@@ -42,7 +42,6 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  TJunkoCrownAura;
   //TJunkoSpellStartFX("Pure Fox's Prototyping", NEUTRAL, 200, 0, 0);
 
   MainTask;
