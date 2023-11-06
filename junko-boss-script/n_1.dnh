@@ -36,7 +36,7 @@ let mainTimer = 0;
   ObjEnemy_Regist(objBoss);
 
   ObjMove_SetPosition(objBoss, GetCenterX(), 0 + 50);
-  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/3, 60);
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.5, 60);
 
   TJunkoHitFX;
   TJunkoBurnAura;
@@ -116,9 +116,9 @@ task MainTask {
 
     let angleT = rand(0, 360);
 
-    fast_circle(ObjMove_GetX(objBoss) + 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.3, L_DOT_BLUE, -0.025, 1.5);
+    fast_circle(ObjMove_GetX(objBoss) + 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.5, L_DOT_BLUE, -0.025, 1.5);
       
-    fast_circle(ObjMove_GetX(objBoss) - 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.3, L_DOT_BLUE, -0.025, 1.5);    
+    fast_circle(ObjMove_GetX(objBoss) - 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.5, L_DOT_BLUE, -0.025, 1.5);    
 
     wait(2.9*30);
   }
