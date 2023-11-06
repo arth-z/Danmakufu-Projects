@@ -44,8 +44,8 @@ task TPlural {
   let dir = GetCurrentScriptDirectory();
   let objScene = ObjEnemyBossScene_Create();
 
-  ObjEnemyBossScene_Add(objScene, 0, dir ~ "./JunkoNonspellPrototype.dnh");
-  ObjEnemyBossScene_Add(objScene, 0, dir ~ "./JunkoSpellPrototype.dnh");
+  ObjEnemyBossScene_Add(objScene, 0, dir ~ "n_1.dnh");
+  ObjEnemyBossScene_Add(objScene, 0, dir ~ "s_1.dnh");
   
   ObjEnemyBossScene_LoadInThread(objScene);
   ObjEnemyBossScene_Regist(objScene);
