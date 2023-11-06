@@ -46,6 +46,7 @@ task TJunkoExplodeIfDie {
 
   PlaySFX(boom);
   BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 400, 10);
+  DeleteShotAll(TYPE_ALL, TYPE_FADE);
 }
 
 task TJunkoExplodeDramaticIfDie {
@@ -388,7 +389,7 @@ task TJunkoCrownAura {
     }
 
     // crownpoint pulses - goes from top to bottom
-    let duration = 30;
+    let duration = 15;
     if (loop_iters % 120 == 10) {
       JunkoCrownpointPulse(crownpoints[2], alpha, [155 + 2*40, 80, 155 + (4-2)*40], duration);
     }
