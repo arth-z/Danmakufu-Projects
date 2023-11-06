@@ -5,7 +5,7 @@
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
-#include "./sqorl-func-lib.dnh"
+#include "./func_library.dnh"
 #include "./img/ZUNShot_Const.txt"
 #include "./JunkoFX.dnh"
 
@@ -65,12 +65,9 @@ let mainTimer = 0;
     MDrawJunkoMotionEnd(mainTimer);
   } else {
     MDrawJunkoLaughContinue(mainTimer);
+    if (mainTimer == 60) {MJunkoChargeUp(200, 80)};
   }
 
-  if (mainTimer == 60) {
-    MJunkoChargeUp();
-  }
-  
   
 
   mainTimer++;

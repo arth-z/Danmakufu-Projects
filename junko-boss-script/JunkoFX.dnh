@@ -1,4 +1,4 @@
-#include "./sqorl-func-lib.dnh"
+#include "./func_library.dnh"
 #include "./sfx/FxnSFX.dnh"
 #include "./img/BFX.dnh"
 #include "./Cutin.dnh"
@@ -32,8 +32,8 @@ task TLoadJunkoFX {
 
   BFX_Init();
   
-  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small.png"; 
-  let ring = GetCurrentScriptDirectory() ~ "./img/Ring.png"; 
+  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small_red.png"; 
+  let ring = GetCurrentScriptDirectory() ~ "./img/ExCircle_red.png"; 
   let beams = GetCurrentScriptDirectory() ~ "./img/Beams_red.png"; 
   BFX_SetGraphics(particle, ring, beams);
 }
@@ -154,9 +154,9 @@ task TJunkoSpellStartFX(name, mood, R, G, B) {
 
 }
 
-task MJunkoChargeUp() {
+task MJunkoChargeUp(radius, duration) {
   let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
-  BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 200, 60);
+  BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(charge);
 }
@@ -441,7 +441,7 @@ task JunkoCrownpointPulse(crownpoint, alpha, color, duration) {
     
     alpha_new -= alpha/duration;
 
-    yScale+=0.03;
+    yScale+=0.01;
 
     posX += 2*sin(angle);
     posY -= 2*cos(angle);

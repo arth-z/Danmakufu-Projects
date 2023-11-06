@@ -5,7 +5,7 @@
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
-#include "./sqorl-func-lib.dnh"
+#include "./func_library.dnh"
 #include "./img/ZUNShot_Const.txt"
 #include "./JunkoFX.dnh"
 
@@ -35,7 +35,7 @@ let mainTimer = 0;
 
   ObjEnemy_Regist(objBoss);
 
-
+  ObjMove_SetPosition(objBoss, GetCenterX(), 0 + 50);
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/3, 60);
 
   TJunkoHitFX;
@@ -97,7 +97,7 @@ task fast_circle(posX, posY, offset, inc, proj, accel, max) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
+    CreateShotA2(posX, posY, 4, angle, accel, max, proj, 5);
     PlaySFX(shoot_sfx);
   }
 
@@ -112,16 +112,15 @@ task MainTask {
   wait(90);
   shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
 
-
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     let angleT = rand(0, 360);
 
-    fast_circle(ObjMove_GetX(objBoss) + 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-40, 40), angleT, 5, L_DOT_RED, 0.5, 1.5);
+    fast_circle(ObjMove_GetX(objBoss) + 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.3, L_DOT_BLUE, -0.025, 1.5);
       
-    fast_circle(ObjMove_GetX(objBoss) - 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-40, 40), angleT, 5, L_DOT_RED, 0.5, 1.5);
-  
-    wait(2.9*20);
+    fast_circle(ObjMove_GetX(objBoss) - 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.3, L_DOT_BLUE, -0.025, 1.5);    
+
+    wait(2.9*30);
   }
   
 }

@@ -78,7 +78,6 @@ task BFX_Explosion(x,y,radius,time,particlespritepath,ringspritepath) {
 task BFX_Release(x,y,radius,time,particlespritepath,beamspritepath) {
 	let count = time;
 	let angle;
-	let speed = 4;
 	_BFX_FocusBeam(x,y,radius,beamspritepath,rand(0,360),-1,time / 4,time / 2);
 	_BFX_FocusBeam(x,y,radius,beamspritepath,rand(0,360),1,time / 4,time / 2);
 	loop (count) {
@@ -90,7 +89,7 @@ task BFX_Release(x,y,radius,time,particlespritepath,beamspritepath) {
 task BFX_Charge(x,y,radius,time,particlespritepath,beamspritepath) {
 	let count = time;
 	let angle;
-	let speed = 4;
+	let speed = 10;
 	_BFX_FocusBeam(x,y,radius,beamspritepath,rand(0,360),-1,time / 4,time / 2);
 	_BFX_FocusBeam(x,y,radius,beamspritepath,rand(0,360),1,time / 4,time / 2);
 	loop (count) {
