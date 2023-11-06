@@ -1,0 +1,119 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Junko Prototyping - Spell"]
+#Text["Code by Squirrelfart [r]Full bossfight eventually..."]
+#System["./JunkoSystem.dnh"]
+#Background["./JunkoBackground.dnh"]
+
+#include "./sqorl-func-lib.dnh"
+#include "./img/ZUNShot_Const.txt"
+#include "./JunkoFX.dnh"
+
+let mainTimer = 0;
+
+@Event 
+{
+  alternative(GetEventType())
+    case(EV_REQUEST_LIFE){ //Sets boss's life
+        SetScriptResult(5750);
+    }
+    case(EV_REQUEST_TIMER){ //Sets attack time
+        SetScriptResult(65);
+    }
+    case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
+        SetScriptResult(1000000);
+    }
+}
+
+@Initialize 
+{ 
+  objScene = GetEnemyBossSceneObjectID();
+  objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+  
+  TLoadJunkoFX;
+  
+  ObjEnemyBossScene_Regist(objBoss);
+  ObjEnemyBossScene_StartSpell(objScene);
+  
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.5, 60);
+
+  TJunkoHitFX;
+  TJunkoBurnAura;
+  TJunkoCircleAura;
+  TJunkoShadowAura;
+  TJunkoCrownAura;
+  TJunkoSpellStartFX("Pure Fox's Prototyping", DISPLEASED, 200, 0, 0);
+
+
+  TJunkoExplodeIfDie;
+  TFinalizeWait(150);
+}
+
+@MainLoop 
+{
+  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+  ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+  
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+
+  if (mainTimer < 16) {
+    MDrawJunkoMotionBegin(mainTimer);
+  } else if (mainTimer < 44) {
+    MDrawJunkoMotionContinue(mainTimer);
+  } else if (mainTimer < 60) {
+    MDrawJunkoMotionEnd(mainTimer);
+  } else {
+    MDrawJunkoLaughContinue(mainTimer);
+  }
+
+  if (mainTimer == 60) {
+    MJunkoChargeUp();
+  }
+  
+  
+
+  mainTimer++;
+  yield;
+}
+
+task slow_circle(offset, inc, proj) {
+
+  let angle = offset;
+  let angle_inc = inc;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    CreateShotA1(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1.5, angle, proj, 5);
+    ObjSound_Play(shoot_sfx);
+  }
+
+  angle += offset;
+
+}
+
+let shoot_sfx;
+
+task MainTask {
+
+  wait(120);
+
+  let intensity=2;
+
+  while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+
+    let angleT = GetAngleToPlayer(objBoss);
+
+    loop(1*floor(intensity)) {
+      slow_circle(angleT + 2, 4, L_DOT_BLUE);
+      wait(9);
+      slow_circle(angleT, 4, L_DOT_BLUE);
+      wait(9);
+    }
+    wait(60);
+
+    intensity += 0.5;
+  
+  }
+  
+}

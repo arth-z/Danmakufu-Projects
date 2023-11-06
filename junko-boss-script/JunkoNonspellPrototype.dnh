@@ -1,0 +1,127 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Junko Prototyping - Nonspell"]
+#Text["Code by Squirrelfart [r]Full bossfight eventually..."]
+#System["./JunkoSystem.dnh"]
+#Background["./JunkoBackground.dnh"]
+
+#include "./sqorl-func-lib.dnh"
+#include "./img/ZUNShot_Const.txt"
+#include "./JunkoFX.dnh"
+
+let mainTimer = 0;
+
+@Event 
+{
+  alternative(GetEventType())
+    case(EV_REQUEST_LIFE){ //Sets boss's life
+        SetScriptResult(4500);
+    }
+    case(EV_REQUEST_TIMER){ //Sets attack time
+        SetScriptResult(65);
+    }
+    case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
+        SetScriptResult(1000000);
+    }
+}
+
+@Initialize 
+{
+  
+  objScene = GetEnemyBossSceneObjectID();
+  objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+
+  TLoadJunkoFX;
+
+  ObjEnemy_Regist(objBoss);
+
+
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/3, 60);
+
+  TJunkoHitFX;
+  TJunkoBurnAura;
+  TJunkoCircleAura;
+  TJunkoShadowAura;
+  TJunkoCrownAura;
+  //TJunkoSpellStartFX("Pure Fox's Prototyping", NEUTRAL, 200, 0, 0);
+
+  MainTask;
+
+  TJunkoExplodeIfDie;
+  TFinalizeWait(85);
+}
+
+@MainLoop 
+{
+  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+  ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+  
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+
+  if (mainTimer < 16) {
+    MDrawJunkoMotionBegin(mainTimer);
+  } else if (mainTimer < 44) {
+    MDrawJunkoMotionContinue(mainTimer);
+  } else if (mainTimer < 60) {
+    MDrawJunkoMotionEnd(mainTimer);
+  } else {
+    MDrawJunkoBlink(mainTimer);
+    MJunkoBreathe(mainTimer);  
+  }
+
+
+  mainTimer++;
+  yield;
+}
+
+task slow_circle(offset, inc, proj) {
+
+  let angle = offset;
+  let angle_inc = inc;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    CreateShotA1(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1.5, angle, proj, 5);
+    PlaySFX(shoot_sfx);
+  }
+
+  angle += offset;
+
+}
+
+task fast_circle(posX, posY, offset, inc, proj, accel, max) {
+  
+  let angle = offset;
+  let angle_inc = inc;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
+    PlaySFX(shoot_sfx);
+  }
+
+  angle += offset;
+
+}
+
+let shoot_sfx;
+
+task MainTask {
+
+  wait(90);
+  shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+
+
+  while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+
+    let angleT = rand(0, 360);
+
+    fast_circle(ObjMove_GetX(objBoss) + 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-40, 40), angleT, 5, L_DOT_RED, 0.5, 1.5);
+      
+    fast_circle(ObjMove_GetX(objBoss) - 100*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-40, 40), angleT, 5, L_DOT_RED, 0.5, 1.5);
+  
+    wait(2.9*20);
+  }
+  
+}

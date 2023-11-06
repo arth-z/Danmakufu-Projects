@@ -1,0 +1,68 @@
+let objBoss;
+let objScene;
+
+function GetCenterX(){
+	return GetStgFrameWidth() / 2;
+}
+
+function GetCenterY(){
+	return GetStgFrameHeight() / 2;
+}
+
+function wait(n) {
+
+	if (n < 0){
+		return;
+	}
+
+	loop(n) {
+		yield;
+	}
+}
+
+function rand_int(min, max) {
+	return round(rand(min, max))
+}
+
+
+task TFinalize {
+
+  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+		yield;
+	}
+
+	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
+		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0) {
+  	AddScore(ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE));
+	}
+
+  Obj_Delete(objBoss);
+  DeleteShotAll(TYPE_ALL, TYPE_IMMEDIATE);
+  SetAutoDeleteObject(true);
+  CloseScript(GetOwnScriptID());
+
+		
+  return;
+}
+
+task TFinalizeWait(time) {
+
+  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+		yield;
+	}
+
+	wait(time);
+
+	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
+		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0) {
+  	AddScore(ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE));
+	}
+
+  Obj_Delete(objBoss);
+  DeleteShotAll(TYPE_ALL, TYPE_IMMEDIATE);
+  SetAutoDeleteObject(true);
+  CloseScript(GetOwnScriptID());
+
+		
+  return;
+}

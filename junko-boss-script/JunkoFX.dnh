@@ -1,0 +1,699 @@
+#include "./sqorl-func-lib.dnh"
+#include "./sfx/FxnSFX.dnh"
+#include "./img/BFX.dnh"
+#include "./Cutin.dnh"
+
+/*
+Contains functionality for letting the boss on the field exist as Junko, as ripped from LoLK.
+Tried to replicate most of the visuals and audio from the original game, with some extra touches...maybe.
+Various methods exist both for being called in @Initialise and in @MainLoop (assuming continuously incrementing timer)
+*/
+
+let imgJunko = GetCurrentScriptDirectory() ~ "./img/Junko.png"; 
+let boom = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_cat00.wav");
+
+let NEUTRAL = "neutral";
+let DISPLEASED = "displeased";
+let BLANK = "blank";
+
+// constants specific for Junko's spritesheet - these describe the dimensions of each sprite frame (or box)
+// frames are indexed by zero
+let right = 96;
+let bottom = 120;
+let blink_offset = 0;
+let motion_offset = 8;
+let laugh_offset = 16;
+
+// functions to help load in sheets for junko to use
+task TLoadJunkoFX {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+  ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, blink_offset+bottom); 
+
+  BFX_Init();
+  
+  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small.png"; 
+  let ring = GetCurrentScriptDirectory() ~ "./img/Ring.png"; 
+  let beams = GetCurrentScriptDirectory() ~ "./img/Beams_red.png"; 
+  BFX_SetGraphics(particle, ring, beams);
+}
+
+task TJunkoExplodeIfDie {
+  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+		yield;
+	}
+  ObjSound_SetVolumeRate(boom, 75);
+
+  PlaySFX(boom);
+  BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 400, 10);
+}
+
+task TJunkoExplodeDramaticIfDie {
+  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+		yield;
+	}
+
+  ObjSound_SetVolumeRate(boom, 75);
+  PlaySFX(boom);
+
+  BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 300, 150);
+  DeleteShotAll(TYPE_ALL, TYPE_FADE);
+
+  wait(120);
+  ObjSound_SetVolumeRate(boom, 100);
+
+  PlaySFX(boom);
+  BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 600, 45);
+
+}
+
+// a periodic oscillation of Junko's y coordinates to help make her feel alive
+// called in @Initialise
+task TJunkoBreathe {
+  let timer = 0;
+  while (!Obj_IsDeleted(objBoss)) {
+    timer++;
+    let pulse = sin(timer*1.5);
+    ObjMove_SetDestAtFrame(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss) + pulse*1, 5);
+    yield;
+  }
+}
+
+// a periodic oscillation of Junko's y coordinates to help make her feel alive
+// called in @MainLoop - requires a passed-in timer variable 
+task MJunkoBreathe(timer) {
+  let pulse = sin(timer*1.5);
+  ObjMove_SetDestAtFrame(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss) + pulse*1, 5);
+}
+
+// VFX and SFX when Junko takes damage
+// called in @Initialise, ideally before anything else happens
+task TJunkoHitFX {
+
+  let beingHit = true;
+  let lastHit = 0;
+  let loop_iters = 0;
+
+  let maxLife = ObjEnemy_GetInfo(objBoss, INFO_LIFE);
+  let critLife = maxLife/6;
+
+  let normalImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage00.wav");
+  let critImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage01.wav");
+  ObjSound_SetVolumeRate(critImpact, 75);
+  ObjSound_SetVolumeRate(normalImpact, 75);
+
+  while (!Obj_IsDeleted(objBoss)) {
+
+    if (loop_iters % 6 == 0) {
+      lastHit = 0;
+    } else {
+      lastHit += ObjEnemy_GetInfo(objBoss, INFO_SHOT_HIT_COUNT);
+    }
+
+    beingHit = lastHit > 0;
+
+    let currLife = ObjEnemy_GetInfo(objBoss, INFO_LIFE);
+    
+    // Junko 'flickers' (brightly) when she gets hit at a specific interval
+    // why the weird interval? i wanted to sync graphics with hitnoise, 
+    // but the hitnoise lasts 0.150 seconds, so i cant use modulus with non-integer values
+    if (floor(loop_iters/(2/3)) == loop_iters/(2/3) && beingHit) {
+      
+      ObjRender_SetBlendType(objBoss, BLEND_ADD_ARGB);
+      ObjRender_SetAlpha(objBoss, 150);
+      if (currLife > critLife) {
+          PlaySFX(normalImpact);
+        } else {
+          PlaySFX(critImpact);
+        }
+
+    } else {
+      ObjRender_SetBlendType(objBoss, BLEND_ALPHA);
+      ObjRender_SetAlpha(objBoss, 255);
+    }
+    
+
+    loop_iters++;
+    yield;
+  }
+}
+
+// called in @Initialise to indicate the start of a spellcard
+task TJunkoSpellStartFX(name, mood, R, G, B) {
+  let junko_cutin = GetCurrentScriptDirectory() ~ "./img/Junko_cutin_" ~ mood ~ ".png"; 
+  let card_activate = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_cat00.wav");
+
+  ObjSound_SetVolumeRate(card_activate, 100);
+
+
+  ObjCutin_SetSpellcardS4(name, junko_cutin, BYAKUREN, R, G, B);
+  ObjCutin_LaunchS3(BYAKUREN, junko_cutin, "Extra");
+
+  wait(15);
+  PlaySFX(card_activate);
+
+}
+
+task MJunkoChargeUp() {
+  let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
+  BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 200, 60);
+  ObjSound_SetVolumeRate(charge, 100);
+  PlaySFX(charge);
+}
+
+// Junko's "first" aura - a slight red burn effect behind her
+// called in @Initialise
+task TJunkoBurnAura {
+  let loop_iters = 0;
+  let reflect = false;
+
+  while (!Obj_IsDeleted(objBoss)) {
+    let color = [200 + 30*sin(loop_iters), 40, 40];
+    if (loop_iters % 8 == 0) {
+      flame(objBoss, color, 2.5, 45);
+    }
+    if (loop_iters % 3 == 0) {
+      flameBase(objBoss, color, 1, 60, reflect);
+      reflect = !reflect;
+    }
+    loop_iters++;
+    yield;
+  }
+}
+
+// all three functions generate one wacky woohoo flame sprite for a total burn aura
+// top and bottom of the flames, respectively
+task flame(owner, colour, scale, duration) {
+  let flame = ObjPrim_Create(OBJ_SPRITE_2D);
+  let xScale = scale/1.75;
+  let yScale = scale/10;
+  let alpha = 255;
+
+  ObjPrim_SetTexture(flame, GetCurrentScriptDirectory()~"./img/aura_sfx.png");
+  ObjSprite2D_SetSourceRect(flame, 0, 0, 48, 64);
+  ObjRender_SetScaleXYZ(flame, xScale, yScale, 1);
+  Obj_SetRenderPriorityI(flame, Obj_GetRenderPriorityI(owner) - 1);
+
+  ObjSprite2D_SetDestCenter(flame);
+  ObjRender_SetBlendType(flame, BLEND_ADD_ARGB);
+  ObjRender_SetAngleXYZ(flame, 0, 0, rand_int(-5, 5));
+  ObjRender_SetColor(flame, colour[0], colour[1], colour[2]);
+
+  let loop_iters = 0;
+  while (loop_iters < duration && !Obj_IsDeleted(owner)) {
+
+    xScale += (xScale/4)/30;
+    yScale += (yScale*2)/30;
+
+    ObjRender_SetAlpha(flame, alpha);
+    ObjRender_SetPosition(flame, ObjMove_GetX(owner), ObjMove_GetY(owner)-10, 0);
+    ObjRender_SetScaleXYZ(flame, xScale, yScale, 1);
+
+    alpha -= 255/duration;
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(flame);
+}
+
+task flameBase(owner, colour, scale, duration, reflect) {
+  let flame = ObjPrim_Create(OBJ_SPRITE_2D);
+  let xScale = scale*1.5;
+  let yScale = scale*1.5;
+  let alpha = 255;
+
+  ObjPrim_SetTexture(flame, GetCurrentScriptDirectory()~"./img/aura_sfx.png");
+  ObjSprite2D_SetSourceRect(flame, 48, 0, 96, 48);
+  ObjRender_SetScaleXYZ(flame, xScale, yScale, 1);
+  Obj_SetRenderPriorityI(flame, Obj_GetRenderPriorityI(owner) - 1);
+
+  ObjSprite2D_SetDestCenter(flame);
+  ObjRender_SetBlendType(flame, BLEND_ADD_ARGB);
+  ObjRender_SetAngleXYZ(flame, 0, 0, rand_int(-10, 10));
+  ObjRender_SetColor(flame, colour[0], colour[1], colour[2]);
+
+  if (reflect) {
+    ObjRender_SetAngleY(flame, 180);
+  }
+
+  let loop_iters = 0;
+  while (loop_iters < duration && !Obj_IsDeleted(owner)) {
+
+    xScale -= 0.1;
+    yScale -= 0.1;
+
+    ObjRender_SetAlpha(flame, alpha);
+    ObjRender_SetPosition(flame, ObjMove_GetX(owner), ObjMove_GetY(owner)+20, 0);
+    ObjRender_SetScaleXYZ(flame, xScale, yScale, 1);
+
+    alpha -= 255/duration;
+    
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(flame);
+}
+
+// Junko's "second" aura - her magic circle
+// called in @Initialise
+task TJunkoCircleAura {
+  
+  let m_circle = ObjPrim_Create(OBJ_SPRITE_2D);
+  ObjPrim_SetTexture(m_circle, GetCurrentScriptDirectory() ~ "./img/moon_circle.png");
+  ObjSprite2D_SetSourceRect(m_circle, 0, 0, 908, 908);
+  ObjRender_SetScaleXYZ(m_circle, 0.3, 0.3, 0.3);
+  ObjRender_SetBlendType(m_circle, BLEND_ADD_ARGB);
+
+  Obj_SetRenderPriorityI(m_circle, Obj_GetRenderPriorityI(objBoss) - 1);
+  ObjRender_SetAlpha(m_circle, 200);
+  ObjRender_SetColor(m_circle, 255, 50, 50);
+
+  let loop_iters = 0;
+  
+  let angleX = ObjRender_GetAngleX(m_circle);
+  let angleY = ObjRender_GetAngleY(m_circle);
+  let angleZ = ObjRender_GetAngleZ(m_circle);
+  
+  while (!Obj_IsDeleted(objBoss) && ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+
+    let bossX = ObjMove_GetX(objBoss);
+    let bossY = ObjMove_GetY(objBoss);
+
+    ObjRender_SetPosition(m_circle, bossX, bossY, 0);
+    ObjSprite2D_SetDestCenter(m_circle);
+
+    ObjRender_SetAlpha(m_circle, 200 + 40*cos(2*loop_iters));
+
+    angleX = 22.5+22.5*sin(0.4*loop_iters);
+    angleY = 45*cos(0.4*loop_iters);
+    angleZ -= 1;
+
+    ObjRender_SetAngleXYZ(m_circle, angleX, angleY, angleZ);
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(m_circle);
+}
+
+// a component to the second aura - a shadow on the magic circle
+task TJunkoShadowAura {
+  
+  let m_circle = ObjPrim_Create(OBJ_SPRITE_2D);
+  ObjPrim_SetTexture(m_circle, GetCurrentScriptDirectory() ~ "./img/shockwave.png");
+  ObjSprite2D_SetSourceRect(m_circle, 0, 0, 256, 256);
+  ObjRender_SetScaleXYZ(m_circle, 1.05, 1.05, 1.05);
+  ObjRender_SetBlendType(m_circle, BLEND_SUBTRACT);
+
+  Obj_SetRenderPriorityI(m_circle, Obj_GetRenderPriorityI(objBoss) - 1);
+
+  let loop_iters = 0;
+  
+  let angleX = ObjRender_GetAngleX(m_circle);
+  let angleY = ObjRender_GetAngleY(m_circle);
+  let angleZ = ObjRender_GetAngleZ(m_circle);
+  
+  while (!Obj_IsDeleted(objBoss) && ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+
+    let bossX = ObjMove_GetX(objBoss);
+    let bossY = ObjMove_GetY(objBoss);
+
+    ObjRender_SetPosition(m_circle, bossX, bossY, 0);
+    ObjSprite2D_SetDestCenter(m_circle);
+
+    ObjRender_SetAlpha(m_circle, 30);
+
+    angleX = 22.5+22.5*sin(0.4*loop_iters);
+    angleY = 45*cos(0.4*loop_iters);
+    angleZ += 1;
+
+    ObjRender_SetAngleXYZ(m_circle, angleX, angleY, angleZ);
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(m_circle);
+}
+
+// Junko's "third" aura - her unique, 5-pointed "crown"
+// called in @Initialise
+task TJunkoCrownAura {
+  let crownpoints = [];
+  let loop_iters = 0;
+
+  ascent(i in 0..5) {
+    let crownpoint = ObjPrim_Create(OBJ_SPRITE_2D);
+    ObjPrim_SetTexture(crownpoint, GetCurrentScriptDirectory() ~ "./img/crownpoint.png");
+    ObjSprite2D_SetSourceRect(crownpoint, 0, 1, 84, 128);
+
+    Obj_SetRenderPriorityI(crownpoint, Obj_GetRenderPriorityI(objBoss) - 1);
+
+    crownpoints = crownpoints ~ [crownpoint];
+  }
+
+  while (!Obj_IsDeleted(objBoss) && ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+
+    let bossX = ObjMove_GetX(objBoss);
+    let bossY = ObjMove_GetY(objBoss);
+    
+    // horizontal tips
+    ObjRender_SetPosition(crownpoints[0], bossX - 70, bossY-10, 0);
+    ObjSprite2D_SetDestCenter(crownpoints[0]);
+    ObjRender_SetAngleZ(crownpoints[0], 275);
+    ObjRender_SetPosition(crownpoints[4], bossX + 70, bossY-10, 0);
+    ObjSprite2D_SetDestCenter(crownpoints[4]);
+    ObjRender_SetAngleZ(crownpoints[4], 85);
+
+    // center
+    ObjRender_SetPosition(crownpoints[2], bossX, bossY-60, 0);
+    ObjSprite2D_SetDestCenter(crownpoints[2]);
+    ObjRender_SetAngleZ(crownpoints[2], 0);
+
+    // diagonal tips
+    ObjRender_SetPosition(crownpoints[1], bossX - 45, bossY - 45, 0);
+    ObjSprite2D_SetDestCenter(crownpoints[1]);
+    ObjRender_SetAngleZ(crownpoints[1], 315);
+    ObjRender_SetPosition(crownpoints[3], bossX + 45, bossY - 45, 0);
+    ObjSprite2D_SetDestCenter(crownpoints[3]);
+    ObjRender_SetAngleZ(crownpoints[3], 45);
+
+    let alpha = 150 + 55*cos(2*loop_iters);
+
+    ascent(i in 0..5) {
+      let crownpoint = crownpoints[i];
+      
+      let color = [155 + i*40, 80, 155 + (4-i)*40];
+
+      ObjRender_SetBlendType(crownpoint, BLEND_ADD_ARGB);
+      ObjRender_SetAlpha(crownpoint, alpha);
+      ObjRender_SetColor(crownpoint, color[0], color[1], color[2]);
+    }
+
+    // crownpoint pulses - goes from top to bottom
+    let duration = 30;
+    if (loop_iters % 120 == 10) {
+      JunkoCrownpointPulse(crownpoints[2], alpha, [155 + 2*40, 80, 155 + (4-2)*40], duration);
+    }
+    if (loop_iters % 120 == 20) {
+      JunkoCrownpointPulse(crownpoints[1], alpha, [155 + 1*40, 80, 155 + (4-1)*40], duration);
+      JunkoCrownpointPulse(crownpoints[3], alpha, [155 + 3*40, 80, 155 + (4-3)*40], duration);
+    }
+    if (loop_iters % 120 == 30) {
+      JunkoCrownpointPulse(crownpoints[0], alpha, [155 + 0*40, 80, 155 + (4-0)*40], duration);
+      JunkoCrownpointPulse(crownpoints[4], alpha, [155 + 4*40, 80, 155 + (4-4)*40], duration);
+    }
+    
+    loop_iters++;
+    yield;
+  }
+  ascent(i in 0..5) {
+    Obj_Delete(crownpoints[i]);
+  }
+
+}
+
+// 'pulses' a crownpoint by copying it, reducing its transparency, and scaling it upwards
+// supplementary to crown aura to make it feel alive
+task JunkoCrownpointPulse(crownpoint, alpha, color, duration) {
+  let xScale = 1;
+  let yScale = 1;
+
+  let alpha_new = alpha;
+  let angle = ObjRender_GetAngleZ(crownpoint);
+
+  let r = color[0];
+  let g = color[1];
+  let b = color[2];
+
+  let posX = ObjRender_GetX(crownpoint);
+  let posY = ObjRender_GetY(crownpoint);
+  
+  let loop_iters = 0;
+
+  let pulse = ObjPrim_Create(OBJ_SPRITE_2D);
+
+  ObjPrim_SetTexture(pulse, GetCurrentScriptDirectory() ~ "./img/crownpoint.png");
+  ObjSprite2D_SetSourceRect(pulse, 0, 1, 84, 128);
+  Obj_SetRenderPriorityI(pulse, Obj_GetRenderPriorityI(objBoss) - 1);
+  ObjSprite2D_SetDestCenter(pulse);
+  ObjRender_SetAngleZ(pulse, angle);
+  ObjRender_SetBlendType(pulse, ObjRender_GetBlendType(crownpoint));
+  
+  while (loop_iters < duration && !Obj_IsDeleted(objBoss)) {
+    
+    alpha_new -= alpha/duration;
+
+    yScale+=0.03;
+
+    posX += 2*sin(angle);
+    posY -= 2*cos(angle);
+
+    
+    ObjRender_SetPosition(pulse, posX, posY, 0);
+    ObjRender_SetScaleXYZ(pulse, xScale, yScale, 1);
+    ObjRender_SetAlpha(pulse, alpha_new);
+    ObjRender_SetColor(pulse, r, g, b);
+
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(pulse);
+}
+
+
+// junko 'laughing' for big attacks
+// called in @Initialise
+task TDrawJunkoLaugh {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+
+  // iteration variables to help cycle through spritesheet
+  let loop_iters = 0;
+  let spriteFrame = 1; // spriteFrame starts from 1 despite the sheet being indexed from zero - to loop through laughing animation
+
+  // actual drawing - laughing
+  while (!Obj_IsDeleted(objBoss)) {
+    
+    if (loop_iters < 8) { // Junko stands in neutral for 8 frames
+      ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, 16+bottom); 
+      ObjSprite2D_SetDestCenter(objBoss); 
+
+    } else if (loop_iters > 8 && loop_iters < 16) { // raises her arms from 9 to 16
+      ObjSprite2D_SetSourceRect(objBoss, 0, laugh_offset+bottom*2, right, laugh_offset+bottom*3); 
+      ObjSprite2D_SetDestCenter(objBoss); 
+
+    } else if (loop_iters > 16) { // and then continuously laughs afterwards (this part loops)
+      ObjSprite2D_SetSourceRect(objBoss, right*spriteFrame, laugh_offset+bottom*2, right + right*spriteFrame, laugh_offset+bottom*3); 
+      ObjSprite2D_SetDestCenter(objBoss); 
+
+      // cycle through the sprite sheet - maintain offset of 1 for the three looping laugh sprites
+      if (loop_iters % 8 == 0) {
+        spriteFrame = spriteFrame % 4 + 1;
+      }
+    }
+
+    loop_iters++;
+    yield;
+  }
+
+}
+
+// junko 'laughing' for big attacks
+// called in @MainLoop, continuously - laughing split into two parts (begin and continue)
+// best call this one for less 16 frames though, or else it'll loop (and look weird)
+task MDrawJunkoLaughBegin(timer) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+
+  if (timer % 8 == 0) {  
+    let loop_iters = timer % 16;
+    if (loop_iters < 8) { // Junko stands in neutral for 8 frames
+      ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, 16+bottom); 
+      ObjSprite2D_SetDestCenter(objBoss); 
+
+    } else { // raises her arms from 9 to 16
+      ObjSprite2D_SetSourceRect(objBoss, 0, laugh_offset+bottom*2, right, laugh_offset+bottom*3); 
+      ObjSprite2D_SetDestCenter(objBoss); 
+    
+    }
+  }
+}
+
+// junko 'laughing' for big attacks
+// called in @MainLoop, continuously - the looping part
+task MDrawJunkoLaughContinue(timer) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+
+  if (timer % 8 == 0) {
+
+    // iter var to cycle through spritesheet - based on how many 8-frame intervals have passed indicated by timer
+    let spriteFrame = (floor(timer/8)) % 4 + 1; 
+    
+    ObjSprite2D_SetSourceRect(objBoss, right*spriteFrame, laugh_offset+bottom*2, right + right*spriteFrame, laugh_offset+bottom*3); 
+    ObjSprite2D_SetDestCenter(objBoss); 
+  }
+  
+
+}
+
+// junko neutral stance
+// called in @Initialise
+task TDrawJunkoBlink {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+
+  // iteration variables to help cycle through spritesheet
+  let loop_iters = 0;
+  let spriteFrame = 0; // sheet indexed from 0
+
+  // actual drawing
+  while (!Obj_IsDeleted(objBoss)) {
+
+    // cycle through the sprite sheet, top row
+    ObjSprite2D_SetSourceRect(objBoss, right*spriteFrame, blink_offset, right + right*spriteFrame, blink_offset+bottom); 
+    ObjSprite2D_SetDestCenter(objBoss); 
+
+    if (loop_iters % 8 == 0) {
+      spriteFrame++;
+
+			// junko only has a 33% chance to blink if she reaches spriteFrame 4 (her blink sprite)
+			if (rand_int(0, 100) < 33) {
+				spriteFrame = spriteFrame % 5;
+			} else {
+				spriteFrame = spriteFrame % 4;
+			}
+    }
+  
+    loop_iters++;
+    yield;
+  }
+
+}
+
+// junko neutral stance
+// called in @MainLoop
+task MDrawJunkoBlink(timer) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+
+  if (timer % 8 == 0) {
+    
+    // iter var to cycle through spritesheet - based on how many 8-frame intervals have passed indicated by timer
+    let spriteFrame = (floor(timer/8));
+
+    // junko only has a 33% chance to blink (frame index 4 is the blinking frame; spriteFrame % 5 actually lets her get there)
+    if (rand_int(0, 100) < 33) {
+      spriteFrame = spriteFrame % 5;
+    } else {
+      spriteFrame = spriteFrame % 4;
+    }
+
+    // cycle through the sprite sheet, top row
+    ObjSprite2D_SetSourceRect(objBoss, right*spriteFrame, blink_offset, right + right*spriteFrame, blink_offset+bottom); 
+    ObjSprite2D_SetDestCenter(objBoss);   
+  }
+
+}
+
+// junko flies forwards to a position, then deccelerates
+task TDrawJunkoMotion(time_until_deccel) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+
+  // iteration variables to help cycle through spritesheet
+  let loop_iters = 0;
+  let spriteFrame = 1; // sheet indexed from 0
+
+  // actual drawing
+  while (!Obj_IsDeleted(objBoss) && loop_iters < time_until_deccel + 24) {
+
+    ObjSprite2D_SetDestCenter(objBoss); 
+
+    if (loop_iters % 8 == 0) {
+      spriteFrame++;
+			spriteFrame = spriteFrame % 2;
+    }
+  
+		if (loop_iters < 8) { // hold neutral pose for 8 frames
+			ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, blink_offset+bottom); 
+
+		} else if (loop_iters > 8 && loop_iters < 16) { // drift frame 1 for another 8 (acceling)
+      ObjSprite2D_SetSourceRect(objBoss, right, motion_offset+bottom, right*2, motion_offset+bottom*2); 
+    
+    } else if (loop_iters > 16 && loop_iters < 24) { // drift frame 2 for another 8 (acceling)
+      ObjSprite2D_SetSourceRect(objBoss, right*2, motion_offset+bottom, right*3, motion_offset+bottom*2); 
+
+    } else if (loop_iters > 24 && loop_iters < time_until_deccel) { // cycle through the rest (max speed)
+			ObjSprite2D_SetSourceRect(objBoss, right*(spriteFrame+2), motion_offset+bottom, right + right*(spriteFrame+2), motion_offset+bottom*2); 
+		
+    } else if (loop_iters > time_until_deccel && loop_iters > time_until_deccel+8) { // go back to frame 2 (deccel)
+      ObjSprite2D_SetSourceRect(objBoss, right*2, motion_offset+bottom, right*3, motion_offset+bottom*2); 
+
+    } else if (loop_iters > time_until_deccel+8 && loop_iters > time_until_deccel+16) { // go back to frame 1 (deccel)
+      ObjSprite2D_SetSourceRect(objBoss, right, motion_offset+bottom, right*2, motion_offset+bottom*2); 
+
+    } else { // back to neutral
+      ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, blink_offset+bottom); 
+    }
+
+    loop_iters++;
+    yield;
+  }
+
+}
+
+// junko's movement sprite - first part, initial acceleration
+// called in @MainLoop
+task MDrawJunkoMotionBegin(timer) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+  if (timer % 8 == 0) {
+
+    let loop_iters = timer % 24;
+
+    if (loop_iters < 8) { // hold neutral pose for 8 frames
+			ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, blink_offset+bottom); 
+
+		} else if (loop_iters > 7 && loop_iters < 16) { // drift frame 1 for another 8 (acceling)
+      ObjSprite2D_SetSourceRect(objBoss, right, motion_offset+bottom, right*2, motion_offset+bottom*2); 
+    
+    } else if (loop_iters > 16 && loop_iters < 24) { // drift frame 2 for another 8 (acceling)
+      ObjSprite2D_SetSourceRect(objBoss, right*2, motion_offset+bottom, right*3, motion_offset+bottom*2); 
+    }
+
+  }
+}
+
+// junko's movement sprite - middle loopable component, 'drifting' at full speed
+// called in @MainLoop
+task MDrawJunkoMotionContinue(timer) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+  if (timer % 8 == 0){
+    
+    // only two sprites to cycle through this time
+    let spriteFrame = (floor(timer/8)) % 2;
+    ObjSprite2D_SetSourceRect(objBoss, right*(spriteFrame+2), motion_offset+bottom, right + right*(spriteFrame+2), motion_offset+bottom*2); 
+      
+  }
+}
+
+// junko's movement sprite - final part, ending decceleration to stillness
+// basically just MotionBegin, but backwards
+// called in @MainLoop
+task MDrawJunkoMotionEnd(timer) {
+  ObjPrim_SetTexture(objBoss, imgJunko);
+  ObjSprite2D_SetDestCenter(objBoss); 
+  if (timer % 8 == 0) {
+
+    let loop_iters = timer % 24;
+
+    // basically just MotionBegin, but backwards
+    if (loop_iters < 8) { 
+			ObjSprite2D_SetSourceRect(objBoss, right*2, motion_offset+bottom, right*3, motion_offset+bottom*2); 
+
+		} else if (loop_iters > 7 && loop_iters < 16) { 
+      ObjSprite2D_SetSourceRect(objBoss, right, motion_offset+bottom, right*2, motion_offset+bottom*2); 
+    
+    } else if (loop_iters > 16 && loop_iters < 24) { 
+      ObjSprite2D_SetSourceRect(objBoss, 0, blink_offset, right, blink_offset+bottom); 
+    }
+
+  }
+}
