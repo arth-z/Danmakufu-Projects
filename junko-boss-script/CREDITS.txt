@@ -3,7 +3,7 @@
 Spellcard Cutin system by Gtbot:
 https://www.bulletforge.org/u/gtbot/p/cutin-function-ph3
 
-Junko spellcard portraits by dairi:
+Junko spellcard portraits and cutin art by dairi:
 https://www.pixiv.net/en/users/4920496
 
 BFX.dnh and BFX_tasks.dnh by darkwalker247:
@@ -25,10 +25,12 @@ Original "Junko" spritesheet from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by
 
 Crown and flame aura graphics by ZUN/Team Shanghai Alice - code for Junko's flame aura modified from existing functions "flame" and "flamebase" in "Effect.dnh" from AJS' "Everlasting Purity"
 
-Floral-lunar magic circle (apparently, a recreation of a design from Sailor Moon) from:
+Floral-lunar magic circle aura (apparently, a recreation of a design from Sailor Moon) from:
 https://www.pngwing.com/en/free-png-sfwka
 
 Image for the skyglow effect from darkwalker's provided "beams.png" as part of their Bloom Effects Library
+
+Original "Hateful Star" sprite by Vecteezy, from https://www.vecteezy.com/free-png/lens-flare
 
 All SFX by ZUN
 BGM (Pure Furies ~ Whereabouts of the Heart) from album 'Dr. Latency's Freak Report' by ZUN

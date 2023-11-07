@@ -60,7 +60,7 @@ task TFinalizeWait(time) {
 	}
 
   Obj_Delete(objBoss);
-  DeleteShotAll(TYPE_ALL, TYPE_IMMEDIATE);
+  DeleteShotAll(TYPE_ALL, TYPE_FADE);
   SetAutoDeleteObject(true);
   CloseScript(GetOwnScriptID());
 
