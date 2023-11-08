@@ -42,7 +42,7 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  TJunkoSpellStartFX("Hateful Star 'Merciless Radiance'", DISPLEASED, 200, 0, 0);
+  TJunkoSpellStartFX("Hateful Star I", DISPLEASED, 200, 0, 0);
 
   TStarInitialise(GetCenterX(), GetCenterY()/3, 0, 0);
   TStarDraw(200);
@@ -68,10 +68,13 @@ let mainTimer = 0;
     MDrawJunkoMotionContinue(mainTimer);
   } else if (mainTimer < 60) {
     MDrawJunkoMotionEnd(mainTimer);
+  } else if (mainTimer < 200) {
+    MDrawJunkoBlink(mainTimer);
   } else {
     MDrawJunkoLaughContinue(mainTimer);
-    if (mainTimer == 60) {MJunkoChargeUp(200, 80)};
   }
+
+  if (mainTimer == 60) {MJunkoChargeUp(200, 80)};
 
   
   UpdateStarHitbox;
@@ -79,19 +82,16 @@ let mainTimer = 0;
   yield;
 }
 
-task slow_circle(offset, inc, proj) {
+task circle(offset, speed, inc, proj) {
 
   let angle = offset;
   let angle_inc = inc;
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    CreateShotA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), 1.5, angle, proj, 10);
+    CreateShotA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), speed, angle, proj, 10);
     ObjSound_Play(shoot_sfx);
   }
-
-  angle += offset;
-
 }
 
 let shoot_sfx;
@@ -99,27 +99,53 @@ let shoot_sfx;
 task MainTask {
 
   shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  ObjSound_SetVolumeRate(shoot_sfx, 70);
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
   ObjSound_SetVolumeRate(shoot_sfx, 50);
+
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
   wait(200);
   PlaySFX(boom_spawn);
 
-  let angleT = 0;
+  let angleL = 0;
+  let angleS = 0;
   let loop_iters = 0;
+  let lasers = [];
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
-    angleT = rand_int(0, 60);
+    angleL = rand_int(0, 360);
+    
+    if (loop_iters % 120 == 0) {
+      lasers = [];
+      loop(60) {
+        let laser = CreateStraightLaserA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), angleL, 
+                512, 20, 30, 22, 120);
+        angleL += 6;
+        ObjLaser_SetGrazeInvalidFrame(laser, 5); 
+        ObjLaser_SetInvalidLength(laser, 5, 5); 
 
-    loop(7) {
-      angleT+=2.5;
-      slow_circle(angleT, 5, L_DOT_BLUE);
-      PlaySFX(shoot_sfx);
-      wait(10);
+        lasers = lasers ~ [laser];
+      }
+      PlaySFX(boom_spawn);
     }
 
-    wait(30);
+    
+    if (loop_iters % 40 == 0) {
+      circle(angleS, 2, 3, L_DOT_BLUE);
+      angleS += 1.5;
+    }
+    
+
+    let len = length(lasers);
+    ascent(i in 0..len) {
+      let laser = lasers[i];
+      let angle = ObjStLaser_GetAngle(laser);
+      let direction = power(-1, i%2+1);
+      let magnitude = (120 - (loop_iters % 120))/120;
+      ObjStLaser_SetAngle(laser, angle+magnitude*direction);
+    }
 
     loop_iters++;
     yield;
