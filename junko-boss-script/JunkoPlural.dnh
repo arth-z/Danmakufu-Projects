@@ -8,6 +8,7 @@
 #include "./func_library.dnh"
 #include "./img/ZUNShot_Const.txt"
 #include "./JunkoFX.dnh"
+#include "./HatefulStar.dnh"
 
 let mainTimer = 0;
 let bgm;

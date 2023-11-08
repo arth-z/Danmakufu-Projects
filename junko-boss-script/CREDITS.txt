@@ -19,7 +19,7 @@ Background graphics for spellcards, ocean surface, ocean waves, and night sky or
 
 Special "galaxy/star" spell background from https://steamuserimages-a.akamaihd.net/ugc/817810804116128362/9B239DDACEBEFABDD106322C198B059726AF5455/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false
 
-Moon surface (tranquility.png) from https://commons.wikimedia.org/wiki/File:Mare_Tranquillitatis.jpg
+Moon surface (moon.png) from https://www.pinterest.ca/pin/240801911301160888/
 
 Original "Junko" spritesheet from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by Team Shanghai Alice
 

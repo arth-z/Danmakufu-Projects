@@ -1,0 +1,69 @@
+#include "./func_library.dnh"
+
+let objStar;
+let path = GetCurrentScriptDirectory();
+
+task TStarInitialise(x, y, angle, speed) {
+  objStar = ObjEnemy_Create(OBJ_ENEMY);
+  ObjEnemy_Regist(objStar);
+
+  ObjEnemy_SetDamageRate(objStar, 0, 0);
+  ObjEnemy_SetLife(objStar, 50);
+  ObjMove_SetPosition(objStar, x, y);
+}
+
+task TStarDraw(delay) {
+
+  wait(delay);
+
+  ObjPrim_SetTexture(objStar, path ~ "./img/hatefulStar_blue.png");
+  ObjRender_SetBlendType(objStar, BLEND_ALPHA);
+	ObjSprite2D_SetSourceRect(objStar, 0, 0, 512, 512);
+  Obj_SetRenderPriorityI(objStar, 70);
+  ObjRender_SetColor(objStar, 255, 255, 255);
+  ObjRender_SetAlpha(objStar, 255);
+  ObjSprite2D_SetDestCenter(objStar);
+
+  BFX_Explosion(ObjMove_GetX(objStar), ObjMove_GetY(objStar), 400, 10);
+
+
+  let xScale = 0.5;
+  let yScale = 0.5;
+  let angleZ = 0;
+  let loop_iters = 0;
+
+  ObjRender_SetScaleXYZ(objStar, yScale, xScale, 1);
+
+  while(ObjEnemy_GetInfo(objStar, INFO_LIFE) > 0) {
+    angleZ += 1;
+    ObjRender_SetAngleZ(objStar, angleZ);
+    ObjSprite2D_SetDestCenter(objStar);
+    ObjRender_SetScaleXYZ(objStar, xScale, yScale, 1);
+    loop_iters++;
+    yield;
+  }
+}
+
+task TStarFollowPlayer {
+  while(ObjEnemy_GetInfo(objStar, INFO_LIFE) > 0) {
+    let angle = GetAngleToPlayer(objStar);
+    let speed = 0.5;
+    ObjMove_SetAngle(objStar, angle);
+    ObjMove_SetSpeed(objStar, speed);
+    yield;
+  }
+}
+
+task UpdateStarHitbox {
+  ObjEnemy_SetIntersectionCircleToShot(objStar, ObjMove_GetX(objStar), ObjMove_GetY(objStar), 32);
+  ObjEnemy_SetIntersectionCircleToPlayer(objStar, ObjMove_GetX(objStar), ObjMove_GetY(objStar), 12);
+}
+
+task TStarHitFX {
+
+}
+
+task TStarFinalize {
+  while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+  Obj_Delete(objStar);
+}

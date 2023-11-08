@@ -8,6 +8,7 @@
 #include "./func_library.dnh"
 #include "./img/ZUNShot_Const.txt"
 #include "./JunkoFX.dnh"
+#include "./HatefulStar.dnh"
 
 let mainTimer = 0;
 
@@ -41,11 +42,16 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  TJunkoSpellStartFX("Pure Fox's Prototyping", DISPLEASED, 200, 0, 0);
+  TJunkoSpellStartFX("Hateful Star 'Merciless Radiance'", DISPLEASED, 200, 0, 0);
 
+  TStarInitialise(GetCenterX(), GetCenterY()/3, 0, 0);
+  TStarDraw(200);
+
+  MainTask;
 
   TJunkoExplodeIfDie;
-  TFinalizeWait(150);
+  TFinalizeWait(60);
+  TStarFinalize;
 }
 
 @MainLoop 
@@ -68,7 +74,7 @@ let mainTimer = 0;
   }
 
   
-
+  UpdateStarHitbox;
   mainTimer++;
   yield;
 }
@@ -80,7 +86,7 @@ task slow_circle(offset, inc, proj) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    CreateShotA1(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1.5, angle, proj, 5);
+    CreateShotA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), 1.5, angle, proj, 10);
     ObjSound_Play(shoot_sfx);
   }
 
@@ -92,24 +98,31 @@ let shoot_sfx;
 
 task MainTask {
 
-  wait(120);
+  shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  ObjSound_SetVolumeRate(shoot_sfx, 50);
+  let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
-  let intensity=2;
+  wait(200);
+  PlaySFX(boom_spawn);
+
+  let angleT = 0;
+  let loop_iters = 0;
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
-    let angleT = GetAngleToPlayer(objBoss);
+    angleT = rand_int(0, 60);
 
-    loop(1*floor(intensity)) {
-      slow_circle(angleT + 2, 4, L_DOT_BLUE);
-      wait(9);
-      slow_circle(angleT, 4, L_DOT_BLUE);
-      wait(9);
+    loop(7) {
+      angleT+=2.5;
+      slow_circle(angleT, 5, L_DOT_BLUE);
+      PlaySFX(shoot_sfx);
+      wait(10);
     }
-    wait(60);
 
-    intensity += 0.5;
-  
+    wait(30);
+
+    loop_iters++;
+    yield;
   }
   
 }
