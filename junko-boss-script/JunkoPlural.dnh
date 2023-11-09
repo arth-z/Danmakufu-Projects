@@ -47,7 +47,7 @@ task TPlural {
 
   ObjEnemyBossScene_Add(objScene, 0, dir ~ "n_1.dnh");
   ObjEnemyBossScene_Add(objScene, 0, dir ~ "s_1.dnh");
-  ObjEnemyBossScene_Add(objScene, 0, dir ~ "n_2.dnh");
+  ObjEnemyBossScene_Add(objScene, 0, dir ~ "s_2.dnh");
   
   ObjEnemyBossScene_LoadInThread(objScene);
   ObjEnemyBossScene_Regist(objScene);

@@ -28,11 +28,9 @@ let mainTimer = 0;
 
 @Initialize 
 {
-
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 
-    
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
@@ -45,10 +43,12 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  TStarInitialise(GetCenterX(), GetCenterY()/3, 0, 0);
+  
+  TStarInitialise(GetCenterX(), GetCenterY()*0.33, 0, 0);
   TStarDraw(200, "red");
-  TJunkoSpellStartFX("Seething Star \"Hatred with Pure Intention\"", DISPLEASED, 255, 150, 100);
-
+  SetStarSpinRate(2);
+  
+  TJunkoSpellStartFX("Seething Star \"Hateful Light with Peerless Reach\"", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -118,20 +118,17 @@ task circle(posX, posY, offset, inc, proj, accel, max) {
   loop(360/angle_inc) {
     angle+=angle_inc;
     CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
-    PlaySFX(shoot_sfx);
   }
 
   angle += offset;
 
 }
 
-let shoot_sfx;
-
 task MainTask {
 
   let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
-  shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
 
   wait(200);
   PlaySFX(boom_spawn);
@@ -145,37 +142,29 @@ task MainTask {
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     angleL = rand_int(0, 360);
+    let starX = ObjMove_GetX(objStar);
+    let starY = ObjMove_GetY(objStar);
     
     if (loop_iters % laser_interval == 0) {
       lasers = [];
-      loop(20) {
-        let laser = CreateStraightLaserA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), angleL, 
-                1024, 20, laser_interval*0.25, 17, laser_interval);
+      loop(15) {
+        let laser = CreateStraightLaserA1(starX, starY, angleL, 
+                1024, 20, laser_interval*0.2, 17, laser_interval);
         angleL = rand_int(0, 360);
         ObjLaser_SetGrazeInvalidFrame(laser, 5); 
         ObjLaser_SetInvalidLength(laser, 5, 5); 
 
         lasers = lasers ~ [laser];
       }
+      angleS = GetAngleToPlayer(objStar);
       PlaySFX(laser_sfx);
       PlaySFX(boom_spawn);
-      angleS = GetAngleToPlayer(objStar);
     }
 
-    if (loop_iters % laser_interval == floor(laser_interval/2)) {
-      let bossX = ObjMove_GetX(objBoss);
-      let bossY = ObjMove_GetY(objBoss);
-      let angleP = GetAngleToPlayer(objBoss);
-      circle(bossX, bossY, angleP, 10, 376, 0.2, 2.5);
-      PlaySFX(shoot_sfx);    
-    }
-
-    let starX = ObjMove_GetX(objStar);
-    let starY = ObjMove_GetY(objStar);
     let len = length(lasers);
     let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
 
-    StarSetMovement(magnitude*3, angleS);
+    SetStarMovement(magnitude*3, angleS);
 
     ascent(i in 0..len) {
       let laser = lasers[i];
@@ -183,6 +172,14 @@ task MainTask {
       let direction = power(-1, i%2+1);
       ObjStLaser_SetAngle(laser, angle+magnitude*direction);
       ObjMove_SetPosition(laser, starX, starY);
+    }
+    
+    if (loop_iters % (laser_interval/2) == floor(laser_interval/4)) {
+      let bossX = ObjMove_GetX(objBoss);
+      let bossY = ObjMove_GetY(objBoss);
+      let angleP = GetAngleToPlayer(objBoss);
+      circle(bossX, bossY, angleP, 10, 376, 0.25, 2.5);
+      PlaySFX(shoot_sfx);    
     }
 
     loop_iters++;

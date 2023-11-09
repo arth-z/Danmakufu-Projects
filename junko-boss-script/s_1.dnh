@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Star Spell 1"]
-#Text["First 'star'. [r] Get used to it - it'll be sticking around."]
+#Text["First 'star'. [r] It'll be sticking around."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -30,24 +30,25 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-  
-  TLoadJunkoFX;
-  
+    
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
 
-  
+  TLoadJunkoFX;
+
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.5, 60);
 
   TJunkoHitFX;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  TJunkoSpellStartFX("Frigid Star \"Splendour of Killing Light\"", NEUTRAL, 255, 150, 200);
-
+  
   TStarInitialise(GetCenterX(), GetCenterY()/3, 0, 0);
   TStarDraw(200, "blue");
+  SetStarSpinRate(1);
+  
+  TJunkoSpellStartFX("Frigid Star \"Killing Light in Pure Splendour\"", NEUTRAL, 255, 150, 200);
 
   MainTask;
 
@@ -94,19 +95,13 @@ task circle(offset, speed, inc, proj) {
   loop(360/angle_inc) {
     angle+=angle_inc;
     CreateShotA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), speed, angle, proj, 10);
-    ObjSound_Play(shoot_sfx);
   }
 }
 
-let shoot_sfx;
-
 task MainTask {
 
-  shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
-  ObjSound_SetVolumeRate(shoot_sfx, 70);
+  let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
   let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
-  ObjSound_SetVolumeRate(shoot_sfx, 50);
-
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
   wait(200);
@@ -122,6 +117,8 @@ task MainTask {
 
     angleL = rand_int(0, 360);
     
+    // radial lasers are created at a specific interval and initialised into a fresh array
+    // the array is cleared as the lasers fire and new lasers are populated into it
     if (loop_iters % laser_interval == 0) {
       lasers = [];
       loop(60) {
@@ -137,13 +134,7 @@ task MainTask {
       PlaySFX(boom_spawn);
     }
 
-    
-    if (loop_iters % (laser_interval/3) == 0) {
-      circle(angleS, 1.8, 3, L_DOT_BLUE);
-      angleS += 1.5;
-    }
-    
-
+    // outside of that interval, the lasers are continuously rotated to deccelerate before the laser shoots
     let len = length(lasers);
     let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
     ascent(i in 0..len) {
@@ -153,8 +144,13 @@ task MainTask {
       ObjStLaser_SetAngle(laser, angle+magnitude*direction);
     }
 
+    if (loop_iters % (laser_interval/3) == 0) {
+      circle(angleS, 1.8, 3, L_DOT_BLUE);
+      angleS += 1.5;
+      PlaySFX(shoot_sfx);
+    }
+
     loop_iters++;
     yield;
   }
-  Obj_Delete(objBoss);
 }

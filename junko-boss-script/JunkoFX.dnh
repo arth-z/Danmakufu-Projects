@@ -97,7 +97,7 @@ task TJunkoHitFX {
   let loop_iters = 0;
 
   let maxLife = ObjEnemy_GetInfo(objBoss, INFO_LIFE);
-  let critLife = maxLife/6;
+  let critLife = maxLife/8;
 
   let normalImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage00.wav");
   let critImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage01.wav");
@@ -116,7 +116,7 @@ task TJunkoHitFX {
 
     let currLife = ObjEnemy_GetInfo(objBoss, INFO_LIFE);
     
-    // Junko 'flickers' (brightly) when she gets hit at a specific interval
+    // Junko 'flickers' (brightly) via blend type change
     // why the weird interval? i wanted to sync graphics with hitnoise, 
     // but the hitnoise lasts 0.150 seconds, so i cant use modulus with non-integer values
     if (floor(loop_iters/(2/3)) == loop_iters/(2/3) && beingHit) {
@@ -147,33 +147,37 @@ task TJunkoSpellStartFX(name, mood, R, G, B) {
 
   ObjSound_SetVolumeRate(card_activate, 100);
 
-	BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 400, 10);
-
   ObjCutin_SetSpellcardS4(name, junko_cutin, BYAKUREN, R, G, B);
   ObjCutin_LaunchS3(BYAKUREN, junko_cutin, "Extra");
 
   wait(15);
   PlaySFX(card_activate);
+  BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 400, 10);
+
 
 }
 
+let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
+
 task MJunkoChargeUp(radius, duration) {
-  let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
   BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(charge);
 }
 
+// called in @Main to match physical movement of junko with sprite
 task MDrawJunkoMove(mainTimer, interval, locationX, locationY, move_time) {
 
   let timer = mainTimer % interval;  
 
+  // reflect sprite depending on movement
   if (ObjMove_GetX(objBoss) - locationX > 0) {
     ObjRender_SetAngleY(objBoss, 180);
   } else {
     ObjRender_SetAngleY(objBoss, 0);
   }
 
+  // draw movement
   if (timer < 16) {
     MDrawJunkoMotionBegin(mainTimer);
   } else if (timer < move_time-16) {

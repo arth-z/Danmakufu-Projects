@@ -2,6 +2,7 @@
 
 let objStar;
 let path = GetCurrentScriptDirectory();
+let angle_inc=1;
 
 task TStarInitialise(x, y, angle, speed) {
   objStar = ObjEnemy_Create(OBJ_ENEMY);
@@ -10,6 +11,10 @@ task TStarInitialise(x, y, angle, speed) {
   ObjEnemy_SetDamageRate(objStar, 0, 0);
   ObjEnemy_SetLife(objStar, 50);
   ObjMove_SetPosition(objStar, x, y);
+}
+
+task SetStarSpinRate(angle) {
+  angle_inc = angle;
 }
 
 task TStarDraw(delay, color) {
@@ -35,7 +40,7 @@ task TStarDraw(delay, color) {
   ObjRender_SetScaleXYZ(objStar, yScale, xScale, 1);
 
   while(ObjEnemy_GetInfo(objStar, INFO_LIFE) > 0) {
-    angleZ += 1;
+    angleZ += angle_inc;
     ObjRender_SetAngleZ(objStar, angleZ);
     ObjSprite2D_SetDestCenter(objStar);
     ObjRender_SetScaleXYZ(objStar, xScale, yScale, 1);
@@ -44,7 +49,7 @@ task TStarDraw(delay, color) {
   }
 }
 
-task StarSetMovement(speed, angle) {
+task SetStarMovement(speed, angle) {
   ObjMove_SetAngle(objStar, angle);
   ObjMove_SetSpeed(objStar, speed);
 }
