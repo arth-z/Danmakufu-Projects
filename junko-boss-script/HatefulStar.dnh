@@ -12,11 +12,11 @@ task TStarInitialise(x, y, angle, speed) {
   ObjMove_SetPosition(objStar, x, y);
 }
 
-task TStarDraw(delay) {
+task TStarDraw(delay, color) {
 
   wait(delay);
 
-  ObjPrim_SetTexture(objStar, path ~ "./img/hatefulStar_blue.png");
+  ObjPrim_SetTexture(objStar, path ~ "./img/hatefulStar_" ~ color ~ ".png");
   ObjRender_SetBlendType(objStar, BLEND_ALPHA);
 	ObjSprite2D_SetSourceRect(objStar, 0, 0, 512, 512);
   Obj_SetRenderPriorityI(objStar, 70);
@@ -44,15 +44,11 @@ task TStarDraw(delay) {
   }
 }
 
-task TStarFollowPlayer {
-  while(ObjEnemy_GetInfo(objStar, INFO_LIFE) > 0) {
-    let angle = GetAngleToPlayer(objStar);
-    let speed = 0.5;
-    ObjMove_SetAngle(objStar, angle);
-    ObjMove_SetSpeed(objStar, speed);
-    yield;
-  }
+task StarSetMovement(speed, angle) {
+  ObjMove_SetAngle(objStar, angle);
+  ObjMove_SetSpeed(objStar, speed);
 }
+
 
 task UpdateStarHitbox {
   ObjEnemy_SetIntersectionCircleToShot(objStar, ObjMove_GetX(objStar), ObjMove_GetY(objStar), 32);
@@ -64,6 +60,6 @@ task TStarHitFX {
 }
 
 task TStarFinalize {
-  while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {yield;}
+  while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0 && ObjEnemy_GetInfo(objStar, INFO_LIFE) > 0) {yield;}
   Obj_Delete(objStar);
 }

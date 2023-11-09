@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Junko Prototyping - Nonspell"]
-#Text["Code by Squirrelfart [r]Full bossfight eventually..."]
+#Title["Squirrel's Junko - Nonspell 1"]
+#Text["A slow start, and the PDH blue circles! [r] Woohoo...not."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -42,12 +42,13 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  //TJunkoSpellStartFX("Pure Fox's Prototyping", NEUTRAL, 200, 0, 0);
   MainTask;
 
-  TJunkoExplodeIfDie;
-  TFinalizeWait(85);
+  TJunkoFinalize;
 }
+
+let new_x;
+let new_y;
 
 @MainLoop 
 {
@@ -57,17 +58,23 @@ let mainTimer = 0;
   let bossX = ObjMove_GetX(objBoss);
   let bossY = ObjMove_GetY(objBoss);
 
-  if (mainTimer < 16) {
-    MDrawJunkoMotionBegin(mainTimer);
-  } else if (mainTimer < 44) {
-    MDrawJunkoMotionContinue(mainTimer);
-  } else if (mainTimer < 60) {
-    MDrawJunkoMotionEnd(mainTimer);
+  // movement constants
+  let move_interval = 240;
+  let move_time = 60;
+
+  // random movement control
+  if (mainTimer % move_interval < move_time) {
+    if (mainTimer % move_interval == 0) {
+      new_x = GetCenterX() + rand(-50, 50);
+      new_y = GetCenterY()*0.5 + rand(-10,10);
+      ObjMove_SetDestAtFrame(objBoss, new_x, new_y, move_time);
+    } else {
+      MDrawJunkoMove(mainTimer % move_interval, move_interval, new_x, new_y, move_time);
+    }
   } else {
     MDrawJunkoBlink(mainTimer);
-    MJunkoBreathe(mainTimer);  
+    MJunkoBreathe(mainTimer);
   }
-
 
   mainTimer++;
   yield;
@@ -114,11 +121,11 @@ task MainTask {
 
     let angleT = rand(0, 360);
 
-    fast_circle(ObjMove_GetX(objBoss) + 150*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.6, L_DOT_BLUE, 0.2, 2);
+    fast_circle(GetCenterX() + 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3.33, L_DOT_BLUE, 0.5, 2);
       
-    fast_circle(ObjMove_GetX(objBoss) - 150*rand(0.75, 1.25), ObjMove_GetY(objBoss) + rand(-20, 20), angleT, 3.6, L_DOT_BLUE, 0.2, 2);    
+    fast_circle(GetCenterX() - 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3.33, L_DOT_BLUE, 0.5, 2);    
 
-    wait(2.9*30);
+    wait(120);
   }
   
 }

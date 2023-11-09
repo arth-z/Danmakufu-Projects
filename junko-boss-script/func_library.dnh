@@ -31,18 +31,11 @@ task TFinalize {
 		yield;
 	}
 
-  DeleteShotAll(TYPE_ALL, TYPE_IMMEDIATE);
-
-	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
-		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0) {
-  	AddScore(ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE));
-	}
-
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
   Obj_Delete(objBoss);
-  SetAutoDeleteObject(true);
+	SetAutoDeleteObject(true);
   CloseScript(GetOwnScriptID());
 
-		
   return;
 }
 
@@ -52,18 +45,32 @@ task TFinalizeWait(time) {
 		yield;
 	}
 
-	wait(time);
-
-	if(ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SHOOTDOWN_COUNT)
-		+ObjEnemyBossScene_GetInfo(objScene, INFO_PLAYER_SPELL_COUNT) == 0) {
-  	AddScore(ObjEnemyBossScene_GetInfo(objScene, INFO_SPELL_SCORE));
-	}
-
-  Obj_Delete(objBoss);
-  DeleteShotAll(TYPE_ALL, TYPE_FADE);
-  SetAutoDeleteObject(true);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	Obj_Delete(objBoss);
+	SetAutoDeleteObject(true);
   CloseScript(GetOwnScriptID());
 
 		
   return;
+}
+
+// Thanks to Sparen's tutorial on screenshake for this code - unit 2, lesson 22.5, "extra"
+task ScreenShakeA1(shaketime, intensity){
+	let orig_focusX = GetCameraFocusX();
+	let orig_focusY = GetCameraFocusY();
+	let orig_focusZ = GetCameraFocusZ();
+    while(shaketime > 0){
+        SetCameraFocusX(orig_focusX + rand(-intensity, intensity));
+        SetCameraFocusY(orig_focusY + rand(-intensity, intensity));
+				SetCameraFocusZ(orig_focusZ + rand(-intensity, intensity));
+				Set2DCameraFocusX(GetStgFrameWidth/2 + rand(-intensity, intensity));
+				Set2DCameraFocusY(GetStgFrameHeight/2 + rand(-intensity, intensity));
+        shaketime--;
+        yield;
+    }
+    SetCameraFocusX(orig_focusX);
+    SetCameraFocusY(orig_focusY);
+		SetCameraFocusZ(orig_focusZ);
+    Set2DCameraFocusX(GetStgFrameWidth/2);
+    Set2DCameraFocusY(GetStgFrameHeight/2);
 }

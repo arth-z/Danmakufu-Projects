@@ -1,11 +1,10 @@
 #TouhouDanmakufu[Plural]
 #ScriptVersion[3]
-#Title["Junko Prototyping - Plural"]
+#Title["Squirrel's Junko"]
 #Text["Code by Squirrelfart [r]Full bossfight eventually..."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
-#include "./func_library.dnh"
 #include "./img/ZUNShot_Const.txt"
 #include "./JunkoFX.dnh"
 #include "./HatefulStar.dnh"
@@ -48,6 +47,7 @@ task TPlural {
 
   ObjEnemyBossScene_Add(objScene, 0, dir ~ "n_1.dnh");
   ObjEnemyBossScene_Add(objScene, 0, dir ~ "s_1.dnh");
+  ObjEnemyBossScene_Add(objScene, 0, dir ~ "n_2.dnh");
   
   ObjEnemyBossScene_LoadInThread(objScene);
   ObjEnemyBossScene_Regist(objScene);

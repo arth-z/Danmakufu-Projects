@@ -36,6 +36,7 @@ task TLoadJunkoFX {
   let ring = GetCurrentScriptDirectory() ~ "./img/ExCircle_red.png"; 
   let beams = GetCurrentScriptDirectory() ~ "./img/Beams_red.png"; 
   BFX_SetGraphics(particle, ring, beams);
+
 }
 
 task TJunkoExplodeIfDie {
@@ -146,6 +147,7 @@ task TJunkoSpellStartFX(name, mood, R, G, B) {
 
   ObjSound_SetVolumeRate(card_activate, 100);
 
+	BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 400, 10);
 
   ObjCutin_SetSpellcardS4(name, junko_cutin, BYAKUREN, R, G, B);
   ObjCutin_LaunchS3(BYAKUREN, junko_cutin, "Extra");
@@ -160,6 +162,26 @@ task MJunkoChargeUp(radius, duration) {
   BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(charge);
+}
+
+task MDrawJunkoMove(mainTimer, interval, locationX, locationY, move_time) {
+
+  let timer = mainTimer % interval;  
+
+  if (ObjMove_GetX(objBoss) - locationX > 0) {
+    ObjRender_SetAngleY(objBoss, 180);
+  } else {
+    ObjRender_SetAngleY(objBoss, 0);
+  }
+
+  if (timer < 16) {
+    MDrawJunkoMotionBegin(mainTimer);
+  } else if (timer < move_time-16) {
+    MDrawJunkoMotionContinue(mainTimer);
+  } else if (mainTimer < move_time) {
+    MDrawJunkoMotionEnd(mainTimer);
+  }
+
 }
 
 // Junko's "first" aura - a slight red burn effect behind her
@@ -697,4 +719,19 @@ task MDrawJunkoMotionEnd(timer) {
     }
 
   }
+}
+
+task TJunkoFinalize {
+  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+		yield;
+	}
+
+  NotifyEventAll(EV_USER_STAGE+777, [ObjMove_GetX(objBoss), ObjMove_GetY(objBoss)]);
+	DeleteShotAll(TYPE_ALL, TYPE_FADE);
+  Obj_Delete(objBoss);
+
+  SetAutoDeleteObject(true);
+  CloseScript(GetOwnScriptID());
+
+  return;
 }

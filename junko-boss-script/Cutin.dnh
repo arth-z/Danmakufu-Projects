@@ -44,6 +44,8 @@ task ObjCutin_LaunchS3(type, image, difficulty){
 }
 
 task CutinS3(Type, mimage, difficulty){
+	InstallFont(current ~ "./system/russellsquare.ttf");
+	InstallFont(current ~ "./system/eurostile.ttf");
 	let spells = Obj_GetValueD(GetEnemyBossObjectID[0], "Spellcards", []);
 	let boss = GetEnemyBossObjectID[0];
 	let spcount = length(spells);
@@ -239,11 +241,12 @@ task CutinS3(Type, mimage, difficulty){
 		ObjRender_SetColor(SpellBG, Colors[0][0], Colors[0][1], Colors[0][2]);
 		
 		let SpellText = ObjText_Create;
+		ObjText_SetFontType(SpellText, "Russell Square Regular");
 		ObjText_SetText(SpellText,SpellName);
-		ObjText_SetFontSize(SpellText,12);
+		ObjText_SetFontSize(SpellText,14);
 		ObjText_SetFontColorTop(SpellText,255,255,255);
 		ObjText_SetFontColorBottom(SpellText, Colors[0][0], Colors[0][1], Colors[0][2]);
-		ObjText_SetFontBorderType(SpellText,BORDER_FULL);
+		ObjText_SetFontBorderType(SpellText, BORDER_SHADOW);
 		ObjText_SetFontBorderColor(SpellText,32,32,32);
 		ObjText_SetFontBorderWidth(SpellText,1);
 		ObjText_SetHorizontalAlignment(SpellText, ALIGNMENT_RIGHT);
