@@ -247,7 +247,7 @@ task CutinS3(Type, mimage, difficulty){
 		ObjText_SetFontColorTop(SpellText,255,255,255);
 		ObjText_SetFontColorBottom(SpellText, Colors[0][0], Colors[0][1], Colors[0][2]);
 		ObjText_SetFontBorderType(SpellText, BORDER_SHADOW);
-		ObjText_SetFontBorderColor(SpellText,32,32,32);
+		ObjText_SetFontBorderColor(SpellText,0,0,0);
 		ObjText_SetFontBorderWidth(SpellText,1);
 		ObjText_SetHorizontalAlignment(SpellText, ALIGNMENT_RIGHT);
 		ObjText_SetMaxWidth(SpellText, GetStgFrameWidth-24);

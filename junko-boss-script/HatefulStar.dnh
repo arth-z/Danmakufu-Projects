@@ -1,4 +1,5 @@
 #include "./func_library.dnh"
+#include "./sfx/FxnSFX.dnh"
 
 let objStar;
 let path = GetCurrentScriptDirectory();
@@ -11,6 +12,7 @@ task TStarInitialise(x, y, angle, speed) {
   ObjEnemy_SetDamageRate(objStar, 0, 0);
   ObjEnemy_SetLife(objStar, 50);
   ObjMove_SetPosition(objStar, x, y);
+
 }
 
 task SetStarSpinRate(angle) {
@@ -29,13 +31,12 @@ task TStarDraw(delay, color) {
   ObjRender_SetAlpha(objStar, 255);
   ObjSprite2D_SetDestCenter(objStar);
 
-  BFX_Explosion(ObjMove_GetX(objStar), ObjMove_GetY(objStar), 400, 10);
-
-
   let xScale = 0.5;
   let yScale = 0.5;
   let angleZ = 0;
   let loop_iters = 0;
+
+  TStarShockwave(color);
 
   ObjRender_SetScaleXYZ(objStar, yScale, xScale, 1);
 
@@ -46,6 +47,20 @@ task TStarDraw(delay, color) {
     ObjRender_SetScaleXYZ(objStar, xScale, yScale, 1);
     loop_iters++;
     yield;
+  }
+}
+
+task TStarShockwave(color) {
+  let posX = ObjRender_GetX(objStar);
+  let posY = ObjRender_GetY(objStar);
+  if (color == "blue") {
+    ShockwaveExpand(posX, posY, 120, 10, [100, 100, 255]);
+  } else if (color == "red") {
+    ShockwaveExpand(posX, posY, 120, 10, [255, 80, 80]);
+  } else if (color == "purple") {
+    ShockwaveExpand(posX, posY, 120, 10, [255, 100, 255]);
+  } else {
+    ShockwaveExpand(posX, posY, 120, 10, [255, 255, 255]);
   }
 }
 
@@ -61,7 +76,36 @@ task UpdateStarHitbox {
 }
 
 task TStarHitFX {
+  let beingHit = true;
+  let lastHit = 0;
+  let loop_iters = 0;
 
+  let maxLife = ObjEnemy_GetInfo(objStar, INFO_LIFE);
+
+  let normalImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage00.wav");
+  ObjSound_SetVolumeRate(normalImpact, 75);
+
+  while (!Obj_IsDeleted(objStar)) {
+
+    if (loop_iters % 6 == 0) {
+      lastHit = 0;
+    } else {
+      lastHit += ObjEnemy_GetInfo(objStar, INFO_SHOT_HIT_COUNT);
+    }
+
+    beingHit = lastHit > 0;
+
+    let currLife = ObjEnemy_GetInfo(objStar, INFO_LIFE);
+
+    if (loop_iters % 4 == 0 && beingHit) {
+      
+      PlaySFX(normalImpact);
+
+    } 
+
+    loop_iters++;
+    yield;
+  }
 }
 
 task TStarFinalize {

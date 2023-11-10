@@ -47,8 +47,8 @@ let mainTimer = 0;
   TJunkoFinalize;
 }
 
-let new_x;
-let new_y;
+let new_x = GetCenterX() + rand(-50, 50);
+let new_y = GetCenterY()*0.5 + rand(-10,10);
 
 @MainLoop 
 {

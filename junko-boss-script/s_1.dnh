@@ -48,7 +48,7 @@ let mainTimer = 0;
   TStarDraw(200, "blue");
   SetStarSpinRate(1);
   
-  TJunkoSpellStartFX("Frigid Star \"Killing Light in Pure Splendour\"", NEUTRAL, 255, 150, 200);
+  TJunkoSpellStartFX("\"Killing Light in Pristine Splendour\"", NEUTRAL, 150, 150, 255);
 
   MainTask;
 

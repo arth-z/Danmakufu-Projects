@@ -74,3 +74,65 @@ task ScreenShakeA1(shaketime, intensity){
     Set2DCameraFocusX(GetStgFrameWidth/2);
     Set2DCameraFocusY(GetStgFrameHeight/2);
 }
+
+task ShockwaveExpand(posX, posY, duration, maxScale, colour) {
+  let wave = ObjPrim_Create(OBJ_SPRITE_2D);
+  let xScale = 0;
+  let yScale = 0;
+  let alpha = 255;
+
+  ObjPrim_SetTexture(wave, GetCurrentScriptDirectory()~"./img/shockwave.png");
+  ObjSprite2D_SetSourceRect(wave, 0, 0, 256, 256);
+  ObjRender_SetPosition(wave, posX, posY, 0);
+
+  ObjSprite2D_SetDestCenter(wave);
+  ObjRender_SetBlendType(wave, BLEND_ADD_ARGB);
+  ObjRender_SetColor(wave, colour[0], colour[1], colour[2]);
+
+  let loop_iters = 0;
+  while (loop_iters < duration) {
+
+    xScale = (loop_iters/duration) * maxScale;
+    yScale = (loop_iters/duration) * maxScale;
+    alpha -= 255/duration;
+
+    ObjRender_SetAlpha(wave, alpha);
+    ObjRender_SetScaleXYZ(wave, xScale, yScale, 1);
+		ObjRender_SetPosition(wave, posX, posY, 0);
+
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(wave);
+}
+
+task ShockwaveCharge(posX, posY, duration, maxScale, colour) {
+  let wave = ObjPrim_Create(OBJ_SPRITE_2D);
+  let xScale = maxScale;
+  let yScale = maxScale;
+  let alpha = 0;
+
+  ObjPrim_SetTexture(wave, GetCurrentScriptDirectory()~"./img/shockwave.png");
+  ObjSprite2D_SetSourceRect(wave, 0, 0, 256, 256);
+  ObjRender_SetPosition(wave, posX, posY, 0);
+
+  ObjSprite2D_SetDestCenter(wave);
+  ObjRender_SetBlendType(wave, BLEND_ADD_ARGB);
+  ObjRender_SetColor(wave, colour[0], colour[1], colour[2]);
+
+  let loop_iters = 0;
+  while (loop_iters < duration) {
+
+    xScale = (1 - loop_iters/duration) * maxScale;
+    yScale = (1 - loop_iters/duration) * maxScale;
+		alpha += 255/duration*2;
+
+    ObjRender_SetAlpha(wave, alpha);
+    ObjRender_SetScaleXYZ(wave, xScale, yScale, 1);
+		ObjRender_SetPosition(wave, posX, posY, 0);
+
+    loop_iters++;
+    yield;
+  }
+  Obj_Delete(wave);
+}

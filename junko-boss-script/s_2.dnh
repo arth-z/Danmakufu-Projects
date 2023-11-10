@@ -46,9 +46,10 @@ let mainTimer = 0;
   
   TStarInitialise(GetCenterX(), GetCenterY()*0.33, 0, 0);
   TStarDraw(200, "red");
+  TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Seething Star \"Hateful Light with Peerless Reach\"", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("\"Pure Fox's Three-Body Problem\"", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -62,8 +63,8 @@ task TJunkoCrownAuraDelay {
   TJunkoCrownAura;
 }
 
-let new_x;
-let new_y;
+let new_x = GetCenterX() + rand(-50, 50);
+let new_y = GetCenterY()*0.5 + rand(-10,10);
 
 @MainLoop 
 {
@@ -74,11 +75,11 @@ let new_y;
   let bossY = ObjMove_GetY(objBoss);
 
   // movement constants
-  let move_interval = 240;
-  let move_time = 60;
+  let move_interval = 90;
+  let move_time = 45;
 
   if (mainTimer < 16) {
-    ObjEnemy_SetDamageRate(objBoss, 1, 1);
+    ObjEnemy_SetDamageRate(objBoss, 25, 25);
     MDrawJunkoMotionBegin(mainTimer);
   } else if (mainTimer < 44) {
     MDrawJunkoMotionContinue(mainTimer);
@@ -126,9 +127,9 @@ task circle(posX, posY, offset, inc, proj, accel, max) {
 
 task MainTask {
 
-  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
-  let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer01.wav");
+  let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
   wait(200);
   PlaySFX(boom_spawn);
@@ -178,7 +179,7 @@ task MainTask {
       let bossX = ObjMove_GetX(objBoss);
       let bossY = ObjMove_GetY(objBoss);
       let angleP = GetAngleToPlayer(objBoss);
-      circle(bossX, bossY, angleP, 10, 376, 0.25, 2.5);
+      circle(bossX, bossY, angleP, 12, 376, 0.25, 2.5);
       PlaySFX(shoot_sfx);    
     }
 
