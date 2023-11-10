@@ -37,7 +37,7 @@ let mainTimer = 0;
 
   TLoadJunkoFX;
 
-  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.5, 60);
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.3, 60);
 
   TJunkoHitFX;
   TJunkoBurnAura;

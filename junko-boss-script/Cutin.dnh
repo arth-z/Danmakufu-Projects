@@ -243,10 +243,11 @@ task CutinS3(Type, mimage, difficulty){
 		let SpellText = ObjText_Create;
 		ObjText_SetFontType(SpellText, "Russell Square Regular");
 		ObjText_SetText(SpellText,SpellName);
-		ObjText_SetFontSize(SpellText,14);
+		ObjText_SetFontSize(SpellText,12);
+		ObjText_SetFontBold(SpellText, true);
 		ObjText_SetFontColorTop(SpellText,255,255,255);
 		ObjText_SetFontColorBottom(SpellText, Colors[0][0], Colors[0][1], Colors[0][2]);
-		ObjText_SetFontBorderType(SpellText, BORDER_SHADOW);
+		ObjText_SetFontBorderType(SpellText, BORDER_FULL);
 		ObjText_SetFontBorderColor(SpellText,0,0,0);
 		ObjText_SetFontBorderWidth(SpellText,1);
 		ObjText_SetHorizontalAlignment(SpellText, ALIGNMENT_RIGHT);
@@ -284,7 +285,7 @@ task CutinS3(Type, mimage, difficulty){
 		let mov = 0;
 		
 		if(Type == "MOKOU"){SpellcardDeclareMovement([ObjRender_GetY(SpellText), 48+32*num, 0.175, 9]);loop(60){yield;}}
-		else{RegularSpellCardDeclare([ObjRender_GetY(SpellText), 32+32*num, 0.135, 12]);}
+		else{RegularSpellCardDeclare([ObjRender_GetY(SpellText), 12+32*num, 0.135, 12]);}
 		//32 is the offset from the top of the screen
 		//If using a system where the lifebar is on the boss rather than the top of the screen, 12 is a good value
 

@@ -26,7 +26,7 @@ task TStarDraw(delay, color) {
   ObjPrim_SetTexture(objStar, path ~ "./img/hatefulStar_" ~ color ~ ".png");
   ObjRender_SetBlendType(objStar, BLEND_ALPHA);
 	ObjSprite2D_SetSourceRect(objStar, 0, 0, 512, 512);
-  Obj_SetRenderPriorityI(objStar, 70);
+  Obj_SetRenderPriorityI(objStar, 60);
   ObjRender_SetColor(objStar, 255, 255, 255);
   ObjRender_SetAlpha(objStar, 255);
   ObjSprite2D_SetDestCenter(objStar);
