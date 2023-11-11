@@ -36,8 +36,6 @@ task TStarDraw(delay, color) {
   let angleZ = 0;
   let loop_iters = 0;
 
-  TStarShockwave(color);
-
   ObjRender_SetScaleXYZ(objStar, yScale, xScale, 1);
 
   while(ObjEnemy_GetInfo(objStar, INFO_LIFE) > 0) {
@@ -54,14 +52,15 @@ task TStarShockwave(color) {
   let posX = ObjRender_GetX(objStar);
   let posY = ObjRender_GetY(objStar);
   if (color == "blue") {
-    ShockwaveExpand(posX, posY, 120, 10, [100, 100, 255]);
+    ShockwaveExpand(posX, posY, 120, 15, [100, 100, 255]);
   } else if (color == "red") {
-    ShockwaveExpand(posX, posY, 120, 10, [255, 80, 80]);
+    ShockwaveExpand(posX, posY, 120, 15, [255, 80, 80]);
   } else if (color == "purple") {
-    ShockwaveExpand(posX, posY, 120, 10, [255, 100, 255]);
+    ShockwaveExpand(posX, posY, 120, 15, [255, 100, 255]);
   } else {
-    ShockwaveExpand(posX, posY, 120, 10, [255, 255, 255]);
+    ShockwaveExpand(posX, posY, 120, 15, [255, 255, 255]);
   }
+  ScreenShakeA1(20, 3);
 }
 
 task SetStarMovement(speed, angle) {

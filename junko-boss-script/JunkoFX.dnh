@@ -32,8 +32,8 @@ task TLoadJunkoFX {
 
   BFX_Init();
   
-  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small_red.png"; 
-  let ring = GetCurrentScriptDirectory() ~ "./img/ExCircle_red.png"; 
+  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small.png"; 
+  let ring = GetCurrentScriptDirectory() ~ "./img/shockwave.png"; 
   let beams = GetCurrentScriptDirectory() ~ "./img/Beams.png"; 
   BFX_SetGraphics(particle, ring, beams);
 
@@ -157,9 +157,9 @@ task TJunkoSpellStartFX(name, mood, R, G, B) {
 
 let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
 
-task MJunkoChargeUp(radius, duration) {
+task MJunkoChargeUp(radius, duration, color) {
   BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
-  ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, [255, 100, 100]);
+  ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(charge);
 }

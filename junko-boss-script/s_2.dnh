@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("\"Pure Fox's Three-Body Problem\"", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("Pure Fox's Three-Body Problem", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -104,7 +104,7 @@ let new_y = GetCenterY()*0.5 + rand(-10,10);
     }
   }
 
-  if (mainTimer == 60) {MJunkoChargeUp(200, 80)};
+  if (mainTimer == 60) {MJunkoChargeUp(200, 80, [255, 80, 80])};
   UpdateStarHitbox;
 
   mainTimer++;
@@ -160,6 +160,7 @@ task MainTask {
       angleS = GetAngleToPlayer(objStar);
       PlaySFX(laser_sfx);
       PlaySFX(boom_spawn);
+      TStarShockwave("red");
     }
 
     let len = length(lasers);
