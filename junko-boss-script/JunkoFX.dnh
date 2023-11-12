@@ -24,7 +24,7 @@ let blink_offset = 0;
 let motion_offset = 8;
 let laugh_offset = 16;
 
-// functions to help load in sheets for junko to use
+// functions to help load in stuff for junko to use
 task TLoadJunkoFX {
   ObjPrim_SetTexture(objBoss, imgJunko);
   ObjSprite2D_SetDestCenter(objBoss); 
@@ -36,36 +36,6 @@ task TLoadJunkoFX {
   let ring = GetCurrentScriptDirectory() ~ "./img/shockwave.png"; 
   let beams = GetCurrentScriptDirectory() ~ "./img/Beams.png"; 
   BFX_SetGraphics(particle, ring, beams);
-
-}
-
-task TJunkoExplodeIfDie {
-  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
-		yield;
-	}
-  ObjSound_SetVolumeRate(boom, 75);
-
-  PlaySFX(boom);
-  BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 400, 10);
-  DeleteShotAll(TYPE_ALL, TYPE_FADE);
-}
-
-task TJunkoExplodeDramaticIfDie {
-  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
-		yield;
-	}
-
-  ObjSound_SetVolumeRate(boom, 75);
-  PlaySFX(boom);
-
-  BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 300, 150);
-  DeleteShotAll(TYPE_ALL, TYPE_FADE);
-
-  wait(120);
-  ObjSound_SetVolumeRate(boom, 100);
-
-  PlaySFX(boom);
-  BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 600, 45);
 
 }
 
@@ -155,9 +125,18 @@ task TJunkoSpellStartFX(name, mood, R, G, B) {
 
 }
 
+let release = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_enep02.wav");
+
+task TJunkoShockwave(radius, duration, color) {
+  BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
+  ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/25, color);
+  ObjSound_SetVolumeRate(release, 100);
+  PlaySFX(release);
+}
+
 let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
 
-task MJunkoChargeUp(radius, duration, color) {
+task TJunkoChargeUp(radius, duration, color) {
   BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
   ObjSound_SetVolumeRate(charge, 100);
@@ -729,7 +708,8 @@ task TJunkoFinalize {
 	}
 
   NotifyEventAll(EV_USER_STAGE+777, [ObjMove_GetX(objBoss), ObjMove_GetY(objBoss)]);
-	DeleteShotAll(TYPE_ALL, TYPE_FADE);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+  wait(20);
   Obj_Delete(objBoss);
 
   SetAutoDeleteObject(true);

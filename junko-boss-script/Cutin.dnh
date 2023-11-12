@@ -239,9 +239,10 @@ task CutinS3(Type, mimage, difficulty){
 		ObjRender_SetColor(SpellBG, Colors[0][0], Colors[0][1], Colors[0][2]);
 		
 		let SpellText = ObjText_Create;
-		ObjText_SetFontType(SpellText, "Zoya");
+		ObjText_SetFontType(SpellText, "Constantia");
 		ObjText_SetText(SpellText,SpellName);
-		ObjText_SetFontSize(SpellText,16);
+		ObjText_SetFontBold(SpellText, true);
+		ObjText_SetFontSize(SpellText,14);
 		ObjText_SetFontColorBottom(SpellText,255,255,255);
 		ObjText_SetFontColorTop(SpellText, Colors[0][0], Colors[0][1], Colors[0][2]);
 		ObjText_SetFontBorderType(SpellText, BORDER_FULL);

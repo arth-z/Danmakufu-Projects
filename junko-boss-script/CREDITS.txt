@@ -23,7 +23,9 @@ Moon surface (moon.png) from https://www.pinterest.ca/pin/240801911301160888/
 
 Original "Junko" spritesheet from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by Team Shanghai Alice
 
-Crown and flame aura graphics by ZUN/Team Shanghai Alice - code for Junko's flame aura modified from existing functions "flame" and "flamebase" in "Effect.dnh" from AJS' "Everlasting Purity"
+Crown and flame aura sprites by ZUN/Team Shanghai Alice
+
+All font data from https://www.dafontfree.io/
 
 Floral-lunar magic circle aura (apparently, a recreation of a design from Sailor Moon) from:
 https://www.pngwing.com/en/free-png-sfwka
@@ -31,6 +33,9 @@ https://www.pngwing.com/en/free-png-sfwka
 Image for the skyglow effect from darkwalker's provided "beams.png" as part of their Bloom Effects Library
 
 Original "Hateful Star" sprite by Vecteezy, from https://www.vecteezy.com/free-png/lens-flare
+
+STG frame abstract background from "https://www.freepik.com/free-vector/abstract-asthetic-hd-wallpaper-background-banner-design-multipurpose_23258842.htm#page=14&query=abstract%20background&position=4&from_view=search&track=ais", image by Sketchepedia on Freepik
+STG frame original logo from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by ZUN/Team Shanghai Alice
 
 All SFX by ZUN
 BGM (Pure Furies ~ Whereabouts of the Heart) from album 'Dr. Latency's Freak Report' by ZUN

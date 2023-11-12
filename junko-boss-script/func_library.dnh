@@ -31,7 +31,7 @@ task TFinalize {
 		yield;
 	}
 
-	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	DeleteShotAll(TYPE_ALL, TYPE_FADE);
   Obj_Delete(objBoss);
 	SetAutoDeleteObject(true);
   CloseScript(GetOwnScriptID());

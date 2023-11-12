@@ -121,7 +121,7 @@ task BFX_Shockwave(x,y,spritepath,angle,alpha,xscale,yscale,radius,time,blending
 	let xsclspd = sspd * (xscl / largest);
 	let ysclspd = sspd * (yscl / largest);
 	let ang = angle;
-	while (alp > 0) {
+	while (alp > 0 && !Obj_IsDeleted(sprite)) {
 		ObjRender_SetAlpha(sprite,alp);
 		ObjRender_SetScaleXYZ(sprite, xscl, yscl, 1);
 		ObjRender_SetAngleZ(sprite,ang);
@@ -156,7 +156,7 @@ task _BFX_ParticleA1(x,y,spritepath,speed,direction,angle,alpha,scale,fadespeed,
 	let alp = alpha;
 	let scl = scale;
 	let ang = angle;
-	while (alp > 0) {
+	while (alp > 0  && !Obj_IsDeleted(sprite)) {
 		ObjRender_SetX(sprite,px);
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);
@@ -190,7 +190,7 @@ task _BFX_ParticleA2(x,y,spritepath,speed,direction,angle,alpha,scale,fadespeed,
 	let alp = alpha;
 	let scl = scale;
 	let ang = angle;
-	while (alp > 0) {
+	while (alp > 0  && !Obj_IsDeleted(sprite)) {
 		ObjRender_SetX(sprite,px);
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);
@@ -222,7 +222,8 @@ task _BFX_FocusPart(x,y,spritepath,tox,toy,speed,angle,scale,angvel,radius) {
 	let ang = angle;
 	let dir;
 	let dist;
-	loop (fadein) {
+	let i = 0;
+	while (i < fadein && !Obj_IsDeleted(sprite)) {
 		ObjRender_SetX(sprite,px);
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);
@@ -235,11 +236,12 @@ task _BFX_FocusPart(x,y,spritepath,tox,toy,speed,angle,scale,angvel,radius) {
 		alp += 255 / fadein;
 		scl = scale * ((dist / radius) ^ 0.6);
 		ang += angvel;
+		i++;
 		yield;
 	}
 	let radius2 = dist;
 	alp = 255;
-	while (alp > 0) {
+	while (alp > 0  && !Obj_IsDeleted(sprite)) {
 		ObjRender_SetX(sprite,px);
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);

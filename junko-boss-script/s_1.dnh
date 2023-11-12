@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Star Spell 1"]
-#Text["First 'star'. [r] It'll be sticking around."]
+#Text["Now the fight's really started! Enjoy the lightshow!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -19,7 +19,7 @@ let mainTimer = 0;
         SetScriptResult(5750);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
-        SetScriptResult(65);
+        SetScriptResult(70);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
         SetScriptResult(1000000);
@@ -48,7 +48,7 @@ let mainTimer = 0;
   TStarDraw(200, "blue");
   SetStarSpinRate(1);
   
-  TJunkoSpellStartFX("Killing Light in Pure Splendour", NEUTRAL, 150, 150, 255);
+  TJunkoSpellStartFX("Shivering Star in Killing Splendour", NEUTRAL, 150, 150, 255);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -85,7 +85,7 @@ task TJunkoCrownAuraDelay {
     ObjEnemy_SetDamageRate(objBoss, 100, 100);
   }
 
-  if (mainTimer == 60) {MJunkoChargeUp(200, 80, [100, 100, 255])};
+  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [100, 100, 255])};
 
   
   UpdateStarHitbox;
