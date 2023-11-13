@@ -16,7 +16,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(2000);
+        SetScriptResult(2500);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
         SetScriptResult(70);
@@ -130,6 +130,7 @@ task MainTask {
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
   let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer01.wav");
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
+  TLoadBrightShader("Red");
 
   wait(200);
   PlaySFX(boom_spawn);
@@ -142,16 +143,15 @@ task MainTask {
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
-    angleL = rand_int(0, 360);
     let starX = ObjMove_GetX(objStar);
     let starY = ObjMove_GetY(objStar);
     
     if (loop_iters % laser_interval == 0) {
       lasers = [];
-      loop(15) {
+      loop(25) {
         let laser = CreateStraightLaserA1(starX, starY, angleL, 
                 1024, 20, laser_interval*0.2, 17, laser_interval);
-        angleL = rand_int(0, 360);
+        angleL = rand(0, 360);
         ObjLaser_SetGrazeInvalidFrame(laser, 5); 
         ObjLaser_SetInvalidLength(laser, 5, 5); 
 
@@ -161,6 +161,12 @@ task MainTask {
       PlaySFX(laser_sfx);
       PlaySFX(boom_spawn);
       TStarShockwave("red");
+    }
+
+    if (loop_iters % laser_interval < laser_interval/3 && loop_iters > laser_interval) {
+      TBright(true);
+    } else {
+      TBright(false);
     }
 
     let len = length(lasers);
@@ -176,15 +182,16 @@ task MainTask {
       ObjMove_SetPosition(laser, starX, starY);
     }
     
-    if (loop_iters % (laser_interval/2) == floor(laser_interval/4)) {
+    if (loop_iters % laser_interval == laser_interval/2) {
       let bossX = ObjMove_GetX(objBoss);
       let bossY = ObjMove_GetY(objBoss);
       let angleP = GetAngleToPlayer(objBoss);
-      circle(bossX, bossY, angleP, 12, 376, 0.25, 2.5);
+      circle(bossX, bossY, angleP, 10, 376, 0.1, 2.5);
       PlaySFX(shoot_sfx);    
     }
 
     loop_iters++;
     yield;
   }
+  TUnloadBrightShader;
 }

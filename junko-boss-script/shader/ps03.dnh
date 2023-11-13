@@ -1,0 +1,193 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["SamplePS03"]
+#Text["SamplePS03"]
+#Background["script/default_system/Default_Background_IceMountain.txt"]
+
+
+//�f�t�H���g�e�摜����[�h
+#include"script/default_system/Default_ShotConst.txt"
+
+//----------------------------------------------------
+//�O���[�o���ϐ��錾
+//���̈ʒu�Ő錾�����ϐ��̓X�N���v�g�S�̂ŗL���ł��B
+//���������̉ӏ��ł̕ϐ��ւ̑���́A�萔�ȊO�̑���͍s���܂���B
+//(���s�������ۏႳ��Ȃ����ߗ����Ȃǂ̎g�p�͂ł��܂���)
+//----------------------------------------------------
+let objEnemy; //�G�I�u�W�F�N�g
+let objPlayer; //���@�I�u�W�F�N�g
+let frame = 0; //�G����Ɏg�p����J�E���^(@MainLoop��1�Â��������܂�)
+
+//----------------------------------------------------
+//�G�̓���
+//----------------------------------------------------
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE)
+	{
+		//�G���C�t��v�����ꂽ
+		SetScriptResult(500);//���C�t��500�ɐݒ�
+	}
+}
+
+@Initialize
+{
+	//���@�I�u�W�F�N�g�擾
+	objPlayer = GetPlayerObjectID();
+
+	//�G�I�u�W�F�N�g�𐶐����o�^
+	objEnemy = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(objEnemy);
+
+	//�G�摜�̐ݒ�
+	let imgExRumia = GetCurrentScriptDirectory ~ "ExRumia.png"; //�G�摜�t�@�C��
+	ObjPrim_SetTexture(objEnemy, imgExRumia); //�摜�t�@�C����ǂݍ���
+	ObjSprite2D_SetSourceRect(objEnemy, 64, 1, 127, 64); //�`�挳��`��(64,1) - (127,64)�ɐݒ�
+	ObjSprite2D_SetDestCenter(objEnemy); //�`���𒆐S(0, 0)�ɐݒ�
+
+	//���W(cx, 120)��60�t���[�������Ĉړ�����
+	let cx = GetStgFrameWidth() / 2;//STG�V�[���̒��Sx���W��擾
+	ObjMove_SetDestAtFrame(objEnemy, cx, 120, 60);
+
+	//let objScene = GetEnemyBossSceneObjectID();
+	//ObjEnemyBossScene_StartSpell(objScene);
+
+	TWaveCircle();
+}
+
+@MainLoop
+{
+	//�G�̍��W��擾
+	let ex = ObjMove_GetX(objEnemy);
+	let ey = ObjMove_GetY(objEnemy);
+
+	if(frame == 90)
+	{
+		let px = GetPlayerX();
+		ObjMove_SetDestAtFrame(objEnemy, rand(192-100, 192+100), rand(50, 200), 60);
+	}
+
+	if(frame == 180)
+	{
+		//frame��180�ɂȂ�������s����镔��
+		//���@�̍��W��擾
+		let px = GetPlayerX();
+		let py = GetPlayerY();
+
+		//�G����݂����@�����̊p�x����߂�B
+		let angleToPlayer = atan2(py - ey, px - ex);
+
+		//angle��-30����15����������5WAY�ɂ���
+		let angle=0;
+		while(angle<360)
+		{//(angle�F15���Ԋu��0�`360�܂�)
+			//��莞�ԂŎ��@�����֊p�x��ς���e
+			//�e��쐬����B
+			let obj = CreateShotA2(ex, ey, 5, angle, -0.10, 1, DS_RICE_S_BLUE, 30);
+			//���ˌ�60�t���[���ڂɁA���@�������Ɋp�x�ύX����悤�ɐݒ�
+			ObjMove_AddPatternA4(obj, 60, 3, 0, 0, 0, 3, objPlayer, NO_CHANGE);
+			angle += 15;
+		}
+
+		frame = 0;//�e��o������frame��0�ɂ���
+	}
+
+	//�����蔻��o�^
+	ObjEnemy_SetIntersectionCircleToShot(objEnemy, ex, ey, 32);//�����蔻��(���@�e�p)�o�^
+	ObjEnemy_SetIntersectionCircleToPlayer(objEnemy, ex, ey, 24);//�����蔻��(�̓�����p)�o�^
+
+	//�J�E���^��1�ǉ�
+	frame++;
+
+	//���C�t0����
+	if(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) <= 0)
+	{
+		//���C�t��0�ɂȂ����瑦���ɏI��
+		//�{���͔����G�t�F�N�g�̃^�X�N��o�^���A
+		//�G�t�F�N�g�I����҂��āA�X�N���v�g��I�����܂��B
+		yield;
+		Obj_Delete(objEnemy);
+		CloseScript(GetOwnScriptID());
+		return;
+	}
+
+	yield;
+}
+
+
+//----------------------------------------------------
+//�{�X���͂̂�炬�G�t�F�N�g
+//----------------------------------------------------
+task TWaveCircle()
+{
+	//�����_�����O�^�[�Q�b�g�Ɏg�p����e�N�X�`��
+	let renderTexture = GetReservedRenderTargetName(0);
+
+	let frame = 0; //�t���[��
+	let baseEffectRadius = 128; //��G�t�F�N�g���a
+	let outerFluct = 16; //�G�t�F�N�g���a�̍ő�ω���
+	let effectRadius = 0; //�G�t�F�N�g���a
+
+
+	let priEffectMin = 20; //�G�t�F�N�g�������ŏ��D��x
+	let priEffectMax = 28; //�G�t�F�N�g�������ő�D��x
+
+	//�w�i�̂݃G�t�F�N�g�̑ΏۂƂ���
+	//�G�t�F�N�g�̕`��ł܂��Ȃ��邽�߁A
+	//�D��x20�`28�̒ʏ�`��𖳌��ɂ���B
+	SetInvalidRenderPriorityA1(priEffectMin, priEffectMax);
+
+	let frameWidth = GetStgFrameWidth();
+	let frameHeight = GetStgFrameHeight();
+	let frameLeft = GetStgFrameLeft();
+	let frameRight = frameLeft + frameWidth;
+	let frameTop = GetStgFrameTop();
+	let frameBottom = frameTop + frameHeight;
+
+
+	//--------------------------------
+	//�䂪�݃I�u�W�F�N�g
+	let objWave = ObjPrim_Create(OBJ_SPRITE_2D); //2D�X�v���C�g�I�u�W�F�N�g����
+	Obj_SetRenderPriorityI(objWave, 25); //�`��D��x��ݒ�
+	ObjPrim_SetTexture(objWave, renderTexture); //�e�N�X�`����ݒ�
+	ObjSprite2D_SetSourceRect(objWave, frameLeft, frameTop, frameRight, frameBottom);
+	ObjSprite2D_SetDestRect(objWave, 0, 0, frameWidth, frameHeight);
+	Obj_SetRenderPriorityI(objWave, priEffectMax + 1);
+
+	//�䂪�݃I�u�W�F�N�g�ɃV�F�[�_��ݒ�
+	let pathShader = GetCurrentScriptDirectory ~ "SamplePS03_HLSL.hlsl";
+	ObjShader_SetShaderF(objWave, pathShader);
+	ObjShader_SetTechnique(objWave, "TecWave");
+
+
+	//�{�X�̃��C�t��0�ɂȂ�܂ŃG�t�F�N�g�������B
+	let objEnemy = GetEnemyBossObjectID[0];
+	while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0)
+	{
+		//�G�t�F�N�g���a
+		effectRadius = baseEffectRadius + outerFluct * sin(frame*4);
+
+		let enemyX = ObjMove_GetX(objEnemy); //�G���WX
+		let enemyY = ObjMove_GetY(objEnemy); //�G���WY
+
+		//--------------------------------
+		//�D��x20�`28(�w�i)��G�t�F�N�g�p�̃e�N�X�`���ɕ`��
+		//�V�F�[�_���
+		RenderToTextureA1(renderTexture, priEffectMin, priEffectMax, true);
+
+		//--------------------------------
+		//�V�F�[�_�Ƀp�����[�^��ݒ�
+		ObjShader_SetFloat(objWave, "frame_", frame);
+		ObjShader_SetFloat(objWave, "enemyX_", enemyX + frameLeft);
+		ObjShader_SetFloat(objWave, "enemyY_", enemyY + frameTop);
+		ObjShader_SetFloat(objWave, "waveRadius_", effectRadius);
+
+		frame++;
+		yield;
+	}
+
+	//�G�t�F�N�g�p�I�u�W�F�N�g�폜
+	Obj_Delete(objWave);
+	ClearInvalidRenderPriority();
+}

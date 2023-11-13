@@ -1,44 +1,43 @@
 //================================================================
-//‘åˆæİ’è’l
 //Texture
 sampler sampler0_ : register(s0);
 
 //================================================================
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_“ü—Í’l
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_ï¿½ï¿½ï¿½Í’l
 struct PS_INPUT
 {
-	float4 diffuse : COLOR0;  //ƒfƒBƒtƒ…[ƒYF
-	float2 texCoord : TEXCOORD0; //ƒeƒNƒXƒ`ƒƒÀ•W
-	float2 vPos : VPOS; //•`‰ææÀ•W
+	float4 diffuse : COLOR0;  //ï¿½fï¿½Bï¿½tï¿½ï¿½ï¿½[ï¿½Yï¿½F
+	float2 texCoord : TEXCOORD0; //ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
+	float2 vPos : VPOS; //ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
 };
 
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_o—Í’l
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_ï¿½oï¿½Í’l
 struct PS_OUTPUT
 {
-    float4 color : COLOR0; //o—ÍF
+    float4 color : COLOR0; //ï¿½oï¿½ÍF
 };
 
 
 //================================================================
-// ƒVƒF[ƒ_
+// ï¿½Vï¿½Fï¿½[ï¿½_
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_
 PS_OUTPUT PsMonotone( PS_INPUT In ) : COLOR0
 {
 	PS_OUTPUT Out;
 
-	//ƒeƒNƒXƒ`ƒƒ‚ÌF
+	//ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ÌF
 	float4 colorTexture = tex2D(sampler0_, In.texCoord);
 
-	//’¸“_ƒfƒBƒt[ƒYF
+	//ï¿½ï¿½ï¿½_ï¿½fï¿½Bï¿½tï¿½[ï¿½Yï¿½F
 	float4 colorDiffuse = In.diffuse;
 
-	//‡¬
+	//ï¿½ï¿½ï¿½ï¿½
 	float4 color = colorTexture * colorDiffuse;
 
-	//ƒ‚ƒmƒg[ƒ“‚ÌŒvZ
+	//ï¿½ï¿½ï¿½mï¿½gï¿½[ï¿½ï¿½ï¿½ÌŒvï¿½Z
 	Out.color.rgb = ( color.r + color.g + color.b ) * 0.3333f;
 	Out.color.a = color.a;
 

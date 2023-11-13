@@ -1,7 +1,7 @@
-#“Œ•û’e–‹•—[Stage]
+#TouhouDanmakufu[Stage]
 #ScriptVersion[3]
 #Title["SamplePS01"]
-#Text["SamplePS01FƒsƒNƒZƒ‹ƒVƒF[ƒ_Fƒ‚ƒmƒg[ƒ“"]
+#Text["SamplePS01"]
 #Background["script/default_system/Default_Background_IceMountain.txt"]
 
 @Initialize
@@ -16,23 +16,23 @@
 
 task TSamplePS1
 {
-	//ƒpƒXİ’è
+	//ï¿½pï¿½Xï¿½İ’ï¿½
 	let dir = GetCurrentScriptDirectory();
-	let pathShader = dir ~ "SamplePS01_HLSL.txt";
+	let pathShader = dir ~ "saturate.hlsl";
 
-	//ƒVƒF[ƒ_¶¬
+	//ï¿½Vï¿½Fï¿½[ï¿½_ï¿½ï¿½ï¿½ï¿½
 	let objShader = ObjShader_Create();
 	ObjShader_SetShaderF(objShader, pathShader);
-	ObjShader_SetTechnique(objShader, "TecMonotone");
+	ObjShader_SetTechnique(objShader, "TecSaturate");
 
 	loop
 	{
-		//“Á’è‚Ì•`‰æ—Dæ“x‚ÉƒVƒF[ƒ_‚ğ“K‰
-		SetShaderI(objShader, 0, 100);
+		//ï¿½ï¿½ï¿½ï¿½Ì•`ï¿½ï¿½Dï¿½ï¿½xï¿½ÉƒVï¿½Fï¿½[ï¿½_ï¿½ï¿½Kï¿½ï¿½
+		SetShaderI(objShader, 20, 80);
 		loop(180){yield;}
 
-		//ƒVƒF[ƒ_‰ğœ
-		ResetShaderI(0, 100);
+		//ï¿½Vï¿½Fï¿½[ï¿½_ï¿½ï¿½ï¿½
+		ResetShaderI(20, 80);
 		loop(180){yield;}
 	}
 

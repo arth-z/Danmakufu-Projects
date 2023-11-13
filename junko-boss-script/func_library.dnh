@@ -136,3 +136,25 @@ task ShockwaveCharge(posX, posY, duration, maxScale, colour) {
   }
   Obj_Delete(wave);
 }
+
+let shader;
+
+task TLoadBrightShader(colour) {
+  let pathShader = GetCurrentScriptDirectory() ~ "./shader/bright_impact.hlsl";
+  shader = ObjShader_Create();
+  ObjShader_SetShaderF(shader, pathShader);
+	ObjShader_SetTechnique(shader, "TecSaturate" ~ colour);
+}
+
+task TBright(on) {
+  if (on) {
+  	SetShaderI(shader, 21, 80);
+  } else {
+  	ResetShaderI(21, 80);
+  }
+}
+
+task TUnloadBrightShader {
+  ResetShaderI(0, 100);
+  Obj_Delete(shader);
+}

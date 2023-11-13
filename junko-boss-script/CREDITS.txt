@@ -21,6 +21,8 @@ Special "galaxy/star" spell background from https://steamuserimages-a.akamaihd.n
 
 Moon surface (moon.png) from https://www.pinterest.ca/pin/240801911301160888/
 
+Thanks to MoTK user "Drake" in the thread https://www.shrinemaiden.org/forum/index.php?topic=19249.180 for providing Junko spell_bg code (also found at https://gist.github.com/drakeirving/8283a5ed47061c19bc4cc4d26e849226)
+
 Original "Junko" spritesheet from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by Team Shanghai Alice
 
 Crown and flame aura sprites by ZUN/Team Shanghai Alice

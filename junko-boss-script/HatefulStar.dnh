@@ -75,6 +75,7 @@ task UpdateStarHitbox {
 }
 
 task TStarHitFX {
+  /*
   let beingHit = true;
   let lastHit = 0;
   let loop_iters = 0;
@@ -105,6 +106,7 @@ task TStarHitFX {
     loop_iters++;
     yield;
   }
+  */
 }
 
 task TStarFinalize {

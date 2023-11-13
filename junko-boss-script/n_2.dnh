@@ -15,7 +15,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(5000);
+        SetScriptResult(5500);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
         SetScriptResult(40);
@@ -39,6 +39,7 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
+  TDistortionAura;
   
   MainTask;
 

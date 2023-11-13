@@ -58,6 +58,58 @@ task MJunkoBreathe(timer) {
   ObjMove_SetDestAtFrame(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss) + pulse*1, 5);
 }
 
+task TDistortionAura
+{
+	let renderTexture = GetReservedRenderTargetName(0);
+
+	let frame = 0; 
+	let baseEffectRadius = 160; 
+	let outerFluct = 8; 
+	let effectRadius = 0; 
+
+	let priEffectMin = 21; 
+	let priEffectMax = 21; 
+
+	let frameWidth = GetStgFrameWidth();
+	let frameHeight = GetStgFrameHeight();
+	let frameLeft = GetStgFrameLeft();
+	let frameRight = frameLeft + frameWidth;
+	let frameTop = GetStgFrameTop();
+	let frameBottom = frameTop + frameHeight;
+
+	let objWave = ObjPrim_Create(OBJ_SPRITE_2D); 
+	Obj_SetRenderPriorityI(objWave, 20); 
+	ObjPrim_SetTexture(objWave, renderTexture); 
+	ObjSprite2D_SetSourceRect(objWave, frameLeft, frameTop, frameRight, frameBottom);
+	ObjSprite2D_SetDestRect(objWave, 0, 0, frameWidth, frameHeight);
+	Obj_SetRenderPriorityI(objWave, priEffectMax+1);
+
+	let pathShader = GetCurrentScriptDirectory ~ "./shader/aura_distortion.hlsl";
+	ObjShader_SetShaderF(objWave, pathShader);
+	ObjShader_SetTechnique(objWave, "TecWave");
+
+	while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0 && !Obj_IsDeleted(objBoss))
+	{
+		effectRadius = baseEffectRadius + outerFluct * sin(frame*4);
+
+		let enemyX = ObjMove_GetX(objBoss); 
+		let enemyY = ObjMove_GetY(objBoss); 
+
+		RenderToTextureA1(renderTexture, priEffectMin, priEffectMax, true);
+
+		ObjShader_SetFloat(objWave, "frame_", frame);
+		ObjShader_SetFloat(objWave, "enemyX_", enemyX + frameLeft);
+		ObjShader_SetFloat(objWave, "enemyY_", enemyY + frameTop);
+		ObjShader_SetFloat(objWave, "waveRadius_", effectRadius);
+
+		frame++;
+		yield;
+	}
+  Obj_SetRenderPriorityI(objWave, 1);
+  ObjShader_ResetShader(objWave);
+  Obj_Delete(objWave);
+}
+
 // VFX and SFX when Junko takes damage
 // called in @Initialise, ideally before anything else happens
 task TJunkoHitFX {

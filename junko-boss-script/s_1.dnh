@@ -87,7 +87,6 @@ task TJunkoCrownAuraDelay {
 
   if (mainTimer == 60) {TJunkoChargeUp(200, 80, [100, 100, 255])};
 
-  
   UpdateStarHitbox;
   mainTimer++;
   yield;
@@ -119,6 +118,8 @@ task MainTask {
   let lasers = [];
   let laser_interval = 120;
 
+  TLoadBrightShader("Blue");
+
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     angleL = rand_int(0, 360);
@@ -141,6 +142,12 @@ task MainTask {
       TStarShockwave("blue");
     }
 
+    if (loop_iters % laser_interval < laser_interval/3 && loop_iters > laser_interval) {
+      TBright(true);
+    } else {
+      TBright(false);
+    }
+
     // outside of that interval, the lasers are continuously rotated to deccelerate before the laser shoots
     let len = length(lasers);
     let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
@@ -160,4 +167,5 @@ task MainTask {
     loop_iters++;
     yield;
   }
+  TUnloadBrightShader;
 }

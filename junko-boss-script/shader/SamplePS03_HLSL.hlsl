@@ -1,87 +1,87 @@
 
 //================================================================
-//‘åˆæİ’è’l
+//ï¿½ï¿½ï¿½İ’ï¿½l
 //Texture
 sampler sampler0_ : register(s0);
 
 //--------------------------------
-//‚ä‚ª‚İ¶¬—pƒpƒ‰ƒ[ƒ^
-static const float RENDER_WIDTH = 1024; //ƒŒƒ“ƒ_ƒŠƒ“ƒOƒeƒNƒXƒ`ƒƒ‚Ì•
-static const float RENDER_HEIGHT = 1024; //ƒŒƒ“ƒ_ƒŠƒ“ƒOƒeƒNƒXƒ`ƒƒ‚Ì‚‚³
+//ï¿½ä‚ªï¿½İï¿½ï¿½ï¿½ï¿½pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^
+static const float RENDER_WIDTH = 1024; //ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½Ì•ï¿½
+static const float RENDER_HEIGHT = 1024; //ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
 
-float frame_; //ƒtƒŒ[ƒ€”
-float enemyX_; //“G‚ÌˆÊ’uX
-float enemyY_; //“G‚ÌˆÊ’uY
-float waveRadius_; //ƒGƒtƒFƒNƒg‚Ì”¼Œa
+float frame_; //ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½
+float enemyX_; //ï¿½Gï¿½ÌˆÊ’uX
+float enemyY_; //ï¿½Gï¿½ÌˆÊ’uY
+float waveRadius_; //ï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½Ì”ï¿½ï¿½a
 
 
 //================================================================
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_“ü—Í’l
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_ï¿½ï¿½ï¿½Í’l
 struct PS_INPUT
 {
-	float4 diffuse : COLOR0;  //ƒfƒBƒtƒ…[ƒYF
-	float2 texCoord : TEXCOORD0; //ƒeƒNƒXƒ`ƒƒÀ•W
-	float2 vPos : VPOS; //•`‰ææÀ•W
+	float4 diffuse : COLOR0;  //ï¿½fï¿½Bï¿½tï¿½ï¿½ï¿½[ï¿½Yï¿½F
+	float2 texCoord : TEXCOORD0; //ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
+	float2 vPos : VPOS; //ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
 };
 
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_o—Í’l
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_ï¿½oï¿½Í’l
 struct PS_OUTPUT
 {
-    float4 color : COLOR0; //o—ÍF
+    float4 color : COLOR0; //ï¿½oï¿½ÍF
 };
 
 
 //================================================================
-// ƒVƒF[ƒ_
+// ï¿½Vï¿½Fï¿½[ï¿½_
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_
 PS_OUTPUT PsWave( PS_INPUT In ) : COLOR0
 {
 	PS_OUTPUT Out;
 
 	//--------------------------------
-	//‚ä‚ç‚¬‚ğŒvZ
+	//ï¿½ï¿½ç‚¬ï¿½ï¿½vï¿½Z
 	float dist2 = pow(In.vPos.x-enemyX_ ,2) + pow(In.vPos.y-enemyY_ ,2);
 	float dist = sqrt(dist2);
 	float sinTheta = (In.vPos.y - enemyY_) / dist;
 	float cosTheta = (In.vPos.x - enemyX_) / dist;
 
-	//˜c‚İì¬—p‚Ìsin‚Ég—p‚·‚éŠp“xƒpƒ‰ƒ[ƒ^
+	//ï¿½cï¿½İì¬ï¿½pï¿½ï¿½sinï¿½Égï¿½pï¿½ï¿½ï¿½ï¿½pï¿½xï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^
 	float angle = In.vPos.y - enemyY_ + In.vPos.x - enemyX_ + frame_;
 	angle = radians(angle);
 
-	//ŠY“–ƒsƒNƒZƒ‹‚Ì˜c‚İ‚Ì”¼Œa‚ğŒvZ
-	//ƒGƒtƒFƒNƒg”¼Œa‚Ì1/16‚ğÅ‘å‚Ì˜c‚İ•‚Æ‚·‚é
+	//ï¿½Yï¿½ï¿½ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Ì˜cï¿½İ‚Ì”ï¿½ï¿½aï¿½ï¿½vï¿½Z
+	//ï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½aï¿½ï¿½1/16ï¿½ï¿½Å‘ï¿½Ì˜cï¿½İ•ï¿½ï¿½Æ‚ï¿½ï¿½ï¿½
 	float waveRadius = waveRadius_ + waveRadius_/16 * (-1 + sin(angle));
 
-	//’†S‚©‚ç‹——£‚ª—£‚ê‚é‚Ù‚Ç‰e‹¿‚ğ¬‚³‚­‚·‚é
+	//ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ç‹—ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù‚Ç‰eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	float powerRatio = (waveRadius - dist) / waveRadius;
 	if(powerRatio < 0){powerRatio = 0;}
 
-	//Fî•ñ‚ğæ“¾‚·‚éˆÊ’u‚ÌƒoƒCƒAƒX’l
+	//ï¿½Fï¿½ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½ï¿½Ê’uï¿½Ìƒoï¿½Cï¿½Aï¿½Xï¿½l
 	float biasRadius = waveRadius * powerRatio;
 	float biasX = biasRadius * cosTheta;
 	float biasY = biasRadius * sinTheta;
 
-	//ƒeƒNƒXƒ`ƒƒ‚ÌFî•ñ‚ğæ“¾‚·‚éˆÊ’u
+	//ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ÌFï¿½ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½ï¿½Ê’u
 	float2 texUV;
 	texUV.x = -biasX / RENDER_WIDTH + In.texCoord.x;
 	texUV.y = -biasY / RENDER_HEIGHT + In.texCoord.y;
 
 
 	//--------------------------------
-	//ƒeƒNƒXƒ`ƒƒ‚ÌF
+	//ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ÌF
 	float4 colorTexture = tex2D(sampler0_, texUV);
 
-	//’¸“_ƒfƒBƒt[ƒYF
+	//ï¿½ï¿½ï¿½_ï¿½fï¿½Bï¿½tï¿½[ï¿½Yï¿½F
 	float4 colorDiffuse = In.diffuse;
 
-	//‡¬
+	//ï¿½ï¿½ï¿½ï¿½
 	float4 color = colorTexture * colorDiffuse;
 
-	//F‚ğÔ‚Á‚Û‚­•Ï‰»‚³‚¹‚é
+	//ï¿½Fï¿½ï¿½Ô‚ï¿½ï¿½Û‚ï¿½ï¿½Ï‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(powerRatio > 0)
 	{
 		color.g = color.g * (1 - powerRatio);

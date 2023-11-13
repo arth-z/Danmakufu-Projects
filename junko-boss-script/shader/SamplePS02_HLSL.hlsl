@@ -1,11 +1,11 @@
 //================================================================
-//‘åˆæÝ’è’l
+//ï¿½ï¿½ï¿½Ý’ï¿½l
 //Texture
 sampler sampler0_ : register(s0);
 
 //--------------------------------
-//ƒ}ƒXƒN—pƒeƒNƒXƒ`ƒƒ
-//‰æ–Ê•(ƒ}ƒXƒNƒeƒNƒXƒ`ƒƒƒTƒCƒY)
+//ï¿½}ï¿½Xï¿½Nï¿½pï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½
+//ï¿½ï¿½Ê•ï¿½(ï¿½}ï¿½Xï¿½Nï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½Tï¿½Cï¿½Y)
 const float SCREEN_WIDTH = 640;
 const float SCREEN_HEIGHT = 480;
 texture textureMask_;
@@ -17,53 +17,53 @@ sampler samplerMask_ = sampler_state
 
 //================================================================
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_“ü—Í’l
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_ï¿½ï¿½ï¿½Í’l
 struct PS_INPUT
 {
-	float4 diffuse : COLOR0;  //ƒfƒBƒtƒ…[ƒYF
-	float2 texCoord : TEXCOORD0; //ƒeƒNƒXƒ`ƒƒÀ•W
-	float2 vPos : VPOS; //•`‰ææÀ•W
+	float4 diffuse : COLOR0;  //ï¿½fï¿½Bï¿½tï¿½ï¿½ï¿½[ï¿½Yï¿½F
+	float2 texCoord : TEXCOORD0; //ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
+	float2 vPos : VPOS; //ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
 };
 
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_o—Í’l
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_ï¿½oï¿½Í’l
 struct PS_OUTPUT
 {
-    float4 color : COLOR0; //o—ÍF
+    float4 color : COLOR0; //ï¿½oï¿½ÍF
 };
 
 
 //================================================================
-// ƒVƒF[ƒ_
+// ï¿½Vï¿½Fï¿½[ï¿½_
 //--------------------------------
-//ƒsƒNƒZƒ‹ƒVƒF[ƒ_
+//ï¿½sï¿½Nï¿½Zï¿½ï¿½ï¿½Vï¿½Fï¿½[ï¿½_
 PS_OUTPUT PsMask( PS_INPUT In ) : COLOR0
 {
 	PS_OUTPUT Out;
 
-	//ƒeƒNƒXƒ`ƒƒ‚ÌF
+	//ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ÌF
 	float4 colorTexture = tex2D(sampler0_, In.texCoord);
 
-	//’¸“_ƒfƒBƒt[ƒYF
+	//ï¿½ï¿½ï¿½_ï¿½fï¿½Bï¿½tï¿½[ï¿½Yï¿½F
 	float4 colorDiffuse = In.diffuse;
 
-	//‡¬
+	//ï¿½ï¿½ï¿½ï¿½
 	float4 color = colorTexture * colorDiffuse;
 	Out.color = color;
 	if(color.a > 0)
 	{
 		//--------------------------------
-		//ƒ}ƒXƒN—p‚ÌƒeƒNƒXƒ`ƒƒ‚©‚çF¬•ª‚ðŽæ“¾
-		//UV‚Å‚ÌˆÊ’u‚Í‰æ‘œƒtƒ@ƒCƒ‹‚Ì‰¡•‚Æ‚‚³‚©‚ç‚ÌŠ„‡
-		//—á‚¦‚ÎA640x480‚Ì‰æ‘œ‚ÌˆÊ’u(320,240)‚ÍUV‚Å‚Í0.5,0.5‚É‚È‚éB
+		//ï¿½}ï¿½Xï¿½Nï¿½pï¿½Ìƒeï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
+		//UVï¿½Å‚ÌˆÊ’uï¿½Í‰æ‘œï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Ì‰ï¿½ï¿½ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌŠï¿½ï¿½ï¿½
+		//ï¿½á‚¦ï¿½ÎA640x480ï¿½Ì‰æ‘œï¿½ÌˆÊ’u(320,240)ï¿½ï¿½UVï¿½Å‚ï¿½0.5,0.5ï¿½É‚È‚ï¿½B
 		float2 maskUV;
 
-		//•`‰ææ‚©‚çƒ}ƒXƒN—pƒeƒNƒXƒ`ƒƒ‚ÌˆÊ’u‚ðŒvŽZ
+		//ï¿½`ï¿½ï¿½æ‚©ï¿½ï¿½}ï¿½Xï¿½Nï¿½pï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ÌˆÊ’uï¿½ï¿½vï¿½Z
 		maskUV.x = In.vPos.x / SCREEN_WIDTH;
 		maskUV.y = In.vPos.y / SCREEN_HEIGHT;
 		float4 colorMask = tex2D(samplerMask_, maskUV);
 
-		//ƒ}ƒXƒN‚ÌRGB’l‚ðo—ÍŒ‹‰Ê‚Ìƒ¿’l‚Æ‚µ‚Ä‡¬‚·‚é
+		//ï¿½}ï¿½Xï¿½Nï¿½ï¿½RGBï¿½lï¿½ï¿½oï¿½ÍŒï¿½ï¿½Ê‚Ìƒï¿½ï¿½lï¿½Æ‚ï¿½ï¿½Äï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		Out.color.a = ( colorMask.r + colorMask.g + colorMask.b ) * 0.3333f * color.a;
 	}
 
