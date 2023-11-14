@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Star Spell 2"]
-#Text["This one's a fun one, but very, very stressful."]
+#Text["That fancy light in spellcard 1 wasn't just a visual gimmick..."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 

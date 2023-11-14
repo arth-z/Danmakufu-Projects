@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Nonspell 1"]
-#Text["Calm start, as is typical. [r] Definitely dodge 1-by-1."]
+#Text["Everybody knows these blue circles. At least you can dodge them 1-by-1 here."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 

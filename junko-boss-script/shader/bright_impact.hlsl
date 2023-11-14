@@ -51,7 +51,7 @@ PS_OUTPUT PsSaturateBlue( PS_INPUT In ) : COLOR0
 
 	Out.color.r = color.r * 1.4f;
     Out.color.g = color.g * 1.4f;
-    Out.color.b = color.b * 2.5f;
+    Out.color.b = color.b * 2.0f;
 	Out.color.a = color.a;
 
 	return Out;

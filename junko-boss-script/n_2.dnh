@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Nonspell 2"]
-#Text["You survived Killing Splendour! This one should be mild, once you get the trick."]
+#Text["Most nonspells in this fight have a 'trick' to them. This one does too."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 

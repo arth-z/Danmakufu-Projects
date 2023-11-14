@@ -319,7 +319,7 @@ task CutinS3(Type, mimage, difficulty){
 				DrawScoreBonus;
 				yield;
 			}
-			let timerf = ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID, INFO_ORGTIMERF);
+			let timerf = ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID(), INFO_ORGTIMERF);
 			let startdiff = timerf-(timerf-5*60);
 			while(!Obj_IsDeleted(boss)){
 				ObjRender_SetAlpha(SpellBG, Alpha_HUD[0]);
@@ -333,7 +333,7 @@ task CutinS3(Type, mimage, difficulty){
 			}
 			Obj_Delete(SpellInfo);
 			
-			if(bonus>=1&&ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID, INFO_TIMERF)>0){
+			if(bonus>=1&&ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID(), INFO_TIMERF)>0){
 			//	GotSpellCard(bonus);
 			//	AddScore(bonus);
 				if(!IsReplay&&!DEBUG&&num==0){
@@ -341,8 +341,6 @@ task CutinS3(Type, mimage, difficulty){
 					SetAreaCommonData("cutin_History", SpellDataGet, SpellValueGet);
 					SaveCommonDataAreaA1("cutin_History");
 				}
-			}else{
-			//	FailedSpellCard;
 			}
 		}
 		sub DrawScoreBonus{
@@ -355,7 +353,7 @@ task CutinS3(Type, mimage, difficulty){
 			ObjRender_SetX(SpellInfo, 382-130);
 			ObjSpriteList2D_AddVertex(SpellInfo);
 			//Bonus Score
-			bonus = ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID, INFO_SPELL_SCORE);
+			bonus = ObjEnemyBossScene_GetInfo(GetEnemyBossSceneObjectID(), INFO_SPELL_SCORE);
 			count = GetNumSize(bonus);
 			let listNum = DigitToArray(min(99999999, bonus), count);
 			let objScene = GetEnemyBossSceneObjectID;

@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Star Spell 1"]
-#Text["Now the fight's really started! Enjoy the lightshow!"]
+#Text["Trying for a strong first impression - enjoy the lightshow!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -30,7 +30,8 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-    
+  TJunkoSpellStartFX("Shivering Star in Killing Splendour", NEUTRAL, 150, 150, 255);
+
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
@@ -48,7 +49,6 @@ let mainTimer = 0;
   TStarDraw(200, "blue");
   SetStarSpinRate(1);
   
-  TJunkoSpellStartFX("Shivering Star in Killing Splendour", NEUTRAL, 150, 150, 255);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -159,8 +159,8 @@ task MainTask {
     }
 
     if (loop_iters % (laser_interval/3) == 0) {
-      circle(angleS, 1.8, 3, L_DOT_BLUE);
-      angleS += 1.5;
+      circle(angleS, 1.8, 2.5, L_DOT_BLUE);
+      angleS += 1.25;
       PlaySFX(shoot_sfx);
     }
 

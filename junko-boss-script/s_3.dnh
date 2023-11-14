@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Nonspell 3"]
-#Text["Hint: How do you dodge the volley reversal of Pristine Lunacy?"]
+#Title["Squirrel's Junko - Spell 3"]
+#Text["No more disco balls - it's personal, now!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -30,6 +30,11 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
+  TJunkoSpellStartFX("Asphodel Meadows", NEUTRAL, 200, 200, 200);
+
+  ObjEnemyBossScene_Regist(objBoss);
+  ObjEnemyBossScene_StartSpell(objScene);
+  ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
 
@@ -39,17 +44,11 @@ let mainTimer = 0;
   TJunkoBurnAura;
   TJunkoCircleAura;
   TJunkoShadowAura;
-  TDistortionAura;
-  TJunkoCrownAuraDelay;
+  TJunkoCrownAura;
   
   MainTask;
 
   TJunkoFinalize;
-}
-
-task TJunkoCrownAuraDelay {
-  wait(200);
-  TJunkoCrownAura;
 }
 
 let new_x = GetCenterX();
@@ -155,7 +154,7 @@ function swirly_laser_circle(posX, posY, offset, inc, proj, angv) {
   loop(360/angle_inc) {
     angle+=angle_inc;
     let objLaser = CreateCurveLaserA1(posX, posY, 5, angle,
-        25, 18, proj, 0);
+        25, 20, proj, 0);
     ObjCrLaser_SetTipDecrement(objLaser, 0.5);
     ObjMove_SetAngularVelocity(objLaser, angv);
     lasers = lasers ~ [objLaser];
@@ -196,7 +195,7 @@ task MainTask {
       ascent(i in 0..length(lasers)) {
         let objLaser = lasers[i];
         ObjMove_SetAngularVelocity(objLaser, power(-1, i)*1);
-        ObjShot_SetDeleteFrame(objLaser, 150);
+        ObjShot_SetDeleteFrame(objLaser, 120);
       }
       lasers = [];
     } else {

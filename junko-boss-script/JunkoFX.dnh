@@ -497,8 +497,8 @@ task JunkoCrownpointPulse(crownpoint, alpha, color, duration) {
     
     alpha_new -= alpha/duration;
 
-    yScale+=0.1;
-    xScale+=0.01;
+    yScale+=0.075;
+    xScale+=0.02;
 
     posX += 2*sin(angle);
     posY -= 2*cos(angle);
@@ -761,11 +761,9 @@ task TJunkoFinalize {
 
   NotifyEventAll(EV_USER_STAGE+777, [ObjMove_GetX(objBoss), ObjMove_GetY(objBoss)]);
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
-  wait(20);
+  wait(15);
   Obj_Delete(objBoss);
-
   SetAutoDeleteObject(true);
-  CloseScript(GetOwnScriptID());
 
   return;
 }
