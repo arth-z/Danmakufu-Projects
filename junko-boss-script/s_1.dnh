@@ -126,6 +126,7 @@ task MainTask {
     
     // radial lasers are created at a specific interval and initialised into a fresh array
     // the array is cleared as the lasers fire and new lasers are populated into it
+    // as the lasers fire, the screen shakes and a saturation shader is applied
     if (loop_iters % laser_interval == 0) {
       lasers = [];
       loop(60) {
@@ -142,6 +143,7 @@ task MainTask {
       TStarShockwave("blue");
     }
 
+    // load in shader and apply it in time with the laser bursts
     if (loop_iters % laser_interval < laser_interval/3 && loop_iters > laser_interval) {
       TBright(true);
     } else {
@@ -149,6 +151,7 @@ task MainTask {
     }
 
     // outside of that interval, the lasers are continuously rotated to deccelerate before the laser shoots
+    // alternating lasers rotate in opposite directions, creating a dazzling effect
     let len = length(lasers);
     let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
     ascent(i in 0..len) {

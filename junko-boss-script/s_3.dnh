@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spell 3"]
-#Text["No more disco balls - it's personal, now!"]
+#Title["Squirrel's Junko - Flower Spell 1"]
+#Text["I hope you enjoy reading diagonal curvy lasers >:)"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -15,10 +15,10 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(7000);
+        SetScriptResult(3000);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
-        SetScriptResult(40);
+        SetScriptResult(70);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
         SetScriptResult(1000000);
@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("Asphodel Meadows", NEUTRAL, 200, 200, 200);
+  TJunkoSpellStartFX("Pure Blossoming of Hatred", DISPLEASED, 255, 100, 100);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -52,7 +52,7 @@ let mainTimer = 0;
 }
 
 let new_x = GetCenterX();
-let new_y = GetCenterY()*0.6;
+let new_y = GetCenterY()*0.5;
 
 @MainLoop 
 {
@@ -63,71 +63,32 @@ let new_y = GetCenterY()*0.6;
   let bossY = ObjMove_GetY(objBoss);
 
   // movement constants
-  let move_interval = 200;
+  let move_interval = 240;
   let move_time = 60;
 
   // random movement control
-
-  if (mainTimer < move_time) {
+  if (mainTimer % move_interval < move_time) {
     if (mainTimer % move_interval == 0) {
+      new_x = GetCenterX() + rand(-50, 50);
+      new_y = GetCenterY()*0.5 + rand(-10,10);
       ObjMove_SetDestAtFrame(objBoss, new_x, new_y, move_time);
     } else {
       MDrawJunkoMove(mainTimer % move_interval, move_interval, new_x, new_y, move_time);
     }
   } else {
-    if (mainTimer < 200) {
-      MDrawJunkoBlink(mainTimer);
-      MJunkoBreathe(mainTimer);
-    } else {
-      MDrawJunkoLaughContinue(mainTimer);
-    }
-    
+    MDrawJunkoBlink(mainTimer);
+    MJunkoBreathe(mainTimer);
   }
 
-  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 255])}
-  if (mainTimer % 200 == 0 && mainTimer > 199) {
-    TJunkoShockwave(200, 80, [255, 80, 255]);
-  }
-
-  if(mainTimer < 200) {
-    ObjEnemy_SetDamageRate(objBoss, 25, 25);
-  } else {
-    ObjEnemy_SetDamageRate(objBoss, 100, 100);
-  }
+  if (mainTimer < 200) {ObjEnemy_SetDamageRate(objBoss, 25, 25)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
+  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 80])}
 
   mainTimer++;
   yield;
 }
 
-task slow_circle(offset, inc, proj) {
 
-  let angle = offset;
-  let angle_inc = inc;
-
-  loop(360/angle_inc) {
-    angle+=angle_inc;
-    CreateShotA1(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1.5, angle, proj, 5);
-  }
-
-  angle += offset;
-
-}
-
-task accel_circle(posX, posY, offset, inc, proj, accel, max) {
-  
-  let angle = offset;
-  let angle_inc = inc;
-
-  loop(360/angle_inc) {
-    angle+=angle_inc;
-    CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
-  }
-
-  angle += offset;
-
-}
-
-function floral_laser_circle(posX, posY, offset, inc, proj, angv) {
+function floral_laser_circle(posX, posY, offset, inc, speed, proj, angv, length, width) {
   let angle = offset;
   let angle_inc = inc;
   let direction = -1;
@@ -135,8 +96,8 @@ function floral_laser_circle(posX, posY, offset, inc, proj, angv) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    let objLaser = CreateCurveLaserA1(posX, posY, 5, angle,
-        30, 20, proj, 0);
+    let objLaser = CreateCurveLaserA1(posX, posY, speed, angle,
+        length, width, proj, 0);
     ObjCrLaser_SetTipDecrement(objLaser, 0.5);
     ObjMove_SetAngularVelocity(objLaser, angv*direction);
     direction*=-1;
@@ -146,65 +107,82 @@ function floral_laser_circle(posX, posY, offset, inc, proj, angv) {
   return lasers;
 }
 
-function swirly_laser_circle(posX, posY, offset, inc, proj, angv) {
+task spin_circle(posX, posY, offset, inc, proj, accel, max, direction) {
+  
   let angle = offset;
   let angle_inc = inc;
-  let lasers = [];
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    let objLaser = CreateCurveLaserA1(posX, posY, 5, angle,
-        25, 20, proj, 0);
-    ObjCrLaser_SetTipDecrement(objLaser, 0.5);
-    ObjMove_SetAngularVelocity(objLaser, angv);
-    lasers = lasers ~ [objLaser];
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    ObjMove_SetAngularVelocity(shot, direction*0.5);
+    ObjShot_SetDeleteFrame(shot, 300);
   }
 
-  return lasers;
-}
+  angle += offset;
 
+}
 
 task MainTask {
 
   wait(200);
   let loop_iters = 0;
-  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer01.wav");
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
+  let orb_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_option.wav");
   let lasers = [];
-  let angleP = rand(0, 360);
+  let orbs = [];
+  let fire_interval = 120;
+  let bloom_interval = fire_interval*4;
+  let angle = rand(0, 360);
+
+
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);
-    let angles = [315, 45, 0, 275, 85];
-    let direction = power(-1, rand_int(0,3));
 
-    if (loop_iters % 2 == 0) {
-      angleP = rand(0, 360);
-      lasers = lasers ~ swirly_laser_circle(bossX, bossY, angleP, 7.5, 40, direction*4); // crimson
-    } else {
-      lasers = lasers ~ swirly_laser_circle(bossX, bossY, angleP+90, 7.5, 38, -direction*6); // purple
+    if(true) {
+      if (loop_iters % fire_interval == fire_interval/2) {
+        ascent(i in 0..length(orbs)) {
+
+        let orbX = ObjMove_GetX(orbs[i]);
+        let orbY = ObjMove_GetY(orbs[i]);
+
+        if (!Obj_IsDeleted(orbs[i])) {
+          lasers = lasers ~ floral_laser_circle(orbX, orbY, angle, 20, 5, 40, 7, 30, 20); 
+          spin_circle(orbX, orbY, angle, 24, 235, 0.1, 3, power(-1, i));
+          spin_circle(orbX, orbY, angle, 24, 235, 0.1, 3, -power(-1, i));
+          ObjShot_FadeDelete(orbs[i]);
+        }
+        
+      }
+      PlaySFX(laser_sfx);
+      orbs = [];
+      } else if (loop_iters % fire_interval == 0) {
+        let angleP = GetAngleToPlayer(objBoss);
+        let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 399, 0);
+
+        let predictX = GetPlayerX();
+        let predictY = GetPlayerY();
+
+        ObjMove_SetDestAtWeight(orb, predictX, predictY, 20, 10);
+        TJunkoShockwave(200, 80, [255, 80, 255]);
+        PlaySFX(orb_sfx);
+        orbs = orbs ~ [orb];
+        angle = rand(0, 360);
+      }
+
+      if (loop_iters % fire_interval  == 0) {
+        ascent(i in 0..length(lasers)) {
+          ObjMove_SetAngularVelocity(lasers[i], -power(-1, i)*1.25);
+          ObjShot_SetDeleteFrame(lasers[i], 180)
+        }
+      lasers = [];
+      }
     }
-
-    PlaySFX(laser_sfx);
-
-    wait(100);
 
     loop_iters++;
-
-    if (loop_iters % 2 == 0) {
-      ascent(i in 0..length(lasers)) {
-        let objLaser = lasers[i];
-        ObjMove_SetAngularVelocity(objLaser, power(-1, i)*1);
-        ObjShot_SetDeleteFrame(objLaser, 120);
-      }
-      lasers = [];
-    } else {
-      ascent(i in 0..length(lasers)) {
-        let objLaser = lasers[i];
-        ObjMove_SetAngularVelocity(objLaser, power(-1, i)*5);
-      }
-    }
-
+    yield;
   }
   
 }

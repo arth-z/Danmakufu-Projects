@@ -130,6 +130,7 @@ task MainTask {
     }
 
     loop(15) {
+      if (Obj_IsDeleted(objBoss)) {return}
       let spawnX = bossX + cos(angleT) * 100;
       let spawnY = bossY + sin(angleT) * 100;
 

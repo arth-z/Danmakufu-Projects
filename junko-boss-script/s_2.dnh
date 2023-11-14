@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Star Spell 2"]
-#Text["That fancy light in spellcard 1 wasn't just a visual gimmick..."]
+#Text["Not just a visual gimmick!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -146,6 +146,7 @@ task MainTask {
     let starX = ObjMove_GetX(objStar);
     let starY = ObjMove_GetY(objStar);
     
+    // same logic as star-spell 1, just laser spawns are random this time
     if (loop_iters % laser_interval == 0) {
       lasers = [];
       loop(25) {
@@ -172,6 +173,9 @@ task MainTask {
     let len = length(lasers);
     let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
 
+    // star movement is constantly updated
+    // magnitude approaches 0 as timer gets closer to laser interval, so star deccelerates
+    // star only remembers angle to player from when lasers fire, so moves in a straight line
     SetStarMovement(magnitude*3, angleS);
 
     ascent(i in 0..len) {
@@ -182,6 +186,7 @@ task MainTask {
       ObjMove_SetPosition(laser, starX, starY);
     }
     
+    // intermittently shoot out rings of fireballs from boss
     if (loop_iters % laser_interval == laser_interval/2) {
       let bossX = ObjMove_GetX(objBoss);
       let bossY = ObjMove_GetY(objBoss);

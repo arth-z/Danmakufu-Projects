@@ -177,12 +177,12 @@ task TJunkoSpellStartFX(name, mood, R, G, B) {
 
 }
 
-let release = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_enep02.wav");
+let release = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
 task TJunkoShockwave(radius, duration, color) {
-  BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
+  //BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
   ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/25, color);
-  ObjSound_SetVolumeRate(release, 100);
+  ObjSound_SetVolumeRate(release, 65);
   PlaySFX(release);
 }
 
