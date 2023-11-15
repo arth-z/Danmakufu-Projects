@@ -158,3 +158,56 @@ task TUnloadBrightShader {
   ResetShaderI(0, 100);
   Obj_Delete(shader);
 }
+
+// Thanks, Sparen!
+// https://sparen.github.io/ph3tutorials/ph3u1l9.html#sub6
+task DelayLaser(x, y, ang, l, w, dt, graph, delay){ 
+    let objlaser = CreateStraightLaserA1(x, y, ang, l, w, dt, graph, delay);
+    ObjStLaser_SetSource(objlaser, false);
+    loop(delay-1){//So that the graphic never enlarges. 
+        if(ObjEnemy_GetInfo(objBoss, INFO_LIFE) <= 0){
+            Obj_Delete(objlaser); 
+            return;
+        }
+        yield;
+    }
+    Obj_Delete(objlaser);
+}
+
+task ExpandOutTelegraphLaser(x, y, ang, l, w, dt, graph, delay){ 
+  let objlaser = CreateStraightLaserA1(x, y, ang, 0, w, dt, graph, delay);
+  let alpha = 255;
+  let length = 0;
+  ObjStLaser_SetSource(objlaser, false);
+  loop(delay-1){//So that the graphic never enlarges. 
+    alpha -= 255/(delay-1);
+    length += l/(delay-1);
+    ObjRender_SetAlpha(objlaser, alpha);
+    ObjLaser_SetLength(objlaser, length);
+    if(ObjEnemy_GetInfo(objBoss, INFO_LIFE) <= 0){
+        Obj_Delete(objlaser); 
+        return;
+    }
+    yield;
+  }
+  Obj_Delete(objlaser);
+}
+
+task ShrinkInTelegraphLaser(x, y, ang, l, w, dt, graph, delay){ 
+  let objlaser = CreateStraightLaserA1(x, y, ang, l, w, dt, graph, delay);
+  let alpha = 255;
+  let length = l;
+  ObjStLaser_SetSource(objlaser, false);
+  loop(delay-1){
+    alpha -= 255/(delay-1);
+    length -= l/(delay-1);
+    ObjLaser_SetLength(objlaser, length);
+    ObjRender_SetAlpha(objlaser, alpha);
+    if(ObjEnemy_GetInfo(objBoss, INFO_LIFE) <= 0){
+        Obj_Delete(objlaser); 
+        return;
+    }
+    yield;
+  }
+  Obj_Delete(objlaser);
+}

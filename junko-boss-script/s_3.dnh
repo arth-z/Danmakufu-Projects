@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Flower Spell 1"]
-#Text["I hope you enjoy reading diagonal curvy lasers >:)"]
+#Text["Are line telegraphs OOC? Well, at least they look nice."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -15,13 +15,13 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(3000);
+      SetScriptResult(6000);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
-        SetScriptResult(70);
+      SetScriptResult(60);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-        SetScriptResult(1000000);
+      SetScriptResult(1000000);
     }
 }
 
@@ -52,7 +52,7 @@ let mainTimer = 0;
 }
 
 let new_x = GetCenterX();
-let new_y = GetCenterY()*0.5;
+let new_y = GetCenterY()*0.6;
 
 @MainLoop 
 {
@@ -70,7 +70,7 @@ let new_y = GetCenterY()*0.5;
   if (mainTimer % move_interval < move_time) {
     if (mainTimer % move_interval == 0) {
       new_x = GetCenterX() + rand(-50, 50);
-      new_y = GetCenterY()*0.5 + rand(-10,10);
+      new_y = GetCenterY()*0.6 + rand(-10,10);
       ObjMove_SetDestAtFrame(objBoss, new_x, new_y, move_time);
     } else {
       MDrawJunkoMove(mainTimer % move_interval, move_interval, new_x, new_y, move_time);
@@ -116,7 +116,7 @@ task spin_circle(posX, posY, offset, inc, proj, accel, max, direction) {
     angle+=angle_inc;
     let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
     ObjMove_SetAngularVelocity(shot, direction*0.5);
-    ObjShot_SetDeleteFrame(shot, 300);
+    ObjShot_SetDeleteFrame(shot, 180);
   }
 
   angle += offset;
@@ -133,52 +133,71 @@ task MainTask {
   let orbs = [];
   let fire_interval = 120;
   let bloom_interval = fire_interval*4;
+  let floral_density = 20;
   let angle = rand(0, 360);
+  let angleOrb = 0;
 
-
+  // code follows format of previous nonspell
+  // except laser spawn from orbs and there's less of them
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);
 
     if(true) {
+      // initial bloom
       if (loop_iters % fire_interval == fire_interval/2) {
         ascent(i in 0..length(orbs)) {
+          let orbX = ObjMove_GetX(orbs[i]);
+          let orbY = ObjMove_GetY(orbs[i]);
 
-        let orbX = ObjMove_GetX(orbs[i]);
-        let orbY = ObjMove_GetY(orbs[i]);
+          if (!Obj_IsDeleted(orbs[i])) { // prevent 0/0 spawning in the case of bomb deletions
+            ascent(i in 0..(360/floral_density)) {
+              if (i % 2 == 1) {
+                ExpandOutTelegraphLaser(orbX, orbY, angle+(floral_density/2)+i*floral_density, 450, 200, 0, 379, fire_interval*1.5);
+              }
+            }
 
-        if (!Obj_IsDeleted(orbs[i])) {
-          lasers = lasers ~ floral_laser_circle(orbX, orbY, angle, 20, 5, 40, 7, 30, 20); 
-          spin_circle(orbX, orbY, angle, 24, 235, 0.1, 3, power(-1, i));
-          spin_circle(orbX, orbY, angle, 24, 235, 0.1, 3, -power(-1, i));
-          ObjShot_FadeDelete(orbs[i]);
-        }
+            lasers = lasers ~ floral_laser_circle(orbX, orbY, angle, floral_density, 5, 41, 6, 30, 20); 
+            spin_circle(orbX, orbY, angle, floral_density, 234, 0.1, 3, 1.25*power(-1, i));
+//            spin_circle(orbX, orbY, angle, floral_density*2, 234, 0.1, 3, 1.25*-power(-1, i));
+
+            ObjShot_FadeDelete(orbs[i]);
+          }
         
       }
       PlaySFX(laser_sfx);
       orbs = [];
+      // orb fires
       } else if (loop_iters % fire_interval == 0) {
-        let angleP = GetAngleToPlayer(objBoss);
-        let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 399, 0);
+        ascent(i in 0..2) {
+          let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 406, 0);
+          ObjShot_SetIntersectionEnable(orb, false);
+          ObjRender_SetAlpha(orb, 155);
 
-        let predictX = GetPlayerX();
-        let predictY = GetPlayerY();
+          let targetX = GetCenterX() + cos(angleOrb)*175;
+          let targetY = GetCenterY() + sin(angleOrb)*175;
 
-        ObjMove_SetDestAtWeight(orb, predictX, predictY, 20, 10);
-        TJunkoShockwave(200, 80, [255, 80, 255]);
-        PlaySFX(orb_sfx);
-        orbs = orbs ~ [orb];
-        angle = rand(0, 360);
+          ObjMove_SetDestAtWeight(orb, targetX, targetY, 20, 10);
+          TJunkoShockwave(200, 80, [255, 80, 80]);
+          PlaySFX(orb_sfx);
+          orbs = orbs ~ [orb];
+          angleOrb+=360/2;
+        }
+        angleOrb = rand(-35, 35);
+      
+
       }
 
+      // full bloom
       if (loop_iters % fire_interval  == 0) {
         ascent(i in 0..length(lasers)) {
           ObjMove_SetAngularVelocity(lasers[i], -power(-1, i)*1.25);
-          ObjShot_SetDeleteFrame(lasers[i], 180)
+          ObjShot_SetDeleteFrame(lasers[i], 180);
         }
       lasers = [];
       }
+
     }
 
     loop_iters++;
