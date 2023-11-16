@@ -10,6 +10,4 @@ Go to this [link](https://touhougc.web.fc2.com/products/th_dnh_ph3.html), (don't
 After that, take any one of the files in this repository and drag it to "script" in your Danmakufu folder. Then open *th_dnh.exe*, use your arrow keys to navigate to "directory", and take your pick of any of the scripts you want to play.
 
 Find more Danmakufu PH3 scripts (including player scripts) at [Bulletforge](https://www.bulletforge.org/). When I'm done working on projects, you'll hopefully see them there.
-I would suggest getting Danmakufu PH3 "Woo" Edition for its curvy laser optimisations, found at [this Bulletforge link](https://www.bulletforge.org/u/wishmakers/p/the-woo-pack), before you play the Junko fight. Just drag and drop the correct downloaded .exe into your Danmakufu folder, in the same location as *th_dnh.exe*
-
-Or you can wait for when I finish the bossfight and upload a video of me beating it, if you just want to see what I've done for yourself.
+I would suggest getting Danmakufu PH3 "Woo" Edition for its curvy laser optimisations, found at [this Bulletforge link](https://www.bulletforge.org/u/wishmakers/p/the-woo-pack), before you play the Junko fight. Just drag and drop the correct downloaded .exe into your Danmakufu folder, in the same location as *th_dnh.exe*.
