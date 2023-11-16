@@ -2,7 +2,7 @@
 A repository for my projects in the "Touhou Danmakufu" shoot-em-up game engine and its associated C-like .dnh scripting language.
 Currently contains one WIP bossfight.
 
-## **What?**
+## **How do I play these?**
 
 Go to this [link](https://touhougc.web.fc2.com/products/th_dnh_ph3.html), (don't worry if it's in Japanese) and click the link labeled **"東方弾幕風ph3 [.1 pre6]
 (2015/01/18)"** to download the most recent version of Touhou Danmakufu ph3. Extract the files to a location of your choice.
