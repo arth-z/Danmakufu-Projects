@@ -119,8 +119,6 @@ task spin_circle(posX, posY, offset, inc, proj, accel, max, direction) {
     ObjShot_SetDeleteFrame(shot, 180);
   }
 
-  angle += offset;
-
 }
 
 task MainTask {
@@ -139,6 +137,7 @@ task MainTask {
 
   // code follows format of previous nonspell
   // except laser spawn from orbs and there's less of them
+  // also follows the "loop_iters % value" format of coding as opposed to "wait"
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let bossX = ObjMove_GetX(objBoss);
@@ -152,12 +151,15 @@ task MainTask {
           let orbY = ObjMove_GetY(orbs[i]);
 
           if (!Obj_IsDeleted(orbs[i])) { // prevent 0/0 spawning in the case of bomb deletions
+
+          // line telegraphs - oooo, they disappear as they complete the petals of the flower!
             ascent(i in 0..(360/floral_density)) {
               if (i % 2 == 1) {
                 ExpandOutTelegraphLaser(orbX, orbY, angle+(floral_density/2)+i*floral_density, 450, 200, 0, 379, fire_interval*1.5);
               }
             }
 
+            // spawn the actual projectiles          
             lasers = lasers ~ floral_laser_circle(orbX, orbY, angle, floral_density, 5, 41, 6, 30, 20); 
             spin_circle(orbX, orbY, angle, floral_density, 234, 0.1, 3, 1.25*power(-1, i));
 //            spin_circle(orbX, orbY, angle, floral_density*2, 234, 0.1, 3, 1.25*-power(-1, i));
@@ -170,7 +172,7 @@ task MainTask {
       orbs = [];
       // orb fires
       } else if (loop_iters % fire_interval == 0) {
-        ascent(i in 0..2) {
+        ascent(i in 0..2) { // two orbs opposite the center
           let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 406, 0);
           ObjShot_SetIntersectionEnable(orb, false);
           ObjRender_SetAlpha(orb, 155);
@@ -180,16 +182,14 @@ task MainTask {
 
           ObjMove_SetDestAtWeight(orb, targetX, targetY, 20, 10);
           TJunkoShockwave(200, 80, [255, 80, 80]);
-          PlaySFX(orb_sfx);
           orbs = orbs ~ [orb];
           angleOrb+=360/2;
         }
         angleOrb = rand(-35, 35);
-      
-
+        PlaySFX(orb_sfx);
       }
 
-      // full bloom
+      // full bloom - lasers go outwards into large petals
       if (loop_iters % fire_interval  == 0) {
         ascent(i in 0..length(lasers)) {
           ObjMove_SetAngularVelocity(lasers[i], -power(-1, i)*1.25);
