@@ -4,6 +4,7 @@
 let objStar;
 let path = GetCurrentScriptDirectory();
 let angle_inc=1;
+let objStars;
 
 task TStarInitialise(x, y, angle, speed) {
   objStar = ObjEnemy_Create(OBJ_ENEMY);

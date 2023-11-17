@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spellcard \"Blossom\""]
-#Text["This attack was a nightmare to balance. I hope it's in a good spot, though."]
+#Title["Squirrel's Junko - Spellcard \"Fox Tails\""]
+#Text["Foxtail plants are sooo \"Junko\", if you get my meaning."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -15,7 +15,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-      SetScriptResult(5000);
+      SetScriptResult(6500);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
       SetScriptResult(60);
@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Flawless Blossoms of Hatred\"", DISPLEASED, 255, 100, 100);
+  TJunkoSpellStartFX("\"Fox Tails\"", DISPLEASED, 255, 100, 100);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);

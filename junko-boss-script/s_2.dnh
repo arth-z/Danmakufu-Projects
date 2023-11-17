@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Star Spell 2"]
+#Title["Squirrel's Junko - Spellcard \"Red Star\""]
 #Text["Not just a visual gimmick!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
@@ -16,7 +16,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(2500);
+        SetScriptResult(2250);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
         SetScriptResult(70);
@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Pure Fox's Three-Body Problem", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("\"Pure Fox's Three-Body Problem\"", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -151,7 +151,7 @@ task MainTask {
       lasers = [];
       loop(25) {
         let laser = CreateStraightLaserA1(starX, starY, angleL, 
-                1024, 20, laser_interval*0.2, 17, laser_interval);
+                768, 20, laser_interval*0.2, 17, laser_interval);
         angleL = rand(0, 360);
         ObjLaser_SetGrazeInvalidFrame(laser, 5); 
         ObjLaser_SetInvalidLength(laser, 5, 5); 
@@ -191,7 +191,7 @@ task MainTask {
       let bossX = ObjMove_GetX(objBoss);
       let bossY = ObjMove_GetY(objBoss);
       let angleP = GetAngleToPlayer(objBoss);
-      circle(bossX, bossY, angleP, 10, 376, 0.1, 2.5);
+      circle(bossX, bossY, angleP, 10, 376, 0.1, 2);
       PlaySFX(shoot_sfx);    
     }
 

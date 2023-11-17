@@ -1,0 +1,155 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Squirrel's Junko - Nonspell 4"]
+#Text["Misdirection is hard. Fortunately, spellcard 2 should've warmed you up by now?"]
+#System["./JunkoSystem.dnh"]
+#Background["./JunkoBackground.dnh"]
+
+#include "./func_library.dnh"
+#include "./img/ZUNShot_Const.txt"
+#include "./JunkoFX.dnh"
+
+let mainTimer = 0;
+
+@Event 
+{
+  alternative(GetEventType())
+    case(EV_REQUEST_LIFE){ //Sets boss's life
+      SetScriptResult(3000);
+    }
+    case(EV_REQUEST_TIMER){ //Sets attack time
+      SetScriptResult(60);
+    }
+    case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
+      SetScriptResult(1000000);
+    }
+}
+
+@Initialize 
+{ 
+  objScene = GetEnemyBossSceneObjectID();
+  objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+  ObjEnemy_Regist(objBoss);
+
+  TLoadJunkoFX;
+
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.25, 60);
+
+  TJunkoHitFX;
+  TJunkoBurnAura;
+  TJunkoCircleAura;
+  TJunkoShadowAura;
+  TJunkoCrownAura;
+  TDistortionAura;
+  
+  MainTask;
+
+  TJunkoFinalize;
+}
+
+let new_x = GetCenterX();
+let new_y = GetCenterY()*0.6;
+
+@MainLoop 
+{
+  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+  ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+  
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+
+  // movement constants
+  let move_interval = 240;
+  let move_time = 60;
+
+  // random movement control
+  if (mainTimer % move_interval < move_time) {
+    if (mainTimer % move_interval == 0) {
+      new_x = GetCenterX() + rand(-50, 50);
+      new_y = GetCenterY()*0.6 + rand(-10,10);
+      ObjMove_SetDestAtFrame(objBoss, new_x, new_y, move_time);
+    } else {
+      MDrawJunkoMove(mainTimer % move_interval, move_interval, new_x, new_y, move_time);
+    }
+  } else {
+    MDrawJunkoBlink(mainTimer);
+    MJunkoBreathe(mainTimer);
+  }
+
+  if (mainTimer < 200) {ObjEnemy_SetDamageRate(objBoss, 25, 25)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
+  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [100, 100, 255])}
+
+  mainTimer++;
+  yield;
+}
+
+task spin_circle(posX, posY, offset, inc, proj, accel, max, direction) {
+  
+  let angle = offset;
+  let angle_inc = inc;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    ObjMove_SetAngularVelocity(shot, direction*0.5);
+    ObjShot_SetDeleteFrame(shot, 360);
+  }
+
+}
+
+task MainTask {
+
+  wait(200);
+  let loop_iters = 0;
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  let orb_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_option.wav");
+  let orbs = [];
+  let fire_interval = 120;
+  let floral_density = 6;
+
+  // Codewise, a variation of spellcard 3, but orb are aimed at you and no flowers (sad!)
+
+  while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+    let angle = rand(0, 360);
+    let bossX = ObjMove_GetX(objBoss);
+    let bossY = ObjMove_GetY(objBoss);
+
+    if(true) {
+      if (loop_iters % fire_interval == fire_interval/2) {
+        ascent(i in 0..length(orbs)) {
+          let orbX = ObjMove_GetX(orbs[i]);
+          let orbY = ObjMove_GetY(orbs[i]);
+
+          if (!Obj_IsDeleted(orbs[i])) { // prevent 0/0 spawning in the case of bomb deletions
+            ObjMove_SetSpeed(orbs[i], 0);
+
+            spin_circle(orbX, orbY, angle, floral_density, 250, 0.1, 2.5, 1);
+            //spin_circle(orbX, orbY, angle, floral_density, 250, 2, 2, -1);
+            PlaySFX(laser_sfx);
+            angle+=floral_density/2;            
+            
+            ObjShot_FadeDelete(orbs[i]);
+          }
+        
+      }
+      orbs = [];
+      // orb fires
+      } else if (loop_iters % fire_interval == 0) {
+        let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 404, 0);
+
+        let targetX = GetPlayerX;
+        let targetY = GetPlayerY;
+
+        ObjMove_SetDestAtWeight(orb, targetX, targetY, 30, 10);
+        TJunkoShockwave(200, 80, [100, 100, 255]);
+        orbs = orbs ~ [orb];
+        PlaySFX(orb_sfx);
+      }
+
+    }
+
+    loop_iters++;
+    yield;
+  }
+  
+}
