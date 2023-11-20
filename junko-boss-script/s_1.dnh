@@ -118,7 +118,7 @@ task MainTask {
   let lasers = [];
   let laser_interval = 120;
 
-  TLoadBrightShader("Blue");
+  TLoadColourShader("Blue"); // this is a saturation shader that makes everything bright and blue
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
@@ -145,9 +145,9 @@ task MainTask {
 
     // load in shader and apply it in time with the laser bursts
     if (loop_iters % laser_interval < laser_interval/3 && loop_iters > laser_interval) {
-      TBright(true);
+      TColour(true);
     } else {
-      TBright(false);
+      TColour(false);
     }
 
     // outside of that interval, the lasers are continuously rotated to deccelerate before the laser shoots
@@ -162,13 +162,13 @@ task MainTask {
     }
 
     if (loop_iters % (laser_interval/3) == 0) {
-      circle(angleS, 1.8, 3, L_DOT_BLUE);
-      angleS += 1.5;
+      circle(angleS, 1.8, 2.5, L_DOT_BLUE);
+      angleS += 1.25;
       PlaySFX(shoot_sfx);
     }
 
     loop_iters++;
     yield;
   }
-  TUnloadBrightShader;
+  TUnloadColourShader;
 }

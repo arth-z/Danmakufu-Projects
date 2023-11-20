@@ -437,7 +437,7 @@ task TJunkoCrownAura {
     ascent(i in 0..5) {
       let crownpoint = crownpoints[i];
       
-      let color = [155 + i*40, 100, 155 + (4-i)*40];
+      let color = [120 + i*40, 110, 155 + (4-i)*40];
 
       ObjRender_SetBlendType(crownpoint, BLEND_ADD_ARGB);
       ObjRender_SetAlpha(crownpoint, alpha);
