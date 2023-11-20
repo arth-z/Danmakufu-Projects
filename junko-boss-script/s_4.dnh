@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Fox Tails\"", DISPLEASED, 255, 100, 100);
+  TJunkoSpellStartFX("\"Foxtail\"", DISPLEASED, 255, 100, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
