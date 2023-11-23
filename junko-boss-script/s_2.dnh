@@ -173,7 +173,7 @@ task MainTask {
     let len = length(lasers);
     let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
 
-    // star movement is constantly updated
+    // star speed and angle is constantly updated
     // magnitude approaches 0 as timer gets closer to laser interval, so star deccelerates
     // star only remembers angle to player from when lasers fire, so moves in a straight line
     SetStarMovement(magnitude*3, angleS);

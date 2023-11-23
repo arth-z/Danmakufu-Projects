@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spellcard \"Fox Tails\""]
-#Text["Foxtail plants are sooo \"Junko\", if you get my meaning."]
+#Title["Squirrel's Junko - Spellcard \"Divine Fox\""]
+#Text["She looks more like an angel here than a fox. Eh, whatever."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Foxtail\"", DISPLEASED, 255, 100, 255);
+  TJunkoSpellStartFX("\"Heavenfallen Fox Spirit\"", DISPLEASED, 255, 100, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -52,7 +52,7 @@ let mainTimer = 0;
 }
 
 let new_x = GetCenterX();
-let new_y = GetCenterY()*0.6;
+let new_y = GetCenterY()*0.5;
 
 @MainLoop 
 {
@@ -81,136 +81,100 @@ let new_y = GetCenterY()*0.6;
   }
 
   if (mainTimer < 200) {ObjEnemy_SetDamageRate(objBoss, 25, 25)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
-  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 80])}
+  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 255])}
+  if (mainTimer == 200) {
+    TJunkoShockwave(200, 80, [255, 80, 255]);
+  }
 
   mainTimer++;
   yield;
 }
 
-
-function floral_laser_circle(posX, posY, offset, inc, speed, proj, angv, length, width) {
-  let angle = offset;
-  let angle_inc = inc;
-  let direction = -1;
-  let lasers = [];
-
-  loop(360/angle_inc) {
-    angle+=angle_inc;
-    let objLaser = CreateCurveLaserA1(posX, posY, speed, angle,
-        length, width, proj, 0);
-    ObjCrLaser_SetTipDecrement(objLaser, 0.5);
-    ObjMove_SetAngularVelocity(objLaser, angv*direction);
-    direction*=-1;
-    lasers = lasers ~ [objLaser];
-  }
-
-  return lasers;
-}
-
-task spin_circle(posX, posY, offset, inc, proj, startspeed, accel, max, direction) {
+task circle(posX, posY, offset, inc, proj, accel, max) {
   
   let angle = offset;
   let angle_inc = inc;
+  let direction = -0.01;
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    let shot = CreateShotA2(posX, posY, startspeed, angle, accel, max, proj, 10);
-    ObjMove_SetAngularVelocity(shot, direction*0.5);
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
   }
-
 }
 
 task MainTask {
 
   wait(200);
   let loop_iters = 0;
-  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
+  let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
   let orb_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_option.wav");
-  let lasers = [];
-  let orbs = [];
-  let fire_interval = 120;
-  let bloom_interval = fire_interval*2;
-  let floral_density = 20;
-  let angle = 0;
-  let angleOrb = 0;
-  let orbCount = 2;
+  let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+  let tails = [];
+  let start_ang = 3;
+  let tail_speed = 2.5;
+  let tail_bullet_graphic = 342;
+  
+  loop(7) {
+    tails = tails ~ [[]]; // tails is a 2d array of six other arrays
+  }
 
-  // code follows format of previous nonspell
-  // except laser spawn from orbs and there's less of them
-  // also follows the "loop_iters % value" format of coding as opposed to "wait"
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
-    let bossX = ObjMove_GetX(objBoss);
-    let bossY = ObjMove_GetY(objBoss);
+    bossX = ObjMove_GetX(objBoss);
+    bossY = ObjMove_GetY(objBoss);
 
-    if(true) {
-      // initial bloom
-      if (loop_iters % fire_interval == fire_interval/2) {
-        ascent(i in 0..length(orbs)) {
-          let orbX = ObjMove_GetX(orbs[i]);
-          let orbY = ObjMove_GetY(orbs[i]);
+    if (loop_iters % 2 == 0) {
+      let shot0 = CreateShotA1(bossX+35, bossY+25, tail_speed, 30, tail_bullet_graphic, 5);
+      tails[0] = tails[0] ~ [shot0];
+      ObjMove_SetAngularVelocity(shot0, start_ang);
 
-          if (!Obj_IsDeleted(orbs[i])) { // prevent 0/0 spawning in the case of bomb deletions
+      let shot1 = CreateShotA1(bossX-35, bossY+25, tail_speed, 150, tail_bullet_graphic, 5);
+      tails[1] = tails[1] ~ [shot1];
+      ObjMove_SetAngularVelocity(shot1, -start_ang);
 
-          // line telegraphs - oooo, they disappear as they complete the petals of the flower!
-            ascent(i in 0..(360/floral_density)) {
-              if (i % 2 == 1) {
-                ExpandOutTelegraphLaser(orbX, orbY, angle+(floral_density/2)+i*floral_density, 450, 200, 0, 379, fire_interval*1.5);
-              }
-            }
+      let shot2 = CreateShotA1(bossX+40, bossY-10, tail_speed, -50, tail_bullet_graphic, 5);
+      tails[2] = tails[2] ~ [shot2];
+      ObjMove_SetAngularVelocity(shot2, start_ang);
 
-            // spawn the actual projectiles 
-            // graphics change based on which flower it is
-            lasers = lasers ~ floral_laser_circle(orbX, orbY, angle, floral_density, 5, 41, 6, 30, 20); 
-            let angv = 0;
-            spin_circle(orbX, orbY, angle+(floral_density/2)+floral_density, floral_density*2, 234, 0, 0.05, 3, angv);
-            spin_circle(orbX, orbY, angle+(floral_density/2)+floral_density, floral_density*2, 234, 0, 0.05, 3, -angv);
+      let shot3 = CreateShotA1(bossX-40, bossY-10, tail_speed, 230, tail_bullet_graphic, 5);
+      tails[3] = tails[3] ~ [shot3];
+      ObjMove_SetAngularVelocity(shot3, -start_ang);
 
-            ObjShot_FadeDelete(orbs[i]);
-            angle = rand(0, 360);
-          }
-        
-      }
-      PlaySFX(laser_sfx);
-      orbs = [];
-      // orb fires
-      } else if (loop_iters % fire_interval == 0) {
-        let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 406, 0);
-        ObjShot_SetIntersectionEnable(orb, false);
-        ObjRender_SetAlpha(orb, 155);
+      let shot4 = CreateShotA1(bossX+20, bossY-25, tail_speed, -90, tail_bullet_graphic, 5);
+      tails[4] = tails[4] ~ [shot4];
+      ObjMove_SetAngularVelocity(shot4, start_ang);
 
-        let targetX = bossX;
-        let targetY = bossY*0.8;
+      let shot5 = CreateShotA1(bossX-20, bossY-25, tail_speed, 270, tail_bullet_graphic, 5);
+      tails[5] = tails[5] ~ [shot5];
+      ObjMove_SetAngularVelocity(shot5, -start_ang);
+    }
+    
 
-        ObjMove_SetDestAtWeight(orb, targetX, targetY, 20, 10);
-        orbs = orbs ~ [orb];
-        
-        ascent(i in 0..orbCount) { 
-          let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 406, 0);
-          ObjShot_SetIntersectionEnable(orb, false);
-          ObjRender_SetAlpha(orb, 155);
-
-          let targetX = GetCenterX() + cos(angleOrb)*160;
-          let targetY = GetCenterY() + sin(angleOrb)*160;
-
-          ObjMove_SetDestAtWeight(orb, targetX, targetY, 20, 10);
-          orbs = orbs ~ [orb];
-          angleOrb+=360/orbCount;
+    if (loop_iters % 12 == 0) {
+      ascent(i in 0..length(tails)) {
+        ascent(j in 0..length(tails[i])) {
+          let shot = tails[i][j];
+          let direction = (-1)^i; 
+          ObjMove_SetAngularVelocity(shot, 1.6*direction*cos(loop_iters));
         }
-        TJunkoShockwave(200, 80, [255, 80, 80]);
-        angleOrb=rand(-35, 35);
-        PlaySFX(orb_sfx);
       }
+    }
 
-      // full bloom - lasers go outwards into large petals
-      if (loop_iters % fire_interval  == 0) {
-        ascent(i in 0..length(lasers)) {
-          ObjMove_SetAngularVelocity(lasers[i], -power(-1, i)*1.25);
-          ObjShot_SetDeleteFrame(lasers[i], 180);
-        }
-      lasers = [];
-      }
+    
+    if (loop_iters % 45 == 0) {
+      let angleP = GetAngleToPlayer(objBoss) + rand(0, 30);
+      circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5);
+      PlaySFX(shoot_sfx);
+    }
 
+    if (loop_iters % 22.5 == 0) {
+      circle(bossX, bossY-55, sin(loop_iters)*3, 6, 256, 0.1, 2);
+    }
+
+    if (loop_iters % (4*90) == 0) {
+      PlaySFX(warning);
     }
 
     loop_iters++;
