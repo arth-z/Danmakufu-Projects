@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Nonspell 4"]
-#Text["Misdirection is hard. Fortunately, spellcard 2 should've warmed you up by now?"]
+#Text["Surprisingly hard, but I think it's okay."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -15,7 +15,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-      SetScriptResult(3000);
+      SetScriptResult(4500);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
       SetScriptResult(60);
@@ -77,22 +77,29 @@ let new_y = GetCenterY()*0.6;
   }
 
   if (mainTimer < 200) {ObjEnemy_SetDamageRate(objBoss, 25, 25)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
-  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [100, 100, 255])}
+  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 100, 255])}
 
   mainTimer++;
   yield;
 }
 
-task spin_circle(posX, posY, offset, inc, proj, accel, max, direction) {
+task spin_circle(posX, posY, radius, offset, inc, proj, accel, max, direction) {
   
   let angle = offset;
   let angle_inc = inc;
+  let start_safe = 0;
+  let end_safe = 0;
+  let rand_ang = rand(-60,60);
 
   loop(360/angle_inc) {
+    if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0 && Obj_IsDeleted(objBoss)) {return;}
     angle+=angle_inc;
-    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
-    ObjMove_SetAngularVelocity(shot, direction*0.5);
-    ObjShot_SetDeleteFrame(shot, 360);
+    if (!(angle > start_safe && angle < end_safe)) {
+      let shot = CreateShotA2(posX+radius*cos(angle), posY+radius*sin(angle), 0, -angle+rand_ang, accel, max, proj, 15);
+      ObjMove_SetAngularVelocity(shot, direction);
+      ObjShot_SetDeleteFrame(shot, 300);
+      ObjShot_SetAutoDelete(shot, 0);
+    }  
   }
 
 }
@@ -106,6 +113,7 @@ task MainTask {
   let orbs = [];
   let fire_interval = 120;
   let floral_density = 6;
+  let direction = 1;
 
   // Codewise, a variation of spellcard 3, but orb are aimed at you and no flowers (sad!)
 
@@ -113,41 +121,28 @@ task MainTask {
     let angle = rand(0, 360);
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);
+    
 
-    if(true) {
-      if (loop_iters % fire_interval == fire_interval/2) {
-        ascent(i in 0..length(orbs)) {
-          let orbX = ObjMove_GetX(orbs[i]);
-          let orbY = ObjMove_GetY(orbs[i]);
+    if (loop_iters % fire_interval == 0) {
+      let playerX = GetPlayerX();
+      let playerY = GetPlayerY();
+      TJunkoShockwave(200, 80, [255, 100, 255]);
+      ascent(i in 0..2) {
 
-          if (!Obj_IsDeleted(orbs[i])) { // prevent 0/0 spawning in the case of bomb deletions
-            ObjMove_SetSpeed(orbs[i], 0);
-
-            spin_circle(orbX, orbY, angle, floral_density, 250, 0.1, 2.5, 1);
-            //spin_circle(orbX, orbY, angle, floral_density, 250, 2, 2, -1);
-            PlaySFX(laser_sfx);
-            angle+=floral_density/2;            
-            
-            ObjShot_FadeDelete(orbs[i]);
-          }
+        spin_circle(playerX, playerY, 100, angle, 15, 376, 0.02, 2.5, -0.4*direction);
+        PlaySFX(laser_sfx);
         
+        wait(40);
+        direction*=-1;
+
+        spin_circle(playerX, playerY, 150, GetAngleToPlayer(objBoss), 12, 375, 0.02, 4, 0.8*direction);
+        PlaySFX(laser_sfx);
+
+        wait(40);
       }
-      orbs = [];
-      // orb fires
-      } else if (loop_iters % fire_interval == 0) {
-        let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 404, 0);
-
-        let targetX = GetPlayerX;
-        let targetY = GetPlayerY;
-
-        ObjMove_SetDestAtWeight(orb, targetX, targetY, 30, 10);
-        TJunkoShockwave(200, 80, [100, 100, 255]);
-        orbs = orbs ~ [orb];
-        PlaySFX(orb_sfx);
-      }
-
     }
 
+    
     loop_iters++;
     yield;
   }

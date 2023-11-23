@@ -122,9 +122,9 @@ task MainTask {
 
     let angleT = rand(0, 360);
 
-    fast_circle(GetCenterX() + 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3.33, L_DOT_BLUE, 0.5, 2);
+    fast_circle(GetCenterX() + 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3, 250, 0.5, 2);
       
-    fast_circle(GetCenterX() - 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3.33, L_DOT_BLUE, 0.5, 2);    
+    fast_circle(GetCenterX() - 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3, 250, 0.5, 2);    
 
     wait(120);
   }

@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spellcard \"Divine Fox\""]
-#Text["She looks more like an angel here than a fox. Eh, whatever."]
+#Title["Squirrel's Junko - Spellcard \"Tail Trap\""]
+#Text["Those are supposed to be her tails, but here they look more like wings..."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -15,7 +15,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-      SetScriptResult(6500);
+      SetScriptResult(7000);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
       SetScriptResult(60);
@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Semblance of a Heavenfallen Fox\"", DISPLEASED, 255, 100, 255);
+  TJunkoSpellStartFX("\"Simple Murder with Seven Tails\"", DISPLEASED, 255, 100, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -70,7 +70,7 @@ let new_y = GetCenterY()*0.5;
   if (mainTimer % move_interval < move_time) {
     if (mainTimer % move_interval == 0) {
       new_x = GetCenterX() + rand(-50, 50);
-      new_y = GetCenterY()*0.6 + rand(-10,10);
+      new_y = GetCenterY()*0.5 + rand(0, 50);
       ObjMove_SetDestAtFrame(objBoss, new_x, new_y, move_time);
     } else {
       MDrawJunkoMove(mainTimer % move_interval, move_interval, new_x, new_y, move_time);
@@ -102,19 +102,30 @@ task circle(posX, posY, offset, inc, proj, accel, max) {
   }
 }
 
+task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
+  
+  let angle = offset;
+  let angle_inc = inc;
+  let direction = -0.01;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    ObjMove_SetAngularVelocity(shot, ang_v);
+  }
+}
+
 task MainTask {
 
   wait(200);
   let loop_iters = 0;
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
-  let orb_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_option.wav");
   let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
-  let bossX = ObjMove_GetX(objBoss);
-  let bossY = ObjMove_GetY(objBoss);
   let tails = [];
   let start_ang = 3;
   let tail_speed = 2.5;
   let tail_bullet_graphic = 342;
+  let ang_v = 0.5;
   
   loop(7) {
     tails = tails ~ [[]]; // tails is a 2d array of six other arrays
@@ -122,36 +133,50 @@ task MainTask {
 
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
-    bossX = ObjMove_GetX(objBoss);
-    bossY = ObjMove_GetY(objBoss);
+    let bossX = ObjMove_GetX(objBoss);
+    let bossY = ObjMove_GetY(objBoss);
 
-    if (loop_iters % 2 == 0) {
-      let shot0 = CreateShotA1(bossX+35, bossY+25, tail_speed, 30, tail_bullet_graphic, 5);
-      tails[0] = tails[0] ~ [shot0];
-      ObjMove_SetAngularVelocity(shot0, start_ang);
-
-      let shot1 = CreateShotA1(bossX-35, bossY+25, tail_speed, 150, tail_bullet_graphic, 5);
-      tails[1] = tails[1] ~ [shot1];
-      ObjMove_SetAngularVelocity(shot1, -start_ang);
-
-      let shot2 = CreateShotA1(bossX+40, bossY-10, tail_speed, -50, tail_bullet_graphic, 5);
-      tails[2] = tails[2] ~ [shot2];
-      ObjMove_SetAngularVelocity(shot2, start_ang);
-
-      let shot3 = CreateShotA1(bossX-40, bossY-10, tail_speed, 230, tail_bullet_graphic, 5);
-      tails[3] = tails[3] ~ [shot3];
-      ObjMove_SetAngularVelocity(shot3, -start_ang);
-
-      let shot4 = CreateShotA1(bossX+20, bossY-25, tail_speed, -90, tail_bullet_graphic, 5);
-      tails[4] = tails[4] ~ [shot4];
-      ObjMove_SetAngularVelocity(shot4, start_ang);
-
-      let shot5 = CreateShotA1(bossX-20, bossY-25, tail_speed, 270, tail_bullet_graphic, 5);
-      tails[5] = tails[5] ~ [shot5];
-      ObjMove_SetAngularVelocity(shot5, -start_ang);
+    // draw her "tails"
+    if (loop_iters % 4 == 0) {
+      ascent (i in 0..2) {
+        let shot0 = CreateShotA1(bossX+35, bossY+25, tail_speed, 30+6*(-1)^i, tail_bullet_graphic, 5);
+        tails[0] = tails[0] ~ [shot0];
+        ObjMove_SetAngularVelocity(shot0, start_ang);
+      }
+      
+      ascent (i in 0..2) {
+        let shot1 = CreateShotA1(bossX-35, bossY+25, tail_speed, 150+6*(-1)^i, tail_bullet_graphic, 5);
+        tails[1] = tails[1] ~ [shot1];
+        ObjMove_SetAngularVelocity(shot1, -start_ang);
+      }
+      
+      ascent (i in 0..2) {
+        let shot2 = CreateShotA1(bossX+35, bossY-12, tail_speed, -50+6*(-1)^i, tail_bullet_graphic, 5);
+        tails[2] = tails[2] ~ [shot2];
+        ObjMove_SetAngularVelocity(shot2, start_ang);
+      }
+      
+      ascent (i in 0..2) {
+        let shot3 = CreateShotA1(bossX-35, bossY-12, tail_speed, 230+6*(-1)^i, tail_bullet_graphic, 5);
+        tails[3] = tails[3] ~ [shot3];
+        ObjMove_SetAngularVelocity(shot3, -start_ang);
+      }
+      
+      ascent (i in 0..2) {
+        let shot4 = CreateShotA1(bossX+20, bossY-25, tail_speed, -80+6*(-1)^i, tail_bullet_graphic, 5);
+        tails[4] = tails[4] ~ [shot4];
+        ObjMove_SetAngularVelocity(shot4, start_ang);
+      }
+      
+      ascent (i in 0..2) {
+        let shot5 = CreateShotA1(bossX-20, bossY-25, tail_speed, 260+6*(-1)^i, tail_bullet_graphic, 5);
+        tails[5] = tails[5] ~ [shot5];
+        ObjMove_SetAngularVelocity(shot5, -start_ang);
+      }
+      
     }
-    
 
+    // force the tails 'inwards'
     if (loop_iters % 12 == 0) {
       ascent(i in 0..length(tails)) {
         ascent(j in 0..length(tails[i])) {
@@ -161,19 +186,20 @@ task MainTask {
         }
       }
     }
-
     
     if (loop_iters % 45 == 0) {
       let angleP = GetAngleToPlayer(objBoss) + rand(0, 30);
-      circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5);
+      ang_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, -ang_v*0.5);
       PlaySFX(shoot_sfx);
     }
 
+    
     if (loop_iters % 22.5 == 0) {
-      circle(bossX, bossY-55, sin(loop_iters)*3, 6, 256, 0.1, 2);
+      ang_circle(bossX, bossY-55, rand(0, 5), 5, 61, 0.1, 2, ang_v*0.25);
+      ang_v*=-1;
     }
-
-    if (loop_iters % (4*90) == 0) {
+    
+    if (loop_iters % (4*90) == (4*90) - 30) {
       PlaySFX(warning);
     }
 

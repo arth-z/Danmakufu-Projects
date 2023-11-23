@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Spellcard \"Red Star\""]
-#Text["Not just a visual gimmick!"]
+#Text["Still messing around with the stars. Misdirection is hard."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
