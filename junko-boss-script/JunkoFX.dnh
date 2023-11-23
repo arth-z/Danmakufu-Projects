@@ -58,6 +58,7 @@ task MJunkoBreathe(timer) {
   ObjMove_SetDestAtFrame(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss) + pulse*1, 5);
 }
 
+// basically a straight copy of the SamplePS03_HLSL from Danmakufu's sample scripts
 task TDistortionAura
 {
 	let renderTexture = GetReservedRenderTargetName(0);
@@ -238,7 +239,7 @@ task TJunkoBurnAura {
   }
 }
 
-// all three functions generate one wacky woohoo flame sprite for a total burn aura
+// following two functions generate one wacky woohoo flame sprite for a total burn aura
 // top and bottom of the flames, respectively
 task flame(owner, colour, scale, duration) {
   let flame = ObjPrim_Create(OBJ_SPRITE_2D);
