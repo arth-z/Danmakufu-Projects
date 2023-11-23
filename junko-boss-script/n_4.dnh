@@ -95,7 +95,7 @@ task spin_circle(posX, posY, radius, offset, inc, proj, accel, max, direction) {
     if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0 && Obj_IsDeleted(objBoss)) {return;}
     angle+=angle_inc;
     if (!(angle > start_safe && angle < end_safe)) {
-      let shot = CreateShotA2(posX+radius*cos(angle), posY+radius*sin(angle), 0, -angle+rand_ang, accel, max, proj, 15);
+      let shot = CreateShotA2(posX+radius*cos(angle), posY+radius*sin(angle), 0, -angle+rand_ang, accel, max, proj, 10);
       ObjMove_SetAngularVelocity(shot, direction);
       ObjShot_SetDeleteFrame(shot, 300);
       ObjShot_SetAutoDelete(shot, 0);
@@ -114,8 +114,6 @@ task MainTask {
   let fire_interval = 120;
   let floral_density = 6;
   let direction = 1;
-
-  // Codewise, a variation of spellcard 3, but orb are aimed at you and no flowers (sad!)
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let angle = rand(0, 360);
