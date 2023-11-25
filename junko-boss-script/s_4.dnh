@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Simple Murder with Seven Tails\"", DISPLEASED, 255, 100, 255);
+  TJunkoSpellStartFX("\"Nameless Flytrap\"", DISPLEASED, 255, 100, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -66,7 +66,6 @@ let new_y = GetCenterY()*0.5;
   let move_interval = 360;
   let move_time = 60;
 
-  // random movement control
   if (mainTimer % move_interval < move_time) {
     if (mainTimer % move_interval == 0) {
       new_x = GetCenterX() + rand(-50, 50);
@@ -76,8 +75,12 @@ let new_y = GetCenterY()*0.5;
       MDrawJunkoMove(mainTimer % move_interval, move_interval, new_x, new_y, move_time);
     }
   } else {
-    MDrawJunkoBlink(mainTimer);
-    MJunkoBreathe(mainTimer);
+    if (mainTimer % 360 < 200 || mainTimer % 360 > 240) {
+      MDrawJunkoBlink(mainTimer);
+      MJunkoBreathe(mainTimer);
+    } else {
+      MDrawJunkoLaughContinue(mainTimer);
+    }
   }
 
   if (mainTimer < 200) {ObjEnemy_SetDamageRate(objBoss, 25, 25)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
@@ -90,7 +93,7 @@ let new_y = GetCenterY()*0.5;
   yield;
 }
 
-task circle(posX, posY, offset, inc, proj, accel, max) {
+task laser_circle(posX, posY, offset, inc, speed, length, width, graphiclaser, graphichead) {
   
   let angle = offset;
   let angle_inc = inc;
@@ -98,20 +101,21 @@ task circle(posX, posY, offset, inc, proj, accel, max) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    let laser = CreateLooseLaserA1(posX, posY, speed, angle, length, width, graphiclaser, 15);
+    let shot = CreateShotA1(posX + cos(angle), posY + sin(angle), speed, angle, graphichead, 15);
   }
 }
 
-task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
-  
+task diag_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
   let angle = offset;
   let angle_inc = inc;
-  let direction = -0.01;
+  let direction = -1;
 
   loop(360/angle_inc) {
     angle+=angle_inc;
     let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
-    ObjMove_SetAngularVelocity(shot, ang_v);
+    ObjMove_SetAngularVelocity(shot, ang_v*direction);
+    direction*=-1;
   }
 }
 
@@ -121,6 +125,7 @@ task MainTask {
   let loop_iters = 0;
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
   let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer01.wav");
   let tails = [];
   let start_ang = 3;
   let tail_speed = 2.5;
@@ -130,6 +135,7 @@ task MainTask {
   loop(7) {
     tails = tails ~ [[]]; // tails is a 2d array of six other arrays
   }
+  PlaySFX(warning);
 
 
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
@@ -176,7 +182,7 @@ task MainTask {
       
     }
 
-    // force the tails 'inwards'
+    // force the tails 'inward' and 'outwards'
     if (loop_iters % 12 == 0) {
       ascent(i in 0..length(tails)) {
         ascent(j in 0..length(tails[i])) {
@@ -187,18 +193,23 @@ task MainTask {
       }
     }
     
-    if (loop_iters % 45 == 0) {
+    if (loop_iters % 40 == 0) {
       let angleP = GetAngleToPlayer(objBoss) + rand(0, 30);
-      ang_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, -ang_v*0.5);
+      //ang_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, -ang_v*0.5);
+      diag_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, ang_v*0.5);
       PlaySFX(shoot_sfx);
     }
 
-    
-    if (loop_iters % 22.5 == 0) {
-      ang_circle(bossX, bossY-55, rand(0, 5), 5, 61, 0.1, 2, ang_v*0.25);
-      ang_v*=-1;
+    if (loop_iters % 180 == 100) {
+      TJunkoChargeUpSmall(150, 60, [255, 80, 255]);
     }
-    
+
+    if (loop_iters % 180 == 0) {
+      laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, 273);
+      TJunkoShockwave(200, 80, [255, 80, 255]);
+      PlaySFX(laser_sfx);
+    }
+
     if (loop_iters % (4*90) == (4*90) - 30) {
       PlaySFX(warning);
     }

@@ -32,7 +32,7 @@ task TLoadJunkoFX {
 
   BFX_Init();
   
-  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small.png"; 
+  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small_red.png"; 
   let ring = GetCurrentScriptDirectory() ~ "./img/shockwave.png"; 
   let beams = GetCurrentScriptDirectory() ~ "./img/Beams.png"; 
   BFX_SetGraphics(particle, ring, beams);
@@ -188,12 +188,20 @@ task TJunkoShockwave(radius, duration, color) {
 }
 
 let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
+let smallCharge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_ch00.wav");
 
 task TJunkoChargeUp(radius, duration, color) {
   BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(charge);
+}
+
+task TJunkoChargeUpSmall(radius, duration, color) {
+  BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
+  ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
+  ObjSound_SetVolumeRate(charge, 100);
+  PlaySFX(smallCharge);
 }
 
 // called in @Main to match physical movement of junko with sprite
