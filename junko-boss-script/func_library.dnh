@@ -132,16 +132,16 @@ task TUnloadColourShader {
 // Thanks, Sparen!
 // https://sparen.github.io/ph3tutorials/ph3u1l9.html#sub6
 task DelayLaser(x, y, ang, l, w, dt, graph, delay){ 
-    let objlaser = CreateStraightLaserA1(x, y, ang, l, w, dt, graph, delay);
-    ObjStLaser_SetSource(objlaser, false);
-    loop(delay-1){//So that the graphic never enlarges. 
-        if(ObjEnemy_GetInfo(objBoss, INFO_LIFE) <= 0){
-            Obj_Delete(objlaser); 
-            return;
-        }
-        yield;
-    }
-    Obj_Delete(objlaser);
+  let objlaser = CreateStraightLaserA1(x, y, ang, l, w, dt, graph, delay);
+  ObjStLaser_SetSource(objlaser, false);
+  loop(delay-1){//So that the graphic never enlarges. 
+      if(ObjEnemy_GetInfo(objBoss, INFO_LIFE) <= 0){
+          Obj_Delete(objlaser); 
+          return;
+      }
+      yield;
+  }
+  Obj_Delete(objlaser);
 }
 
 task ExpandOutTelegraphLaser(x, y, ang, l, w, dt, graph, delay){ 

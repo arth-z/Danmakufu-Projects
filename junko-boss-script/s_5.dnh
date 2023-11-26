@@ -1,0 +1,245 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Squirrel's Junko - Spellcard \"Purple Star\""]
+#Text["An exemplary 'blender'. And she changes directions...quite nasty."]
+#System["./JunkoSystem.dnh"]
+#Background["./JunkoBackground.dnh"]
+
+#include "./func_library.dnh"
+#include "./img/ZUNShot_Const.txt"
+#include "./JunkoFX.dnh"
+#include "./HatefulStar.dnh"
+
+let mainTimer = 0;
+
+@Event 
+{
+  alternative(GetEventType())
+    case(EV_REQUEST_LIFE){ //Sets boss's life
+        SetScriptResult(50);
+    }
+    case(EV_REQUEST_TIMER){ //Sets attack time
+        SetScriptResult(65);
+    }
+    case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
+        SetScriptResult(2000000);
+    }
+    case(EV_REQUEST_IS_DURABLE_SPELL) {
+        SetScriptResult(true);
+    }
+}
+
+@Initialize 
+{
+  objScene = GetEnemyBossSceneObjectID();
+  objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+
+  ObjEnemyBossScene_Regist(objBoss);
+  ObjEnemyBossScene_StartSpell(objScene);
+  ObjEnemy_Regist(objBoss);
+
+  TLoadJunkoFX;
+
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY(), 60);
+
+  TJunkoBurnAura;
+  TJunkoCircleAura;
+  TJunkoShadowAura;
+  TJunkoCrownAura;
+  
+  TStarInitialise(GetCenterX(), GetCenterY(), 0, 0);
+  TStarDraw(200, "purple");
+  TStarHitFX;
+  SetStarSpinRate(1);
+  
+  TJunkoSpellStartFX("Light Sign \"Lunatic Evening Star\"", NEUTRAL, 255, 100, 255);
+
+  MainTask;
+
+  TJunkoFinalize;
+  TStarFinalize;
+}
+
+let new_x = GetCenterX();
+let new_y = GetCenterY();
+
+@MainLoop 
+{ 
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+
+  // movement constants
+  let move_interval = 600;
+  let move_time = 150;
+
+  if (mainTimer < 16) {
+    ObjEnemy_SetDamageRate(objBoss, 25, 25);
+    MDrawJunkoMotionBegin(mainTimer);
+  } else if (mainTimer < 44) {
+    MDrawJunkoMotionContinue(mainTimer);
+  } else if (mainTimer < 60) {
+    MDrawJunkoMotionEnd(mainTimer);
+  } else if (mainTimer < 200) {
+    MDrawJunkoBlink(mainTimer);
+    MJunkoBreathe(mainTimer);
+  } else {
+    if (mainTimer == 205) {
+      new_x = GetCenterX();
+      new_y = GetCenterY()*-1.7;
+      ObjMove_SetDestAtWeight(objBoss, new_x, new_y, 0.1, 2);
+    } else {
+      ObjRender_SetAlpha(objBoss, 200);
+      ObjRender_SetBlendType(objBoss, BLEND_ADD_ARGB);
+      MDrawJunkoLaughContinue(mainTimer);
+    }
+  }
+     
+
+  if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 255])};
+  UpdateStarHitbox;
+
+  mainTimer++;
+  yield;
+}
+
+task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
+  
+  let angle = offset;
+  let angle_inc = inc;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
+    ObjMove_SetAngularVelocity(shot, ang_v);
+  }
+
+}
+
+task MainTask {
+
+  let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  ObjSound_SetVolumeRate(shoot_sfx, 60);
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
+  let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
+  let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
+  let desperation = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_nep00.wav");
+  TLoadColourShader("Purple");
+
+  wait(200);
+  PlaySFX(boom_spawn);
+  TStarShockwave("purple");
+
+  let angleL = 0;
+  let angleS = 0;
+  let loop_iters = 0;
+  
+  // laser variables
+  let lasers = [];
+  let laser_interval = 180;
+  let laser_count = 12;
+
+  // blender variables
+  let blender_offset = GetAngleToPlayer(objBoss);
+  let blender_speed = 0.5 * (-1)^rand_int(0,9);
+  let blender_target_speed = blender_speed;
+  let blender_count = 7;
+
+  // timer phase breakpoints - in seconds
+  let blender_changes = [2*60, 12*60, 21*60, 29*60, 36*60, 41*60, 45*60, 49*60, 52*60, 54*60];
+  let blender_index = 0;
+  let blender_shift_time = 30;
+
+  while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+
+    let starX = ObjMove_GetX(objStar);
+    let starY = ObjMove_GetY(objStar);
+    
+    // laser
+    if (loop_iters > blender_changes[0]) {
+      if (loop_iters % laser_interval == 0) {
+        lasers = [];
+        angleL = (360/laser_count)/2;
+        loop(laser_count) {
+          let laser = CreateStraightLaserA1(starX, starY, angleL, 
+                  512, 20, 30, 23, laser_interval);
+          angleL += 360/laser_count;
+          ObjLaser_SetGrazeInvalidFrame(laser, 5); 
+          ObjLaser_SetInvalidLength(laser, 5, 5); 
+
+          lasers = lasers ~ [laser];
+        }
+        angleS = GetAngleToPlayer(objStar);
+        PlaySFX(laser_sfx);
+        PlaySFX(boom_spawn);
+        TStarShockwave("purple");
+      }
+
+      let len = length(lasers);
+      let magnitude = (laser_interval - (loop_iters % laser_interval))/laser_interval;
+
+      ascent(i in 0..len) {
+        let laser = lasers[i];
+        let angle = ObjStLaser_GetAngle(laser);
+        let direction = power(-1, i%2+1);
+        ObjStLaser_SetAngle(laser, angle+magnitude*direction);
+        ObjMove_SetPosition(laser, starX, starY);
+        ObjLaser_SetLength(laser, ObjLaser_GetLength(laser))
+      }
+
+      if (loop_iters % laser_interval < laser_interval/5 && loop_iters > blender_changes[0] + laser_interval) {
+        TColour(true);
+      } else {
+        TColour(false);
+      }
+    }
+    
+
+    // basic blender pattern
+    ang_circle(starX, starY, blender_offset, 360/blender_count, 109, 0.1, 3, 0);
+    blender_offset+=blender_speed;
+    if (loop_iters % 10 == 0) {
+    }
+
+    // blender shifting
+
+    // first block - bounds checking of phase change array, swap to movement if out of phase changes
+    // (aka run into end of array)
+    if (blender_index < length(blender_changes)) {
+      let blender_phase = blender_changes[blender_index];
+
+      if (loop_iters == blender_phase) {
+        blender_index++;
+        blender_target_speed = blender_speed*-1.07;
+        PlaySFX(warning);
+      }
+
+      if (absolute(blender_speed) < absolute(blender_target_speed)) {
+        blender_speed+=blender_target_speed/blender_shift_time;
+      }
+    } else {
+      if (blender_index == length(blender_changes)) {
+        TStarShockwave("purple");
+        PlaySFX(warning);
+        PlaySFX(warning);
+        PlaySFX(warning);
+        PlaySFX(desperation);
+        ScreenShakeA1(30, 3);
+      } else {
+        ScreenShakeA1(15, 2);
+        TColour(true);
+        SetStarMovement(0.75, GetAngleToPlayer(objStar));
+        if (blender_index % 120 == 0) {
+          PlaySFX(desperation);
+        }
+      }
+      blender_index++;
+    }
+
+    // auxiliary effects
+
+    loop_iters++;
+    yield;
+  }
+  TColour(false);
+  TUnloadColourShader;
+}

@@ -187,6 +187,13 @@ task TJunkoShockwave(radius, duration, color) {
   PlaySFX(release);
 }
 
+task TJunkoShockwaveSilent(radius, duration, color) {
+  //BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
+  ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/25, color);
+  ObjSound_SetVolumeRate(release, 65);
+  //PlaySFX(release);
+}
+
 let charge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_power0.wav");
 let smallCharge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_ch00.wav");
 

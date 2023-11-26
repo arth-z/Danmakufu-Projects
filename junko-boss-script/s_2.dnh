@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Light Sign \"Hateful Star\"", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("Light Sign \"Incandescing Spite\"", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -128,7 +128,7 @@ task circle(posX, posY, offset, inc, proj, accel, max) {
 task MainTask {
 
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
-  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer01.wav");
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer00.wav");
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
   TLoadColourShader("Red");
 
