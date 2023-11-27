@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Flawless Blossoms of Hatred\"", DISPLEASED, 255, 100, 100);
+  TJunkoSpellStartFX("\"Flawless Blossoms of Hatred\"", DISPLEASED, 220, 100, 100);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);

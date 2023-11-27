@@ -19,7 +19,7 @@ let mainTimer = 0;
         SetScriptResult(50);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
-        SetScriptResult(41);
+        SetScriptResult(40);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
         SetScriptResult(2000000);
@@ -40,7 +40,7 @@ let mainTimer = 0;
 
   TLoadJunkoFX;
 
-  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY(), 60);
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.5, 60);
 
   TJunkoBurnAura;
   TJunkoCircleAura;
@@ -51,7 +51,7 @@ let mainTimer = 0;
   TStarDraw(200, "purple");
   TStarHitFX;
   
-  TJunkoSpellStartFX("Light Sign \"Otherworldly Star\"", NEUTRAL, 255, 100, 255);
+  TJunkoSpellStartFX("Lunatic Star \"Dissolution\"", NEUTRAL, 255, 50, 255);
 
   MainTask;
 
@@ -68,7 +68,7 @@ let new_y = GetCenterY();
   let bossY = ObjMove_GetY(objBoss);
 
   // movement constants
-  let move_interval = 600;
+  let move_interval = 120;
   let move_time = 150;
 
   if (mainTimer < 16) {
@@ -79,7 +79,7 @@ let new_y = GetCenterY();
   } else if (mainTimer < 60) {
     MDrawJunkoMotionEnd(mainTimer);
   } else if (mainTimer < 200) {
-    MDrawJunkoBlink(mainTimer);
+    MDrawJunkoLaughContinue(mainTimer);
     MJunkoBreathe(mainTimer);
   } else {
     if (mainTimer == 205) {
@@ -149,7 +149,7 @@ task MainTask {
   
   // laser variables
   let lasers = [];
-  let laser_interval = 180;
+  let laser_interval = 120;
   let laser_count = 12;
   let angleL = 0;
 
@@ -158,7 +158,7 @@ task MainTask {
   let blender_speed = 0.5 * (-1)^rand_int(0,9);
   let blender_target_speed = blender_speed;
   let blender_count = 7;
-  let blender_wave = 2.75;
+  let blender_wave = 3;
   let star_spin = blender_speed;
 
   // timer phase breakpoints - in seconds
@@ -181,7 +181,7 @@ task MainTask {
         angleL = (360/laser_count)/2;
         loop(laser_count) {
           let laser = CreateStraightLaserA1(starX, starY, angleL, 
-                  512, 20, 30, 23, laser_interval);
+                  512, 20, 20, 23, laser_interval);
           angleL += 360/laser_count;
           ObjLaser_SetGrazeInvalidFrame(laser, 5); 
           ObjLaser_SetInvalidLength(laser, 5, 5); 
@@ -238,7 +238,6 @@ task MainTask {
       shotsToDelete = shotsToDelete ~ shots;
       PlaySFX(shoot_sfx);
     }
-
     // blender shifting
 
     // first block - bounds checking of phase change array, swap to movement if out of phase changes
@@ -248,7 +247,7 @@ task MainTask {
 
       if (loop_iters == blender_phase) {
         blender_index++;
-        blender_target_speed = blender_speed*-1.06;
+        blender_target_speed = blender_speed*-1.07;
         PlaySFX(warning);
         if (blender_index == length(blender_changes) - 1) {
           ShockwaveCharge(starX, starY, 120, 6, [255, 80, 255]);
@@ -275,12 +274,12 @@ task MainTask {
       } else {
         ScreenShakeA1(15, 2);
         TColour(true);
-        SetStarMovement(0.75, GetAngleToPlayer(objStar));
+        SetStarMovement(1, GetAngleToPlayer(objStar));
         if (blender_index % 120 == 0) {
           PlaySFX(desperation);
         }
-        if (blender_index % 6 == 0) {
-          ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-7, 7), 60, 204, 0.02, 4, 0);
+        if (blender_index % 9 == 0) {
+          ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-7, 7), 45, 204, 0.02, 4, 0);
           PlaySFX(shoot_sfx);
         }
       }
@@ -290,6 +289,7 @@ task MainTask {
     loop_iters++;
     yield;
   }
+  ObjSound_Stop(desperation);
   TStarShockwave("purple");
   TColour(false);
   TUnloadColourShader;

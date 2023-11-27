@@ -124,8 +124,8 @@ task TJunkoHitFX {
 
   let normalImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage00.wav");
   let critImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage01.wav");
-  ObjSound_SetVolumeRate(critImpact, 75);
-  ObjSound_SetVolumeRate(normalImpact, 75);
+  ObjSound_SetVolumeRate(critImpact, 50);
+  ObjSound_SetVolumeRate(normalImpact, 50);
 
   while (!Obj_IsDeleted(objBoss)) {
 
@@ -200,6 +200,13 @@ let smallCharge = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_ch00.wav");
 task TJunkoChargeUp(radius, duration, color) {
   BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
+  ObjSound_SetVolumeRate(charge, 100);
+  PlaySFX(charge);
+}
+
+task TJunkoChargeUpAtPos(posX, posY, radius, duration, color) {
+  BFX_Charge(posX, posY, radius, duration);
+  ShockwaveCharge(posX, posY, duration, radius/50, color);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(charge);
 }

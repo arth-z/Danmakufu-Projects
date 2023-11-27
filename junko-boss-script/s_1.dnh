@@ -30,7 +30,7 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-  TJunkoSpellStartFX("Light Sign \"Perfect Radiance\"", NEUTRAL, 150, 150, 255);
+  TJunkoSpellStartFX("Frigid Star \"Irradiance\"", NEUTRAL, 150, 150, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);

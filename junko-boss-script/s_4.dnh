@@ -194,7 +194,7 @@ task MainTask {
       }
     }
     
-    if (loop_iters % 45 == 0) {
+    if (loop_iters % 60 == 0) {
       let angleP = GetAngleToPlayer(objBoss);
       //ang_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, -ang_v*0.5);
       diag_circle(bossX, bossY-55, angleP, 6, 349, 0.2, 1.5, 0.25);
