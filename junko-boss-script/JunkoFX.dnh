@@ -205,7 +205,7 @@ task TJunkoChargeUp(radius, duration, color) {
 }
 
 task TJunkoChargeUpSmall(radius, duration, color) {
-  BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
+  //BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(smallCharge);

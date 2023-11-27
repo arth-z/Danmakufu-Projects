@@ -2,46 +2,53 @@
 
 Spellcard Cutin system by Gtbot:
 https://www.bulletforge.org/u/gtbot/p/cutin-function-ph3
-
-Junko spellcard portraits and cutin art by dairi:
+Junko spellcard portraits/cutin art by dairi:
 https://www.pixiv.net/en/users/4920496
 
 BFX.dnh and BFX_tasks.dnh by darkwalker247:
 https://www.bulletforge.org/u/darkwalker247/p/bloom-effects-library-now-events-based
 
+All font data from https://www.dafontfree.io/
+
+Original 'ZUNShot' shotdata and constants by Ozzy and ExPorygon - graphics also by ZUN:
+https://www.bulletforge.org/u/ozzy/p/zun-expanded-shotsheet-for-ph3
+
+Massive credits to Sparen for their Danmakufu PH3 tutorials, as well as for extensive documentation:
+https://sparen.github.io/ph3tutorials/ph3tutorials.html, https://sparen.github.io/ph3tutorials/docs_event.html
+Notable thanks to Sparen's existing tutorial code for delay lasers and screen shake, which I used as a base.
 FxnSFX.dnh by Sparen:
 https://github.com/TheLandOfCodesAndApertures/Sparen_Sound_Library/blob/master/FxnSFX.dnh
 
-Original 'ZUNShot' shotdata and constants by Ozzy and ExPorygon - graphics by ZUN:
-https://www.bulletforge.org/u/ozzy/p/zun-expanded-shotsheet-for-ph3
+Thanks to Michael Serajnik (mserajnik) for their Visual Studio Code extension for Danmakufu and .dnh files.
+Find the GitHub here: https://github.com/imtbl/dnh
+Find the direct download link here: https://www.vsixhub.com/vsix/5270/
 
-Background graphics for spellcards, ocean surface, ocean waves, and night sky originally from Touhou Kanjuden ~ Legacy of Lunatic Kingdom
+Shoutout to the base Danmakufu ph3 sample scripts too!
 
-Special "galaxy/star" spell background from https://steamuserimages-a.akamaihd.net/ugc/817810804116128362/9B239DDACEBEFABDD106322C198B059726AF5455/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false
-
-Moon surface (moon.png) from https://www.pinterest.ca/pin/240801911301160888/
-
-Thanks to MoTK user "Drake" in the thread https://www.shrinemaiden.org/forum/index.php?topic=19249.180 for providing Junko spell_bg code (also found at https://gist.github.com/drakeirving/8283a5ed47061c19bc4cc4d26e849226)
+-----------------------
 
 Original "Junko" spritesheet from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by Team Shanghai Alice
-
-Crown and flame aura sprites by ZUN/Team Shanghai Alice
-
-All font data from https://www.dafontfree.io/
+Crown and flame aura sprites by ZUN/Team Shanghai Alice, also from Touhou Kanjuden
 
 Floral-lunar magic circle aura (apparently, a recreation of a design from Sailor Moon) from:
 https://www.pngwing.com/en/free-png-sfwka
 
-Image for the skyglow effect from darkwalker's provided "beams.png" as part of their Bloom Effects Library
+Background graphics for spellcards, ocean surface, ocean waves, and night sky originally from Touhou Kanjuden ~ Legacy of Lunatic Kingdom. Most have been edited by me with online image editing software.
 
-Original "Hateful Star" sprite by Vecteezy, from https://www.vecteezy.com/free-png/lens-flare
+Moon surface (moon.png) from https://www.pinterest.ca/pin/240801911301160888/
+
+Thanks to MoTK user "Drake" at https://www.shrinemaiden.org/forum/index.php?topic=19249.180 for providing the code for Junko's scrolling spell background (code at https://gist.github.com/drakeirving/8283a5ed47061c19bc4cc4d26e849226)
+
+Image for the skyglow effect from darkwalker's provided "beams.png" as part of their Bloom Effects Library
+Original "Hateful Star" sprite by Vecteezy, from https://www.vecteezy.com/free-png/lens-flare. The variants appearing in-game are literally just recoloured.
 
 STG frame abstract background from "https://www.freepik.com/free-vector/abstract-asthetic-hd-wallpaper-background-banner-design-multipurpose_23258842.htm#page=14&query=abstract%20background&position=4&from_view=search&track=ais", image by Sketchepedia on Freepik
+
 STG frame original logo from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by ZUN/Team Shanghai Alice
 
-All SFX by ZUN
+-----------------------
+
+All SFX by ZUN (specifically, from Touhou Chireiden ~ Subterranean Animism)
 BGM (Pure Furies ~ Whereabouts of the Heart) from album 'Dr. Latency's Freak Report' by ZUN
 
-Massive credits to Sparen for their Danmakufu PH3 tutorials, without which this would not be possible: https://sparen.github.io/ph3tutorials/ph3tutorials.html
-
-Big thanks to existing Bulletforge Junko projects, such as Lusus' Junko Battle and AJS' Everlasting Purity, for providing inspiration
+-----------------------

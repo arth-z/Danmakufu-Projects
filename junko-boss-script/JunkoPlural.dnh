@@ -25,7 +25,7 @@ let bgm;
 
 @Initialize 
 {
-  SetPlayerLife(3);
+  SetPlayerLife(8);
   bgm = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/pf-drL.ogg");
   ObjSound_SetSoundDivision(bgm, SOUND_BGM);
   ObjSound_SetRestartEnable(bgm, true);
@@ -53,6 +53,7 @@ task TPlural {
   ObjEnemyBossScene_Add(objScene, 2, dir ~ "s_3.dnh");
   ObjEnemyBossScene_Add(objScene, 3, dir ~ "n_4.dnh");
   ObjEnemyBossScene_Add(objScene, 3, dir ~ "s_4.dnh");
+  ObjEnemyBossScene_Add(objScene, 4, dir ~ "s_5.dnh");
 
   
   ObjEnemyBossScene_LoadInThread(objScene);

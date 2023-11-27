@@ -67,9 +67,9 @@ PS_OUTPUT PsSaturatePurple( PS_INPUT In ) : COLOR0
 
 	float4 color = colorTexture * colorDiffuse;
 
-	Out.color.r = color.r * 2.2f;
-    Out.color.g = color.g * 1.4f;
-    Out.color.b = color.b * 2.2f;
+	Out.color.r = color.r * 2.0f;
+    Out.color.g = color.g * 1.2f;
+    Out.color.b = color.b * 2.0f;
 	Out.color.a = color.a;
 
 	return Out;
