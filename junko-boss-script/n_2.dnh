@@ -117,6 +117,9 @@ task MainTask {
   wait(60);
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
 
+  // half-circle of circles spawns in sequence below Junko towards you
+  // looks like an unreadable wall until the very last moment where a small gap opens up
+  // it's also a somewhat fixed pattern, so you can just like...sit below her and watch for the gaps
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);

@@ -138,7 +138,10 @@ task MainTask {
   ScreenShakeA1(20, 3);
   PlaySFX(warning);
 
-
+  // attack design - Junko shoots her tails outwards, 
+  // and their flapping/waving forces you to get closer to her to not get swept up
+  // also she shoots junk at you to make it harder for you to get close to her, and moves around
+  // pretty brutal
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);
@@ -150,40 +153,34 @@ task MainTask {
         tails[0] = tails[0] ~ [shot0];
         ObjMove_SetAngularVelocity(shot0, start_ang);
       }
-      
       ascent (i in 0..2) {
         let shot1 = CreateShotA1(bossX-35, bossY+25, tail_speed, 150+6*(-1)^i, tail_bullet_graphic, 5);
         tails[1] = tails[1] ~ [shot1];
         ObjMove_SetAngularVelocity(shot1, -start_ang);
       }
-      
       ascent (i in 0..2) {
         let shot2 = CreateShotA1(bossX+35, bossY-12, tail_speed, -50+6*(-1)^i, tail_bullet_graphic, 5);
         tails[2] = tails[2] ~ [shot2];
         ObjMove_SetAngularVelocity(shot2, start_ang);
       }
-      
       ascent (i in 0..2) {
         let shot3 = CreateShotA1(bossX-35, bossY-12, tail_speed, 230+6*(-1)^i, tail_bullet_graphic, 5);
         tails[3] = tails[3] ~ [shot3];
         ObjMove_SetAngularVelocity(shot3, -start_ang);
       }
-      
       ascent (i in 0..2) {
         let shot4 = CreateShotA1(bossX+20, bossY-25, tail_speed, -80+6*(-1)^i, tail_bullet_graphic, 5);
         tails[4] = tails[4] ~ [shot4];
         ObjMove_SetAngularVelocity(shot4, start_ang);
       }
-      
       ascent (i in 0..2) {
         let shot5 = CreateShotA1(bossX-20, bossY-25, tail_speed, 260+6*(-1)^i, tail_bullet_graphic, 5);
         tails[5] = tails[5] ~ [shot5];
         ObjMove_SetAngularVelocity(shot5, -start_ang);
       }
-      
     }
 
-    // force the tails 'inward' and 'outwards'
+    // force the tails 'inward' and 'outwards' with angular velocity changes
     if (loop_iters % 12 == 0) {
       ascent(i in 0..length(tails)) {
         ascent(j in 0..length(tails[i])) {
@@ -194,6 +191,7 @@ task MainTask {
       }
     }
     
+    // shoots junk at you - have fun navigating this to avoid the tails...
     if (loop_iters % 60 == 0) {
       let angleP = GetAngleToPlayer(objBoss);
       //ang_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, -ang_v*0.5);
@@ -202,11 +200,12 @@ task MainTask {
       
     }
     
+    // just so you dont get jumpscared by PLP-mini
     if (loop_iters % 180 == 70) {
       TJunkoChargeUpSmall(200, 80, [255, 80, 255]);
     }
 
-    // pure light of the palm ripoff
+    // pure light of the palm lasers
     if (loop_iters % 180 == 0) {
       laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, 273);
       TJunkoShockwave(200, 80, [255, 80, 255]);

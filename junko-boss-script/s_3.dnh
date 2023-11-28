@@ -133,19 +133,17 @@ task MainTask {
   let floral_density = 20;
   let angle = 0;
   let angleOrb = 0;
-  let orbCount = 2;
+  let orbCount = 2
 
-  // code follows format of previous nonspell
-  // except laser spawn from orbs and there's less of them
-  // also follows the "loop_iters % value" format of coding as opposed to "wait"
-
+  // attack design - difficult tri-direction "floral" curved laser reading (plus some balls to look nice)
+  // the "orb" throw mechanism into flower bloom is a callback to Lilies of Murderous Intent
+  // the only bone I can throw out for you is a telegraph line of ambiguous clarity...at least it looks pretty
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);
 
     if(true) {
-      // initial bloom
-      if (loop_iters % fire_interval == fire_interval/2) {
+      if (loop_iters % fire_interval == fire_interval/2) { // flower bloom initial
         ascent(i in 0..length(orbs)) {
           let orbX = ObjMove_GetX(orbs[i]);
           let orbY = ObjMove_GetY(orbs[i]);
@@ -159,33 +157,36 @@ task MainTask {
               }
             }
 
-            // spawn the actual projectiles 
-            // graphics change based on which flower it is
+            // spawn the actual projectiles, adds to array to control it later
             lasers = lasers ~ floral_laser_circle(orbX, orbY, angle, floral_density, 5, 41, 6, 30, 20); 
-            let angv = 0;
-            spin_circle(orbX, orbY, angle+(floral_density/2)+floral_density, floral_density*2, 234, 0, 0.05, 3, angv);
-            spin_circle(orbX, orbY, angle+(floral_density/2)+floral_density, floral_density*2, 234, 0, 0.05, 3, -angv);
 
+            // these projectile spawns are doubled to make them more visible
+            spin_circle(orbX, orbY, angle+(floral_density/2)+floral_density, floral_density*2, 234, 0, 0.05, 3, 0);
+            spin_circle(orbX, orbY, angle+(floral_density/2)+floral_density, floral_density*2, 234, 0, 0.05, 3, 0);
+
+            // delete orb
             ObjShot_FadeDelete(orbs[i]);
+
+            // angle of the flower blooms are random
             angle = rand(0, 360);
           }
         
       }
       PlaySFX(laser_sfx);
       orbs = [];
-      // orb fires
-      } else if (loop_iters % fire_interval == 0) {
+      } else if (loop_iters % fire_interval == 0) { // flower throw
         let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 406, 0);
         ObjShot_SetIntersectionEnable(orb, false);
         ObjRender_SetAlpha(orb, 155);
 
+        // one orb above boss
         let targetX = bossX;
         let targetY = bossY*0.8;
 
         ObjMove_SetDestAtWeight(orb, targetX, targetY, 20, 10);
         orbs = orbs ~ [orb];
         
-        ascent(i in 0..orbCount) { 
+        ascent(i in 0..orbCount) { // two orbs around center
           let orb = CreateShotA2(bossX, bossY, 0, 0, 0, 0, 406, 0);
           ObjShot_SetIntersectionEnable(orb, false);
           ObjRender_SetAlpha(orb, 155);

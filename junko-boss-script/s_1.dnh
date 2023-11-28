@@ -30,7 +30,7 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-  TJunkoSpellStartFX("Frigid Star -Irradiance-", NEUTRAL, 150, 150, 255);
+  TJunkoSpellStartFX("Frigid Star -Overwhelm-", NEUTRAL, 150, 150, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -120,6 +120,9 @@ task MainTask {
 
   TLoadColourShader("Blue"); // this is a saturation shader that makes everything bright and blue
 
+  // attack design - tap-tap to dodge blue bullet rings with intermittent last-second reads against dense laser blasts
+  // there's always a gap for you to dodge through the projectiles - reading and finding it is the problem
+  // introduces the "Star" mechanics - namely the dazzle-spin lasers
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     angleL = rand_int(0, 360);
@@ -161,6 +164,7 @@ task MainTask {
       ObjStLaser_SetAngle(laser, angle+magnitude*direction);
     }
 
+    // also TSS-lite projectiles lmao
     if (loop_iters % (laser_interval/3) == 0) {
       circle(angleS, 1.8, 2.5, L_DOT_BLUE);
       angleS += 1.25;
@@ -170,5 +174,6 @@ task MainTask {
     loop_iters++;
     yield;
   }
+  TStarShockwave("blue");
   TUnloadColourShader;
 }

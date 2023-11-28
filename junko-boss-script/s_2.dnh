@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Hateful Star -Blaze-", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("Hateful Star -Scorch-", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -141,6 +141,9 @@ task MainTask {
   let lasers = [];
   let laser_interval = 90;
 
+  // attack design - misdirect and manage the Hateful Star while trying to shoot down Junko
+  // it blocks your shots and constantly homes in on you while blasting lasers at you, so it's quite the handful
+  // also Junko spams fireball rings at you to give you something else to worry about (and cuz she hates you)
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     let starX = ObjMove_GetX(objStar);
@@ -198,5 +201,6 @@ task MainTask {
     loop_iters++;
     yield;
   }
+  TStarShockwave("red");
   TUnloadColourShader;
 }

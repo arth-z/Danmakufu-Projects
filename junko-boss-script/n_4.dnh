@@ -83,7 +83,7 @@ let new_y = GetCenterY()*0.6;
   yield;
 }
 
-task spin_circle(posX, posY, radius, offset, inc, proj, accel, max, direction) {
+task collapse_circle(posX, posY, radius, offset, inc, proj, accel, max, direction) {
   
   let angle = offset;
   let angle_inc = inc;
@@ -109,12 +109,14 @@ task MainTask {
   wait(200);
   let loop_iters = 0;
   let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
-  let orb_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_option.wav");
   let orbs = [];
   let fire_interval = 120;
   let floral_density = 6;
   let direction = 1;
 
+  // circles spawn around you, overflowing blemishes callback, except they "degenerate" or "collapse"
+  // into walls/waves that converge on you. also they have angular velocity, to be mean.
+  // a surprisingly difficult dodge, despite the simplicity
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     let angle = rand(0, 360);
     let bossX = ObjMove_GetX(objBoss);
@@ -127,14 +129,14 @@ task MainTask {
       TJunkoShockwave(200, 80, [255, 100, 255]);
       ascent(i in 0..2) {
         if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0){return}
-        spin_circle(playerX, playerY, 100, angle, 15, 376, 0.02, 2.5, -0.4*direction);
+        collapse_circle(playerX, playerY, 100, angle, 15, 376, 0.02, 2.5, -0.4*direction);
         PlaySFX(laser_sfx);
         
         wait(40);
         direction*=-1;
 
         if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0){return}
-        spin_circle(playerX, playerY, 150, GetAngleToPlayer(objBoss), 12, 375, 0.02, 4, 0.8*direction);
+        collapse_circle(playerX, playerY, 150, GetAngleToPlayer(objBoss), 12, 375, 0.02, 4, 0.8*direction);
         PlaySFX(laser_sfx);
 
         wait(40);

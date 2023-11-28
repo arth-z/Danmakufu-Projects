@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Squirrel's Junko - Spellcard \"Purple Star\""]
-#Text["This is technically 'just' BoWaP, but uh...well, see for yourself."]
+#Text["It's not BoWaP, I swear!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -53,12 +53,12 @@ let mainTimer = 0;
   TStarFinalize;
 }
 
-task TSpellCardWait() {
+task TSpellCardWait() { // you thought this would be a nonspell? get survivaled, lmao
   wait(200);
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("Lunatic Star -Dissolution-", NEUTRAL, 255, 50, 255);
+  TJunkoSpellStartFX("Lunatic Star -Disintegrate-", NEUTRAL, 255, 50, 255);
 
 }
 
@@ -93,10 +93,10 @@ let new_y = GetCenterY();
   } else {
     if (mainTimer == 205) {
       new_x = GetCenterX();
-      new_y = GetCenterY()*-1.7;
+      new_y = GetCenterY()*-1.7; // oh, she just flies off screen for this 
       ObjMove_SetDestAtWeight(objBoss, new_x, new_y, 0.1, 2);
     } else {
-      MDrawJunkoLaughContinue(mainTimer);
+      MDrawJunkoLaughContinue(mainTimer); // and if you bother to check up there, she's laughing like always
     }
   }
      
@@ -109,6 +109,7 @@ let new_y = GetCenterY();
   yield;
 }
 
+// circle for blender "lasers" - it's actually just individual projectiles
 task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
   
   let angle = offset;
@@ -169,21 +170,27 @@ task MainTask {
   let blender_target_speed = blender_speed;
   let star_spin = blender_speed;
 
-  // timer phase breakpoints - in seconds
+  // time related blender phase variables
   let blender_changes = [2*60, 7*60, 12*60, 16*60, 20*60, 23*60, 26*60, 28*60, 30*60];
   let blender_index = 0;
   let blender_shift_time = 30;
 
-  // other varaibles
+  // other variables
   let shotsToDelete = [];
   let aux_blender_angle = 0;
 
+  // attack design - a stress-control survival (blender = follow the spinning lasers)
+  // curvy blender blades are weird and unnerving but the real fear factor is frequent spin-direction changes 
+  // this also gets combo'd with the familiar star-dazzle lasers to mess with your sense of space management
+  // there's also an accelerating auxiliary pattern fired inwards to mess with your sense of space management even MORE
+  // survival intensification is here too: spirals grow denser, blender blades go faster, direction changes become more frequent
+  // and eventually in the last 5 all hell breaks loose as the star decides it's had enough and starts moving towards you
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     let starX = ObjMove_GetX(objStar);
     let starY = ObjMove_GetY(objStar);
     
-    // laser
+    // lasers
     if (loop_iters > blender_changes[0]) {
       if (loop_iters % laser_interval == 0) {
         lasers = [];
@@ -221,16 +228,15 @@ task MainTask {
       }
     }
     
-
     // basic blender pattern
+    // it fires every frame, and basically 'works' as a laser despite being like, 5000 murasa droplets
+    // this is...basically a BoWaP variant, if you look at the way blender_offset and blender_speed are controlled
     if (loop_iters > 30) {
       ang_circle(starX, starY, blender_offset, 360/blender_count, 272, 0.1, blender_wave, 0);
       blender_offset+=blender_speed;
     }
 
-
-    // escalations
-
+    // escalations - spiral inwards dark ovals
     if (blender_index > 1 && blender_index < length(blender_changes) && loop_iters % 60 == 0) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
@@ -241,7 +247,6 @@ task MainTask {
       PlaySFX(shoot_sfx);
       aux_blender_angle+=15;
     }
-
     if (blender_index > 2 && blender_index < length(blender_changes) && loop_iters % 60 == 30) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
@@ -252,7 +257,6 @@ task MainTask {
       PlaySFX(shoot_sfx);
       aux_blender_angle+=15;
     }
-
     if (blender_index > 3 && blender_index < length(blender_changes) && loop_iters % 60 == 15) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
@@ -263,7 +267,6 @@ task MainTask {
       PlaySFX(shoot_sfx);
       aux_blender_angle+=15;
     }
-
     if (blender_index > 4 && blender_index < length(blender_changes) && loop_iters % 60 == 45) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
@@ -276,8 +279,8 @@ task MainTask {
     }
 
     // blender shifting
-    // first block - bounds checking of phase change array, swap to movement if out of phase changes
-    // (aka run into end of array)
+    // bounds check of phase-timer array, shift blender velocity to a target velocity opposite and greater than the last
+    // if out of phase-timer array, go into "supercritical" phase
     if (blender_index < length(blender_changes)) {
       let blender_phase = blender_changes[blender_index];
 
@@ -285,36 +288,36 @@ task MainTask {
         blender_index++;
         blender_target_speed = blender_speed*-1.07;
         PlaySFX(warning);
-        if (blender_index == length(blender_changes) - 1) {
+        if (blender_index == length(blender_changes) - 1) { // charge-up as a warning right before supercritical phase
           ShockwaveCharge(starX, starY, 120, 6, [255, 80, 255]);
           PlaySFX(warning2);
         }
       }
 
-      if (absolute(blender_speed) < absolute(blender_target_speed)) {
+      if (absolute(blender_speed) < absolute(blender_target_speed)) { // only reverse direction if in not supercritical phase
         let star_spin=blender_speed;
         SetStarSpinRate(star_spin);
         blender_speed+=blender_target_speed/blender_shift_time;
       }
-    } else {
-      if (blender_index == length(blender_changes)) {
+    } else { 
+      if (blender_index == length(blender_changes)) { // warning, warning
         TStarShockwave("purple");
         PlaySFX(warning);
         PlaySFX(warning);
         PlaySFX(warning);
         PlaySFX(desperation);
-        ascent(i in 0..length(shotsToDelete)) {
-          ObjShot_ToItem(shotsToDelete[i]);
+        ascent(i in 0..length(shotsToDelete)) { // this is what that shotsToDelete array is for
+          ObjShot_ToItem(shotsToDelete[i]); // prevent boring cheapshots since next phase is kinda nuts
         }
-        ScreenShakeA1(30, 3);
-      } else {
+        ScreenShakeA1(30, 3); // visual impact to coincide with shockwave
+      } else { // warning's over, now RUN!
         ScreenShakeA1(15, 2);
         TColour(true);
-        SetStarMovement(1, GetAngleToPlayer(objStar));
+        SetStarMovement(1, GetAngleToPlayer(objStar)); // the actual movement part of the "RUN!" phase
         if (blender_index % 120 == 0) {
           PlaySFX(desperation);
         }
-        if (blender_index % 9 == 0) {
+        if (blender_index % 9 == 0) { // also fires a bunch of aimed junk at you (looks nice, though)
           ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-5, 5), 36, 204, 0.03, 4, 0);
           PlaySFX(shoot_sfx);
         }

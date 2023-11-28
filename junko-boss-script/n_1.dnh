@@ -118,6 +118,7 @@ task MainTask {
   wait(75);
   shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
 
+  // it's the super dense but slow PDH blue rings.
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     let angleT = rand(0, 360);
