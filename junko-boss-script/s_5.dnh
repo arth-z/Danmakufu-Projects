@@ -34,12 +34,8 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 
-  ObjEnemyBossScene_Regist(objBoss);
-  ObjEnemyBossScene_StartSpell(objScene);
-  ObjEnemy_Regist(objBoss);
-
   TLoadJunkoFX;
-
+  TSpellCardWait;
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.5, 60);
 
   TJunkoBurnAura;
@@ -51,12 +47,19 @@ let mainTimer = 0;
   TStarDraw(200, "purple");
   TStarHitFX;
   
-  TJunkoSpellStartFX("Lunatic Star \"Dissolution\"", NEUTRAL, 255, 50, 255);
-
   MainTask;
 
   TJunkoFinalize;
   TStarFinalize;
+}
+
+task TSpellCardWait() {
+  wait(200);
+  ObjEnemyBossScene_Regist(objBoss);
+  ObjEnemyBossScene_StartSpell(objScene);
+  ObjEnemy_Regist(objBoss);
+  TJunkoSpellStartFX("Lunatic Star -Dissolution-", NEUTRAL, 255, 50, 255);
+
 }
 
 let new_x = GetCenterX();
@@ -64,12 +67,18 @@ let new_y = GetCenterY();
 
 @MainLoop 
 { 
+  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+  ObjEnemy_SetDamageRate(objBoss, 0, 0);
+
   let bossX = ObjMove_GetX(objBoss);
   let bossY = ObjMove_GetY(objBoss);
 
   // movement constants
   let move_interval = 120;
   let move_time = 150;
+
+  ObjRender_SetAlpha(objBoss, 150);
+  ObjRender_SetBlendType(objBoss, BLEND_ALPHA);
 
   if (mainTimer < 16) {
     ObjEnemy_SetDamageRate(objBoss, 25, 25);
@@ -79,7 +88,7 @@ let new_y = GetCenterY();
   } else if (mainTimer < 60) {
     MDrawJunkoMotionEnd(mainTimer);
   } else if (mainTimer < 200) {
-    MDrawJunkoLaughContinue(mainTimer);
+    MDrawJunkoBlink(mainTimer);
     MJunkoBreathe(mainTimer);
   } else {
     if (mainTimer == 205) {
@@ -87,15 +96,14 @@ let new_y = GetCenterY();
       new_y = GetCenterY()*-1.7;
       ObjMove_SetDestAtWeight(objBoss, new_x, new_y, 0.1, 2);
     } else {
-      ObjRender_SetAlpha(objBoss, 200);
-      ObjRender_SetBlendType(objBoss, BLEND_ADD_ARGB);
       MDrawJunkoLaughContinue(mainTimer);
     }
   }
      
 
   if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 255])};
-  UpdateStarHitbox;
+  
+  if (mainTimer > 200) {UpdateStarHitbox}
 
   mainTimer++;
   yield;
@@ -154,11 +162,11 @@ task MainTask {
   let angleL = 0;
 
   // blender variables
+  let blender_count = 7;
+  let blender_wave = 3;
   let blender_offset = GetAngleToPlayer(objBoss);
   let blender_speed = 0.5 * (-1)^rand_int(0,9);
   let blender_target_speed = blender_speed;
-  let blender_count = 7;
-  let blender_wave = 3;
   let star_spin = blender_speed;
 
   // timer phase breakpoints - in seconds
@@ -215,12 +223,15 @@ task MainTask {
     
 
     // basic blender pattern
-    ang_circle(starX, starY, blender_offset, 360/blender_count, 272, 0.1, blender_wave, 0);
-    blender_offset+=blender_speed;
+    if (loop_iters > 30) {
+      ang_circle(starX, starY, blender_offset, 360/blender_count, 272, 0.1, blender_wave, 0);
+      blender_offset+=blender_speed;
+    }
+
 
     // escalations
 
-    if (blender_index > 0 && blender_index < length(blender_changes) && loop_iters % 75 == 0) {
+    if (blender_index > 1 && blender_index < length(blender_changes) && loop_iters % 60 == 0) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
         let shot = shots[i];
@@ -231,7 +242,7 @@ task MainTask {
       aux_blender_angle+=15;
     }
 
-    if (blender_index > 1 && blender_index < length(blender_changes) && loop_iters % 75 == 60) {
+    if (blender_index > 2 && blender_index < length(blender_changes) && loop_iters % 60 == 30) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
         let shot = shots[i];
@@ -242,7 +253,7 @@ task MainTask {
       aux_blender_angle+=15;
     }
 
-    if (blender_index > 2 && blender_index < length(blender_changes) && loop_iters % 75 == 15) {
+    if (blender_index > 3 && blender_index < length(blender_changes) && loop_iters % 60 == 15) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
         let shot = shots[i];
@@ -253,18 +264,7 @@ task MainTask {
       aux_blender_angle+=15;
     }
 
-    if (blender_index > 3 && blender_index < length(blender_changes) && loop_iters % 75 == 45) {
-      let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
-      ascent(i in 0..length(shots)) {
-        let shot = shots[i];
-        ObjShot_SetDeleteFrame(shot, 185);
-      }
-      shotsToDelete = shotsToDelete ~ shots;
-      PlaySFX(shoot_sfx);
-      aux_blender_angle+=15;
-    }
-
-    if (blender_index > 4 && blender_index < length(blender_changes) && loop_iters % 75 == 30) {
+    if (blender_index > 4 && blender_index < length(blender_changes) && loop_iters % 60 == 45) {
       let shots = circle_in(starX, starY, 260, aux_blender_angle, 72, 204, 0, 0.05, 1.5, 30);
       ascent(i in 0..length(shots)) {
         let shot = shots[i];
