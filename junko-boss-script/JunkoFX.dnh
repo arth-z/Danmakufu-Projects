@@ -183,7 +183,7 @@ let release = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
 task TJunkoShockwave(radius, duration, color) {
   //BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
-  loop(32){PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 3, 10, duration*10, [255, 200, 255])}
+  PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 2, 10, duration*10, [255, 200, 255], 32);
   ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/25, color);
   ObjSound_SetVolumeRate(release, 65);
   PlaySFX(release);

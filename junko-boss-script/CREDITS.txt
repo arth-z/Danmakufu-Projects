@@ -8,6 +8,9 @@ https://www.pixiv.net/en/users/4920496
 BFX.dnh and BFX_tasks.dnh by darkwalker247:
 https://www.bulletforge.org/u/darkwalker247/p/bloom-effects-library-now-events-based
 
+Cherry petal explosion effect derived from an original method called "MapleLeaf" in Gtbot's TD Youmu:
+https://www.bulletforge.org/u/gtbot/p/td-youmu-player 
+
 All font data from https://www.dafontfree.io/
 
 Original 'ZUNShot' shotdata and constants by Ozzy and ExPorygon - graphics also by ZUN:
@@ -15,11 +18,12 @@ https://www.bulletforge.org/u/ozzy/p/zun-expanded-shotsheet-for-ph3
 
 Massive credits to Sparen for their Danmakufu PH3 tutorials, as well as for extensive documentation:
 https://sparen.github.io/ph3tutorials/ph3tutorials.html, https://sparen.github.io/ph3tutorials/docs_event.html
-Notable thanks to Sparen's existing tutorial code for delay lasers and screen shake, which I used as a base.
+Notable thanks to Sparen's existing code for delay lasers, screen shake, and a dialogue library which I used as a base.
 FxnSFX.dnh by Sparen:
 https://github.com/TheLandOfCodesAndApertures/Sparen_Sound_Library/blob/master/FxnSFX.dnh
 
 Thanks to Michael Serajnik (mserajnik) for their Visual Studio Code extension for Danmakufu and .dnh files.
+Without it, this would be much more difficult.
 Find the GitHub here: https://github.com/imtbl/dnh
 Find the direct download link here: https://www.vsixhub.com/vsix/5270/
 
@@ -33,14 +37,17 @@ Crown and flame aura sprites by ZUN/Team Shanghai Alice, also from Touhou Kanjud
 Floral-lunar magic circle aura (apparently, a recreation of a design from Sailor Moon) from:
 https://www.pngwing.com/en/free-png-sfwka
 
-Background graphics for spellcards, ocean surface, ocean waves, and night sky originally from Touhou Kanjuden ~ Legacy of Lunatic Kingdom. Most have been edited by me with online image editing software.
+Background graphics for spellcards, ocean surface, ocean waves, and night sky originally from Touhou Kanjuden ~ Legacy of Lunatic Kingdom. 
+Most have been edited by me with online image editing software.
 
 Moon surface (moon.png) from https://www.pinterest.ca/pin/240801911301160888/
 
-Thanks to MoTK user "Drake" at https://www.shrinemaiden.org/forum/index.php?topic=19249.180 for providing the code for Junko's scrolling spell background (code at https://gist.github.com/drakeirving/8283a5ed47061c19bc4cc4d26e849226)
+Thanks to MoTK user "Drake" at https://www.shrinemaiden.org/forum/index.php?topic=19249.180 for providing the code for Junko's scrolling spell background.
+Drake's code can also be found at https://gist.github.com/drakeirving/8283a5ed47061c19bc4cc4d26e849226
 
 Image for the skyglow effect from darkwalker's provided "beams.png" as part of their Bloom Effects Library
-Original "Hateful Star" sprite by Vecteezy, from https://www.vecteezy.com/free-png/lens-flare. The variants appearing in-game are literally just recoloured.
+Original "Hateful Star" sprite by Vecteezy, from https://www.vecteezy.com/free-png/lens-flare. 
+The variants appearing in-game are literally just recoloured.
 
 STG frame abstract background from "https://www.freepik.com/free-vector/abstract-asthetic-hd-wallpaper-background-banner-design-multipurpose_23258842.htm#page=14&query=abstract%20background&position=4&from_view=search&track=ais", image by Sketchepedia on Freepik
 

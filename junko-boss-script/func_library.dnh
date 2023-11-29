@@ -107,7 +107,7 @@ task ShockwaveCharge(posX, posY, duration, maxScale, colour) {
   Obj_Delete(wave);
 }
 
-task PetalRelease(deX, deY, angX, deAlpha, deScale, radius, duration, colour){
+task SinglePetalRelease(deX, deY, angX, deAlpha, deScale, radius, duration, colour){
 	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D); 
 	ObjRender_SetBlendType(obj, BLEND_ADD_ARGB);
 	Obj_SetRenderPriority(obj, 0.49);
@@ -139,11 +139,19 @@ task PetalRelease(deX, deY, angX, deAlpha, deScale, radius, duration, colour){
 		ObjRender_SetPosition(obj, deX, deY, 0);
 		ObjRender_SetAngleXYZ(obj, ang2, angX, (ang2+angX)/2);
 		ObjRender_SetScaleXYZ(obj, scale, scale, scale);
-		ObjRender_SetAlpha(obj, deAlpha-scale*20);
+		ObjRender_SetAlpha(obj, deAlpha*(duration-loop_iters)/duration);
     loop_iters++;
 		yield;
 	}
 	Obj_Delete(obj);
+}
+
+task PetalRelease(deX, deY, angX, deAlpha, deScale, radius, duration, colour, intensity){
+  let angle = angX;
+  loop(intensity) {
+    SinglePetalRelease(deX, deY, angle, deAlpha, deScale, radius, duration, colour);
+    angle+=(360/angX)
+  }
 }
 
 let shader;

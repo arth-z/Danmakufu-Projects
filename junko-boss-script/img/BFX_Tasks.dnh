@@ -161,7 +161,7 @@ task _BFX_ParticleA1(x,y,spritepath,speed,direction,angle,alpha,scale,fadespeed,
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);
 		ObjRender_SetScaleXYZ(sprite, scl, scl, 1);
-		ObjRender_SetAngleZ(sprite,ang);
+		ObjRender_SetAngleXYZ(sprite, -ang, ang, -ang);
 		px += cos(dir) * spd;
 		py += sin(dir) * spd;
 		alp -= fspd;
@@ -195,7 +195,7 @@ task _BFX_ParticleA2(x,y,spritepath,speed,direction,angle,alpha,scale,fadespeed,
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);
 		ObjRender_SetScaleXYZ(sprite, scl, scl, 1);
-		ObjRender_SetAngleZ(sprite,ang);
+		ObjRender_SetAngleXYZ(sprite, -ang, ang, -ang);
 		px += cos(dir) * spd;
 		py += sin(dir) * spd;
 		alp -= fspd;
@@ -228,7 +228,7 @@ task _BFX_FocusPart(x,y,spritepath,tox,toy,speed,angle,scale,angvel,radius) {
 		ObjRender_SetY(sprite,py);
 		ObjRender_SetAlpha(sprite,alp);
 		ObjRender_SetScaleXYZ(sprite, scl, scl, 1);
-		ObjRender_SetAngleZ(sprite,ang);
+		ObjRender_SetAngleXYZ(sprite, -ang, ang, -ang);
 		dir = atan2(toy - py,tox - px);
 		dist = ((px - tox) ^ 2 + (py - toy) ^ 2) ^ 0.5;
 		px += cos(dir) * min(speed,dist);
