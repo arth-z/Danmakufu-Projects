@@ -16,7 +16,7 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(5750);
+        SetScriptResult(6000);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
         SetScriptResult(70);

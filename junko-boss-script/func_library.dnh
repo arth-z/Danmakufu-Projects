@@ -107,6 +107,45 @@ task ShockwaveCharge(posX, posY, duration, maxScale, colour) {
   Obj_Delete(wave);
 }
 
+task PetalRelease(deX, deY, angX, deAlpha, deScale, radius, duration, colour){
+	let obj = ObjPrim_Create(OBJ_SPRITE_LIST_2D); 
+	ObjRender_SetBlendType(obj, BLEND_ADD_ARGB);
+	Obj_SetRenderPriority(obj, 0.49);
+	ObjPrim_SetTexture(obj, GetCurrentScriptDirectory()~"./img/cherry_small.png");
+	ObjSpriteList2D_SetSourceRect(obj, 0, 0, 64, 64);
+	ObjSpriteList2D_SetDestCenter(obj);
+  ObjRender_SetColor(obj, colour[0], colour[1], colour[2]);
+	ObjRender_SetAngleXYZ(obj, 0, 0, angX);
+	ObjRender_SetPosition(obj, deX, deY, 0);
+	ObjRender_SetAlpha(obj, deAlpha);
+
+	let scale = deScale;
+	let randX = rand(-105, 105);
+	let randY = rand(-105, 105);
+	let	ang2 = rand(0, 360);
+  let loop_iters = 0;
+	
+	while(loop_iters < duration){
+		scale *= (duration - loop_iters)/duration;
+		deX += (randX/radius);
+		deY += (randY/radius);
+		angX += (randX/radius);
+		ang2 += (randX/radius);
+		ObjSpriteList2D_ClearVertexCount(obj);
+		ObjSpriteList2D_SetSourceRect(obj, 0, 0, 64, 64);
+		ObjSpriteList2D_SetDestCenter(obj);
+		ObjSpriteList2D_AddVertex(obj);
+		
+		ObjRender_SetPosition(obj, deX, deY, 0);
+		ObjRender_SetAngleXYZ(obj, ang2, angX, (ang2+angX)/2);
+		ObjRender_SetScaleXYZ(obj, scale, scale, scale);
+		ObjRender_SetAlpha(obj, deAlpha-scale*20);
+    loop_iters++;
+		yield;
+	}
+	Obj_Delete(obj);
+}
+
 let shader;
 
 task TLoadColourShader(colour) {

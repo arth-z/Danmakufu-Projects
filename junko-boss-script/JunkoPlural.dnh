@@ -25,7 +25,6 @@ let bgm;
 
 @Initialize 
 {
-  SetPlayerLife(8);
   bgm = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/pf-drL.ogg");
   ObjSound_SetSoundDivision(bgm, SOUND_BGM);
   ObjSound_SetRestartEnable(bgm, true);

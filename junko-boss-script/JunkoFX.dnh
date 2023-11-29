@@ -32,7 +32,7 @@ task TLoadJunkoFX {
 
   BFX_Init();
   
-  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small_red.png"; 
+  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small.png"; 
   let ring = GetCurrentScriptDirectory() ~ "./img/shockwave.png"; 
   let beams = GetCurrentScriptDirectory() ~ "./img/Beams.png"; 
   BFX_SetGraphics(particle, ring, beams);
@@ -146,6 +146,7 @@ task TJunkoHitFX {
       
       ObjRender_SetBlendType(objBoss, BLEND_ADD_ARGB);
       ObjRender_SetAlpha(objBoss, 150);
+      AddScore(1);
       if (currLife > critLife) {
           PlaySFX(normalImpact);
         } else {
@@ -182,6 +183,7 @@ let release = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
 
 task TJunkoShockwave(radius, duration, color) {
   //BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
+  loop(32){PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 3, 10, duration*10, [255, 200, 255])}
   ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/25, color);
   ObjSound_SetVolumeRate(release, 65);
   PlaySFX(release);
@@ -455,12 +457,12 @@ task TJunkoCrownAura {
     ObjSprite2D_SetDestCenter(crownpoints[3]);
     ObjRender_SetAngleZ(crownpoints[3], 45);
 
-    let alpha = 185 + 55*cos(2*loop_iters);
+    let alpha = 140 + 55*cos(2*loop_iters);
 
     ascent(i in 0..5) {
       let crownpoint = crownpoints[i];
       
-      let color = [120 + i*40, 110, 155 + (4-i)*40];
+      let color = [90 + i*40, 90, 150 + (4-i)*40];
 
       ObjRender_SetBlendType(crownpoint, BLEND_ADD_ARGB);
       ObjRender_SetAlpha(crownpoint, alpha);

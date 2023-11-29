@@ -21,7 +21,7 @@ let mainTimer = 0;
       SetScriptResult(60);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-      SetScriptResult(1000000);
+      SetScriptResult(2000000);
     }
 }
 

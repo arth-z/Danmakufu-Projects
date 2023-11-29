@@ -21,7 +21,7 @@ let mainTimer = 0;
       SetScriptResult(60);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-      SetScriptResult(1000000);
+      SetScriptResult(2000000);
     }
 }
 
@@ -133,7 +133,7 @@ task MainTask {
   let floral_density = 20;
   let angle = 0;
   let angleOrb = 0;
-  let orbCount = 2
+  let orbCount = 2;
 
   // attack design - difficult tri-direction "floral" curved laser reading (plus some balls to look nice)
   // the "orb" throw mechanism into flower bloom is a callback to Lilies of Murderous Intent

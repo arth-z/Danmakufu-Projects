@@ -16,13 +16,13 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-        SetScriptResult(50);
+        SetScriptResult(100000);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
         SetScriptResult(40);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-        SetScriptResult(2000000);
+        SetScriptResult(3000000);
     }
     case(EV_REQUEST_IS_DURABLE_SPELL) {
         SetScriptResult(true);
@@ -42,6 +42,7 @@ let mainTimer = 0;
   TJunkoCircleAura;
   TJunkoShadowAura;
   TJunkoCrownAura;
+  TJunkoHitFX;
   
   TStarInitialise(GetCenterX(), GetCenterY(), 0, 0);
   TStarDraw(200, "purple");
@@ -67,8 +68,8 @@ let new_y = GetCenterY();
 
 @MainLoop 
 { 
-  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
   ObjEnemy_SetDamageRate(objBoss, 0, 0);
+  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
 
   let bossX = ObjMove_GetX(objBoss);
   let bossY = ObjMove_GetY(objBoss);
@@ -76,9 +77,6 @@ let new_y = GetCenterY();
   // movement constants
   let move_interval = 120;
   let move_time = 150;
-
-  ObjRender_SetAlpha(objBoss, 150);
-  ObjRender_SetBlendType(objBoss, BLEND_ALPHA);
 
   if (mainTimer < 16) {
     ObjEnemy_SetDamageRate(objBoss, 25, 25);
