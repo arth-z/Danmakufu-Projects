@@ -192,7 +192,7 @@ task TEvent {
   EventWaitA3(10);
 
   JunkoText;
-  ObjText_SetText(textobj, "But you accepted my invitation. I'm glad.");
+  ObjText_SetText(textobj, "But you accepted my invitation. I thank you.");
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
   ObjPrim_SetTexture(rightportrait, junko_neutral);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
@@ -269,17 +269,17 @@ task TEvent {
   ObjPrim_SetTexture(leftportrait, reimu_bruh);
   EventWaitA3(10);
 
-  ObjText_SetText(textobj, "And you know what?[r] Getting myself here wasn't fun.");
+  ObjText_SetText(textobj, "And you know what? [r] Getting myself here wasn't fun.");
   ObjPrim_SetTexture(leftportrait, reimu_serious);
   EventWaitA3(10);
 
-  ObjText_SetText(textobj, "So, if you want a duel...");
+  ObjText_SetText(textobj, "So, if you want a duel with me...");
   ObjPrim_SetTexture(leftportrait, reimu_bruh);
   EventWaitA3(10);
 
   PlaySFX(boom_spawn);
   ScreenShakeA1(45, 3);
-  ObjText_SetText(textobj, "...you'll get one, alright!");
+  ObjText_SetText(textobj, "...then you're getting one, alright!");
   ObjText_SetFontBold(textobj, true);
   ObjPrim_SetTexture(leftportrait, reimu_angery);
   ObjPrim_SetTexture(rightportrait, junko_smug2);
@@ -289,12 +289,12 @@ task TEvent {
   JunkoText;
   ObjText_SetFontBold(textobj, false);
   ObjText_SetText(textobj, "Splendid.");
-  ObjPrim_SetTexture(leftportrait, reimu_neutral);
   ObjPrim_SetTexture(rightportrait, junko_smile);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
   EventWaitA3(10);
 
-  ObjText_SetText(textobj, "Come then, Miko of Hakurei.");
+  ObjText_SetText(textobj, "Then come, Miko of Hakurei.");
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
   ObjPrim_SetTexture(rightportrait, junko_smug1);
 
   EventWaitA3(10);
@@ -305,8 +305,8 @@ task TEvent {
   EventWaitA3(10);
 
   ObjText_SetFontBold(textobj, true);
-  ObjText_SetText(textobj, "...and fall!");
-  ObjPrim_SetTexture(rightportrait, junko_creepy);
+  ObjText_SetText(textobj, "...and face me in battle!");
+  ObjPrim_SetTexture(rightportrait, junko_smug1);
 
   EventWaitA3(10);
 
