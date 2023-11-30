@@ -1,0 +1,98 @@
+/*
+Credits to Sparen's tutorials for the original version of the code, found here:
+https://sparen.github.io/ph3tutorials/ph3u3l32a.html
+*/
+
+// Returns an array containing the text box 2D Sprite Object, the dialogue text Text Object, the left portrait, and the right portrait
+function CreateDialogueEvent(imgpathL, imgpathR, initialText) {
+    // We will want the portraits to render first, as the text will render above the portraits.
+    let objImgLeft = ObjPrim_Create(OBJ_SPRITE_2D);
+    Obj_SetRenderPriorityI(objImgLeft, 81);
+    ObjPrim_SetTexture(objImgLeft, imgpathL);
+    ObjSprite2D_SetSourceRect(objImgLeft, 0, 0, 430, 555);
+    ObjSprite2D_SetDestCenter(objImgLeft);
+    ObjRender_SetX(objImgLeft, GetStgFrameLeft() + GetStgFrameWidth()/2 - 100);
+    ObjRender_SetY(objImgLeft, 320);
+    let objImgRight = ObjPrim_Create(OBJ_SPRITE_2D);
+    Obj_SetRenderPriorityI(objImgRight, 81);
+    ObjPrim_SetTexture(objImgRight, imgpathR);
+    ObjSprite2D_SetSourceRect(objImgRight, 0, 0, 531, 561);
+    ObjSprite2D_SetDestCenter(objImgRight);
+    ObjRender_SetX(objImgRight, GetStgFrameLeft() + GetStgFrameWidth()/2 + 100);
+    ObjRender_SetY(objImgRight, 288);
+
+    // Prepare text background. We will use render priority 83.
+    let TEXTBOX_BUFFER = 16; // Buffers on edges
+    let TEXTBOX_WIDTH = GetStgFrameWidth - TEXTBOX_BUFFER*2;
+    let TEXTBOX_HEIGHT = 48;
+    let objTextBack = ObjPrim_Create(OBJ_SPRITE_2D);
+    Obj_SetRenderPriorityI(objTextBack, 83);
+    ObjSprite2D_SetSourceRect(objTextBack, 0, 0, 1, 1); // Use default white texture
+    ObjSprite2D_SetDestRect(objTextBack, 0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT);
+    ObjRender_SetX(objTextBack, GetStgFrameLeft() + TEXTBOX_BUFFER);
+    ObjRender_SetY(objTextBack, GetStgFrameTop() + GetStgFrameHeight() - TEXTBOX_HEIGHT - TEXTBOX_BUFFER);
+    ObjRender_SetColor(objTextBack, 0, 0, 0);
+
+    // Prepare text object. We will use render priority 83.
+    let TEXT_MARGIN_LR = 8; // Left and Right Margins.
+    let TEXT_MARGIN_TOP = 6; // Top Margin
+    let TEXT_MAXWIDTH = TEXTBOX_WIDTH - TEXT_MARGIN_LR*2;
+    let objText = ObjText_Create();
+    ObjText_SetText(objText, initialText);
+    ObjText_SetFontSize(objText, 15);
+    ObjText_SetFontBold(objText, false);
+    ObjText_SetFontType(objText, "Constantia");
+    Obj_SetRenderPriorityI(objText, 83);
+    ObjText_SetFontColorTop(objText, 255, 255, 255);
+    ObjText_SetFontColorBottom(objText, 255, 255, 255);
+    ObjText_SetFontBorderType(objText, BORDER_FULL);
+    ObjText_SetFontBorderColor(objText, 0, 0, 0);
+    ObjText_SetFontBorderWidth(objText, 2);
+    //ObjText_SetMaxWidth(objText, TEXT_MAXWIDTH);
+    ObjRender_SetX(objText, GetStgFrameLeft() + TEXTBOX_BUFFER + TEXT_MARGIN_LR);
+    ObjRender_SetY(objText, GetStgFrameTop() + GetStgFrameHeight() - TEXTBOX_HEIGHT - TEXTBOX_BUFFER + TEXT_MARGIN_TOP);
+    return [objTextBack, objText, objImgLeft, objImgRight];
+}
+// Given an array of object IDs, destroys all of them
+function DestroyDialogueEvent(objects) {
+    ascent(i in 0..length(objects)) {
+        Obj_Delete(objects[i]);
+    }
+}
+// On player key press, wait specified number of frames
+function EventWaitA1(frames) {
+    while(GetVirtualKeyState(VK_OK) == KEY_FREE || GetVirtualKeyState(VK_OK) == KEY_HOLD){yield;}
+    loop(frames){yield;}
+}
+// Timed wait for specified number of frames
+function EventWaitA2(frames) {
+    loop(frames){yield;}
+}
+// At start of event, wait for key to be released, wait for key to be pressed, and then wait specified number of frames
+function EventWaitA3(frames) {
+    while(GetVirtualKeyState(VK_OK) == KEY_HOLD){yield;}
+    while(GetVirtualKeyState(VK_OK) != KEY_PUSH){yield;}
+    loop(frames){yield;} 
+}
+// Sets portrait to background
+function SetPortraitToBackground(portrait, time) {
+    let alpha = 255;
+
+    while (alpha > 192) {  
+      ObjRender_SetAlpha(portrait, alpha);
+      ObjRender_SetColor(portrait, alpha, alpha, alpha);
+      alpha-=(255-192)/time;
+      yield;
+    }
+}
+// Sets portrait to foreground
+function SetPortraitToForeground(portrait, time) {
+    let alpha = 192;
+
+    while (alpha < 255) {  
+      ObjRender_SetAlpha(portrait, alpha);
+      ObjRender_SetColor(portrait, alpha, alpha, alpha);
+      alpha+=(255-192)/time;
+      yield;
+    }
+}

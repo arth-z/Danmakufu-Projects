@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spellcard \"Blue Star\""]
+#Title["Spellcard \"Blue Star\""]
 #Text["Trying for a strong first impression, so enjoy the lightshow."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
@@ -30,7 +30,7 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-  TJunkoSpellStartFX("Frigid Star -Overwhelm-", NEUTRAL, 150, 150, 255);
+  TJunkoSpellStartFX("Frigid Star -Irradiate-", NEUTRAL, 150, 150, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);

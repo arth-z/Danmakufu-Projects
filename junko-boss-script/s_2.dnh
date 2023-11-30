@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spellcard \"Red Star\""]
+#Title["Spellcard \"Red Star\""]
 #Text["Still messing around with the stars. Misdirection is hard."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Hateful Star -Scorch-", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("Hateful Star -Incinerate-", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;

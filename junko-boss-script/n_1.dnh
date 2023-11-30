@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Nonspell 1"]
+#Title["Nonspell 1"]
 #Text["Everybody knows these blue circles. At least you can dodge them 1-by-1 here."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
@@ -35,8 +35,7 @@ let mainTimer = 0;
 
   ObjEnemy_Regist(objBoss);
 
-  ObjMove_SetPosition(objBoss, GetCenterX()-200, 0 + 50);
-  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.5, 60);
+  ObjMove_SetPosition(objBoss, GetCenterX(), GetCenterY()*0.5);
 
   TJunkoHitFX;
   TJunkoBurnAura;

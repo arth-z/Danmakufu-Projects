@@ -39,6 +39,15 @@ task TLoadJunkoFX {
 
 }
 
+task TLoadBFX {
+  BFX_Init();
+  
+  let particle = GetCurrentScriptDirectory() ~ "./img/cherry_small.png"; 
+  let ring = GetCurrentScriptDirectory() ~ "./img/shockwave.png"; 
+  let beams = GetCurrentScriptDirectory() ~ "./img/Beams.png"; 
+  BFX_SetGraphics(particle, ring, beams);
+}
+
 // a periodic oscillation of Junko's y coordinates to help make her feel alive
 // called in @Initialise
 task TJunkoBreathe {
@@ -146,7 +155,6 @@ task TJunkoHitFX {
       
       ObjRender_SetBlendType(objBoss, BLEND_ADD_ARGB);
       ObjRender_SetAlpha(objBoss, 150);
-      AddScore(1);
       if (currLife > critLife) {
           PlaySFX(normalImpact);
         } else {

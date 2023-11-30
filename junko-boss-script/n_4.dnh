@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Nonspell 4"]
+#Title["Nonspell 4"]
 #Text["Surprisingly hard, but I think it's okay."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]

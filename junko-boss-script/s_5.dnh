@@ -1,6 +1,6 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Squirrel's Junko - Spellcard \"Purple Star\""]
+#Title["Spellcard \"Purple Star\""]
 #Text["It's not BoWaP, I swear!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
@@ -59,7 +59,7 @@ task TSpellCardWait() { // you thought this would be a nonspell? get survivaled,
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("Lunatic Star -Disintegrate-", NEUTRAL, 255, 50, 255);
+  TJunkoSpellStartFX("Lunatic Star -Annihilate-", NEUTRAL, 255, 50, 255);
 
 }
 

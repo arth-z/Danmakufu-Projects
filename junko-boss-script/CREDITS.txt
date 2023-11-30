@@ -2,8 +2,11 @@
 
 Spellcard Cutin system by Gtbot:
 https://www.bulletforge.org/u/gtbot/p/cutin-function-ph3
-Junko spellcard portraits/cutin art by dairi:
+
+All dialogue art, and spellcard cutin art by Dairi:
 https://www.pixiv.net/en/users/4920496
+Reimu: https://www.pixiv.net/en/artworks/39843825
+Junko: https://www.pixiv.net/en/artworks/52473979 
 
 BFX.dnh and BFX_tasks.dnh by darkwalker247:
 https://www.bulletforge.org/u/darkwalker247/p/bloom-effects-library-now-events-based
@@ -56,6 +59,7 @@ STG frame original logo from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by ZUN/
 -----------------------
 
 All SFX by ZUN (specifically, from Touhou Chireiden ~ Subterranean Animism)
-BGM (Pure Furies ~ Whereabouts of the Heart) from album 'Dr. Latency's Freak Report' by ZUN
+Boss BGM: Pure Furies ~ Whereabouts of the Heart from album 'Dr. Latency's Freak Report' by ZUN
+Initial BGM: The Sea that Reflects One's Home Planet ~ Whereabouts of the Heart from album 'Dr. Latency's Freak Report' by ZUN
 
 -----------------------
