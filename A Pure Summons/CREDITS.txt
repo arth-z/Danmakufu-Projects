@@ -30,7 +30,7 @@ Without it, this would be much more difficult.
 Find the GitHub here: https://github.com/imtbl/dnh
 Find the direct download link here: https://www.vsixhub.com/vsix/5270/
 
-Shoutout to the base Danmakufu ph3 sample scripts too!
+Shoutout to the base Danmakufu ph3 sample scripts too! Those shader ones were immensely helpful.
 
 -----------------------
 
