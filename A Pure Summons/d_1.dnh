@@ -120,7 +120,7 @@ task TEvent {
 
   SetPortraitToBackground(leftportrait, 5);
   ObjText_SetText(textobj, "Hm?");
-  ObjPrim_SetTexture(leftportrait, reimu_serious);
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
   TJunkoChargeUpAtPos(starX, starY, 200, 80, [100, 100, 255]);
   TStarInitialise(starX, starY, 0, 0);
   TStarDraw(150, "blue");
@@ -180,7 +180,7 @@ task TEvent {
 
   JunkoText;
   ObjText_SetText(textobj, "I apologise for my poor hospitality. [r] I should've been the first to greet you.");
-  ObjPrim_SetTexture(rightportrait, junko_smug1);
+  ObjPrim_SetTexture(rightportrait, junko_hmph);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
 
