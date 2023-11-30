@@ -32,9 +32,6 @@ let starY = GetCenterY()*0.8;
     case(EV_REQUEST_LIFE) {
         SetScriptResult(1500);
     }
-    case(EV_REQUEST_TIMER) {
-        SetScriptResult(99);
-    }
 }
 
 task TShowEnemy {
@@ -68,6 +65,7 @@ task TEvent {
   let junko_creepy = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_creepy.png";
 
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
+  let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
 
   let dialogueobjects = CreateDialogueEvent(reimu_neutral, junko_neutral, "Ugh, it's so cold, and too quiet...");
   
@@ -118,9 +116,9 @@ task TEvent {
 
   EventWaitA3(10);
 
-  SetPortraitToBackground(leftportrait, 5);
   ObjText_SetText(textobj, "Hm?");
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
+  SetPortraitToBackground(leftportrait, 5);
   TJunkoChargeUpAtPos(starX, starY, 200, 80, [100, 100, 255]);
   TStarInitialise(starX, starY, 0, 0);
   TStarDraw(150, "blue");
@@ -135,9 +133,9 @@ task TEvent {
 
   EventWaitA3(1);
 
-  SetPortraitToForeground(leftportrait, 5);
   ObjText_SetText(textobj, "Is that...a star? But it's not like Mari's stars, [r] or even those from that lunatic hell fairy's...");
   ObjPrim_SetTexture(leftportrait, reimu_exclaim);
+  SetPortraitToForeground(leftportrait, 5);
 
   EventWaitA3(10);
 
@@ -195,9 +193,10 @@ task TEvent {
 
   JunkoText;
   ObjText_SetText(textobj, "But you accepted my invitation. I'm glad.");
-  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
   ObjPrim_SetTexture(rightportrait, junko_neutral);
+  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
+
 
   EventWaitA3(10);
 
@@ -219,11 +218,14 @@ task TEvent {
 
   JunkoText;
   
-  ObjText_SetText(textobj, "Please, Miko of Hakurei. [r] That is not my intent now.");
+  ObjText_SetText(textobj, "Please, Miko of Hakurei. [r] That was not my intent then...");
   ObjPrim_SetTexture(rightportrait, junko_hmph);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
+  EventWaitA3(10);
 
+  ObjText_SetText(textobj, "And it is not my intent now.");
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
   EventWaitA3(10);
 
   ObjText_SetText(textobj, "You are not my enemy. [r] Instead, at a friend's behest, I am...");
@@ -311,6 +313,7 @@ task TEvent {
   ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 80, 8, [255, 80, 255]);
 	PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 3, 18, 1000, [255, 200, 255], 64);
   PlaySFX(boom_spawn);
+  PlaySFX(warning);
   ScreenShakeA1(45, 3);
 
   DestroyDialogueEvent(dialogueobjects);
