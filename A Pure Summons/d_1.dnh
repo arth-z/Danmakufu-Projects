@@ -231,17 +231,23 @@ task TEvent {
   
   ObjText_SetText(textobj, "Oh, is that how you see it? Forgive me.");
   ObjPrim_SetTexture(rightportrait, junko_hmph);
-  ObjPrim_SetTexture(leftportrait, reimu_neutral);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
   ObjText_SetText(textobj, "Our fight over the Sea of Tranquility...[r] I thought you'd enjoy recollecting it.");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "Especially now, when we are not enemies. [r] Indeed, all that I intend today...");
+  ObjText_SetText(textobj, "Especially now that we are not enemies. ");
+  ObjPrim_SetTexture(rightportrait, junko_smug1);
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "Indeed, all that I intend today...");
+  ObjPrim_SetTexture(rightportrait, junko_hmph);
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
@@ -287,7 +293,7 @@ task TEvent {
   PlaySFX(diag_beat);
 
   ReimuText;
-  ObjText_SetText(textobj, "One of your spellcards is literally [r] \"Pristine Danmaku to Kill a Person\"...");
+  ObjText_SetText(textobj, "One of your spellcards is literally named [r] \"Pristine Danmaku to Kill a Person\"...");
   ObjPrim_SetTexture(leftportrait, reimu_bruh);
   ObjPrim_SetTexture(rightportrait, junko_smile);
   SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
@@ -300,21 +306,32 @@ task TEvent {
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "Ugh, you know what? You're weird. [r]And I've been having a bad day.");
+  ObjText_SetText(textobj, "Ugh, you're giving me the creeps...");
   ObjPrim_SetTexture(leftportrait, reimu_serious);
   ObjPrim_SetTexture(rightportrait, junko_neutral);
-
 
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "So, if you really want a fight that badly...");
+  ObjText_SetText(textobj, "And it wasn't easy getting myself here either.");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "So, let's not waste time.");
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "If you want a fight...");
   ObjPrim_SetTexture(leftportrait, reimu_exclaim);
   EventWaitA3(10);
 
   PlaySFX(boom_spawn);
   ScreenShakeA1(45, 3);
-  ObjText_SetText(textobj, "...then you're sure as hell gonna get one!");
+  ObjText_SetText(textobj, "...then you're sure as hell getting one!");
   ObjText_SetFontBold(textobj, true);
   ObjPrim_SetTexture(leftportrait, reimu_angery);
   ObjPrim_SetTexture(rightportrait, junko_smug2);
@@ -352,6 +369,7 @@ task TEvent {
   SetForbidPlayerSpell(false);
   SetForbidPlayerShot(false);
   ObjEnemy_SetLife(objBoss, -1);
+  wait(5);
   Obj_Delete(objBoss);
   NotifyEventAll(EV_USER_STAGE+222, 0);
   SetAutoDeleteObject(true);

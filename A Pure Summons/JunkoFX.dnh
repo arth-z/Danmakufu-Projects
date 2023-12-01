@@ -197,6 +197,14 @@ task TJunkoShockwave(radius, duration, color) {
   PlaySFX(release);
 }
 
+task TJunkoShockwaveAtPos(posX, posY, radius, duration, color) {
+  //BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
+  PetalRelease(posX, posY, rand(0, 360), rand(100, 255), 2, 10, duration*10, [255, 200, 255], 32);
+  ShockwaveExpand(posX, posY, duration, radius/25, color);
+  ObjSound_SetVolumeRate(release, 65);
+  PlaySFX(release);
+}
+
 task TJunkoShockwaveSilent(radius, duration, color) {
   //BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration/4);
   ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/25, color);
@@ -224,6 +232,13 @@ task TJunkoChargeUpAtPos(posX, posY, radius, duration, color) {
 task TJunkoChargeUpSmall(radius, duration, color) {
   //BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
+  ObjSound_SetVolumeRate(charge, 100);
+  PlaySFX(smallCharge);
+}
+
+task TJunkoChargeUpSmallAtPos(posX, posY, radius, duration, color) {
+  //BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
+  ShockwaveCharge(posX, posY, duration, radius/50, color);
   ObjSound_SetVolumeRate(charge, 100);
   PlaySFX(smallCharge);
 }

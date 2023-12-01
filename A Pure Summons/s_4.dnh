@@ -85,9 +85,6 @@ let new_y = GetCenterY()*0.5;
 
   if (mainTimer < 200) {ObjEnemy_SetDamageRate(objBoss, 25, 25)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
   if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 255])}
-  if (mainTimer == 200) {
-    TJunkoShockwave(200, 80, [255, 80, 255]);
-  }
 
   mainTimer++;
   yield;
@@ -204,13 +201,13 @@ task MainTask {
     
     // just so you dont get jumpscared by PLP-mini
     if (loop_iters % 180 == 70) {
-      TJunkoChargeUpSmall(200, 80, [255, 80, 255]);
+      TJunkoChargeUpSmallAtPos(bossX, bossY-55, 200, 80, [255, 80, 255]);
     }
 
-    // pure light of the palm lasers
+    // pure light of the palm lasers - well, close to, cuz i dont have the laser tips
     if (loop_iters % 180 == 0) {
       laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, SMALL_PURPLE);
-      TJunkoShockwave(200, 80, [255, 80, 255]);
+      TJunkoShockwaveAtPos(bossX, bossY-55, 200, 80, [255, 80, 255]);
       PlaySFX(laser_sfx);
     }
 
