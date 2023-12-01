@@ -80,7 +80,7 @@ task TPlural {
   ObjEnemyBossScene_Add(objScene, 4, dir ~ "s_4.dnh");
   ObjEnemyBossScene_Add(objScene, 5, dir ~ "s_5.dnh");
 
-  
+  SetPlayerLife(3);
   ObjEnemyBossScene_LoadInThread(objScene);
   ObjEnemyBossScene_Regist(objScene);
 

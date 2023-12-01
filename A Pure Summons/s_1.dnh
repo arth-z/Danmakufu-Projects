@@ -30,7 +30,7 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-  TJunkoSpellStartFX("Frigid Star -Irradiate-", NEUTRAL, 150, 150, 255);
+  TJunkoSpellStartFX("Frigid Star \"Irradiate\"", NEUTRAL, 150, 150, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -99,7 +99,8 @@ task circle(offset, speed, inc, proj) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    CreateShotA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), speed, angle, proj, 10);
+    let shot = CreateShotA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), speed, angle, proj, 10);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
   }
 }
 
@@ -125,7 +126,7 @@ task MainTask {
   // introduces the "Star" mechanics - namely the dazzle-spin lasers
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
-    angleL = rand_int(0, 360);
+    angleL = GetAngleToPlayer(objStar);
     
     // radial lasers are created at a specific interval and initialised into a fresh array
     // the array is cleared as the lasers fire and new lasers are populated into it
@@ -134,7 +135,7 @@ task MainTask {
       lasers = [];
       loop(60) {
         let laser = CreateStraightLaserA1(ObjMove_GetX(objStar), ObjMove_GetY(objStar), angleL, 
-                512, 20, laser_interval*0.25, 22, laser_interval);
+                512, 20, laser_interval*0.25, CTC_LASER_BLUE, laser_interval);
         angleL += 6;
         ObjLaser_SetGrazeInvalidFrame(laser, 5); 
         ObjLaser_SetInvalidLength(laser, 5, 5); 
@@ -165,9 +166,9 @@ task MainTask {
     }
 
     // also TSS-lite projectiles lmao
-    if (loop_iters % (laser_interval/3) == 0) {
-      circle(angleS, 1.8, 2.5, L_DOT_BLUE);
-      angleS += 1.25;
+    if (loop_iters % (laser_interval/5) == 0) {
+      circle(angleS, 1.5, 3, SMALL_BLUE);
+      angleS += 1.5;
       PlaySFX(shoot_sfx);
     }
 

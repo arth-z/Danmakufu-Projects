@@ -175,9 +175,9 @@ task MainTask {
     // add all the lasers to the laser array
     if (loop_iters % 2 == 0) {
       angleP = rand(0, 360);
-      lasers = lasers ~ swirly_laser_circle(bossX, bossY, angleP, 9, 40, direction*4, 70); // crimson
+      lasers = lasers ~ swirly_laser_circle(bossX, bossY, angleP, 9, 38, direction*4, 60); // crimson
     } else {
-      lasers = lasers ~ swirly_laser_circle(bossX, bossY, angleP, 9, 38, -direction*6, 70); // purple
+      lasers = lasers ~ swirly_laser_circle(bossX, bossY, angleP, 9, 40, -direction*6, 60); // purple
     }
 
     PlaySFX(laser_sfx);

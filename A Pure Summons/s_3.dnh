@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("-Flawless Blossoms of Hatred-", DISPLEASED, 255, 100, 100);
+  TJunkoSpellStartFX("\"Flawless Blossoming Enmity\"", DISPLEASED, 255, 100, 100);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -115,6 +115,7 @@ task spin_circle(posX, posY, offset, inc, proj, startspeed, accel, max, directio
   loop(360/angle_inc) {
     angle+=angle_inc;
     let shot = CreateShotA2(posX, posY, startspeed, angle, accel, max, proj, 10);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
     ObjMove_SetAngularVelocity(shot, direction*0.5);
   }
 

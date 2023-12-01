@@ -1,6 +1,6 @@
 #UserShotData
 
-shot_image = "./img/AllStarShot.png"
+shot_image = "./AllStarShot.png"
 
 
 //delay_rect = (1,574,32,606)  //starry orb

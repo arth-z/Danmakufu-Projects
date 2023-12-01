@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Dialogue 1"]
-#Text["Why can you can even play this script as a single...?"]
+#Text["Personally, I love TH15 Junko, [r] but in-universe I think [r] everybody hates her danmaku."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -30,7 +30,7 @@ let starY = GetCenterY()*0.8;
 @Event {
     alternative(GetEventType())
     case(EV_REQUEST_LIFE) {
-        SetScriptResult(1500);
+        SetScriptResult(1);
     }
 }
 
@@ -42,7 +42,6 @@ task TShowEnemy {
 
   TLoadJunkoFX;
   TJunkoHitFX;
-  TJunkoBurnAura;
   TDistortionAura;
 }
 
@@ -66,8 +65,10 @@ task TEvent {
 
   let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
   let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
+  let diag_beat = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_select00.wav");
+  ObjSound_SetVolumeRate(diag_beat, 50);
 
-  let dialogueobjects = CreateDialogueEvent(reimu_neutral, junko_neutral, "Ugh, it's so cold, and too quiet...");
+  let dialogueobjects = CreateDialogueEvent(reimu_neutral, junko_neutral, "Ugh. Too cold, and too quiet...");
   
   let textbox = dialogueobjects[0];
   let textobj = dialogueobjects[1];
@@ -92,13 +93,17 @@ task TEvent {
   task ReimuText {
     ObjText_SetFontColorTop(textobj, 255, 150, 150);
     ObjText_SetFontColorBottom(textobj, 255, 255, 255);
+    ObjText_SetFontBorderColor(textobj, 50, 25, 25);
+    ObjText_SetFontType(textobj, "Arial");
   }
 
   ReimuText;
 
   task JunkoText {
-    ObjText_SetFontColorTop(textobj, 255, 90, 255);
-    ObjText_SetFontColorBottom(textobj, 255, 50, 50);
+    ObjText_SetFontColorTop(textobj, 220, 150, 255);
+    ObjText_SetFontColorBottom(textobj, 255, 0, 0);
+    ObjText_SetFontBorderColor(textobj, 0, 0, 50);
+    ObjText_SetFontType(textobj, "Constantia");
   }
 
   while (alpha < 255) {
@@ -111,14 +116,15 @@ task TEvent {
 
   EventWaitA3(10);
   
-  ObjText_SetText(textobj, "Should I have really come here..?");
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "I'm still not sure if coming to this place [r] was a good idea...");
   ObjPrim_SetTexture(leftportrait, reimu_exclaim);
 
   EventWaitA3(10);
 
+  PlaySFX(diag_beat);
   ObjText_SetText(textobj, "Hm?");
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
-  SetPortraitToBackground(leftportrait, 5);
   TJunkoChargeUpAtPos(starX, starY, 200, 80, [100, 100, 255]);
   TStarInitialise(starX, starY, 0, 0);
   TStarDraw(150, "blue");
@@ -130,23 +136,27 @@ task TEvent {
   SetStarSpinRate(0.5);
   TStarShockwave("blue");
   PlaySFX(boom_spawn);
+  SetPortraitToBackground(leftportrait, 5);
 
   EventWaitA3(1);
 
-  ObjText_SetText(textobj, "Is that...a star? But it's not like Mari's stars, [r] or even those from that lunatic hell fairy's...");
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "What is that thing?");
   ObjPrim_SetTexture(leftportrait, reimu_exclaim);
   SetPortraitToForeground(leftportrait, 5);
 
   EventWaitA3(10);
 
-  ObjText_SetText(textobj, "It's so bright and...clear. Wait, is it-");
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "So bright, yet so clear. A star..?");
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
 
   EventWaitA3(10);
 
+  PlaySFX(diag_beat);
   JunkoText;
-  ObjText_SetText(textobj, "You came earlier than I expected...");
-  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  ObjText_SetText(textobj, "You came earlier than I expected.");
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
   SetPortraitToBackground(leftportrait, 5);
 
   TJunkoChargeUpAtPos(bossX, bossY, 200, 80, [255, 80, 255]);
@@ -156,8 +166,9 @@ task TEvent {
   TJunkoShockwave(200, 80, [255, 80, 255]);
   TJunkoBreathe;
   TDrawJunkoBlink;
+  NotifyEventAll(EV_USER_STAGE+333, 0); // tells system to start drawing boss healthbars
 
-  ObjText_SetText(textobj, "...miko of Hakurei.");
+  ObjText_SetText(textobj, "Miko of Hakurei.");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
 
   alpha = 0;
@@ -168,145 +179,166 @@ task TEvent {
   }
 
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
   ReimuText;
-  ObjText_SetText(textobj, "Junko.");
-  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  ObjText_SetText(textobj, "Nameless fox.");
+  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
   SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
 
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
   JunkoText;
-  ObjText_SetText(textobj, "I apologise for my poor hospitality. [r] I should've been the first to greet you.");
+  ObjText_SetText(textobj, "I apologise for my poor hospitality. [r] I should've greeted you sooner.");
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
+  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "But I thank you for accepting my invitation.");
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
+  ObjPrim_SetTexture(rightportrait, junko_smile);
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ReimuText;
+  ObjText_SetText(textobj, "Right, I'm here for that 'friendly' duel.");
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
+  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "And yet I see your realm is in [r] the likeness of the moon's surface...");
+  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
+
+  EventWaitA3(10);
+  ScreenShakeA1(20, 2);
+  PlaySFX(boom_spawn);
+
+  ObjText_SetText(textobj, "...which is where you tried to kill me!");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  JunkoText;
+  
+  ObjText_SetText(textobj, "Oh, is that how you see it? Forgive me.");
   ObjPrim_SetTexture(rightportrait, junko_hmph);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
-
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
-  ReimuText;
-  ObjText_SetText(textobj, "'The first'?");
-  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
-  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
-  
-  EventWaitA3(10);
-
-  JunkoText;
-  ObjText_SetText(textobj, "But you accepted my invitation. I thank you.");
-  ObjPrim_SetTexture(leftportrait, reimu_neutral);
-  ObjPrim_SetTexture(rightportrait, junko_neutral);
-  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
-
-
-  EventWaitA3(10);
-
-  ReimuText;
-  ObjText_SetText(textobj, "Right. A 'friendly' duel...with you.");
-  ObjPrim_SetTexture(rightportrait, junko_neutral);
-  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
-  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
-
-  EventWaitA3(10);
-
-  ObjText_SetText(textobj, "And you've changed your realm to mimic the [r] moon's surface, where we last fought...");
-  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
-  EventWaitA3(10);
-
-  ObjText_SetText(textobj, "...and where you last tried to kill me!");
-  ObjPrim_SetTexture(leftportrait, reimu_bruh);
-  EventWaitA3(10);
-
-  JunkoText;
-  
-  ObjText_SetText(textobj, "Please, Miko of Hakurei. [r] That was not my intent then...");
-  ObjPrim_SetTexture(rightportrait, junko_hmph);
-  ObjPrim_SetTexture(leftportrait, reimu_neutral);
-  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
-  EventWaitA3(10);
-
-  ObjText_SetText(textobj, "And it is not my intent now.");
+  ObjText_SetText(textobj, "Our fight over the Sea of Tranquility...[r] I thought you'd enjoy recollecting it.");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "You are not my enemy. [r] Instead, at a friend's behest, I am...");
+  ObjText_SetText(textobj, "Especially now, when we are not enemies. [r] Indeed, all that I intend today...");
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "...testing some new danmaku.");
+  ObjText_SetText(textobj, "...is for us to enjoy some new danmaku.");
   ObjPrim_SetTexture(rightportrait, junko_smile);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
   TStarShockwave("blue");
   PlaySFX(boom_spawn);
+  PetalRelease(ObjMove_GetX(objStar), ObjMove_GetY(objStar), rand(0, 360), rand(100, 255), 2, 10, 80*10, [200, 200, 255], 32);
   Obj_Delete(objStar);
 
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "With your gracious help, of course.");
+  ObjText_SetText(textobj, "And what better way to enjoy danmaku [r] than in a friendly sparring match, hm?");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
 
   EventWaitA3(10);
-
-  ObjText_SetText(textobj, "So, I'm sure this need not be something [r] we both cannot enjoy.");
-  ObjPrim_SetTexture(rightportrait, junko_smile);
-  ObjPrim_SetTexture(leftportrait, reimu_neutral);
-
-  EventWaitA3(10);
-
-  ObjText_SetText(textobj, "It is the essence of a friendly spar, no? [r] To enjoy new danmaku.");
-  ObjPrim_SetTexture(rightportrait, junko_neutral);
-
-  EventWaitA3(10);
+  PlaySFX(diag_beat);
 
   ReimuText;
 
-  ObjText_SetText(textobj, "'Enjoy new danmaku'? With you?! [r] What even-");
-  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
-  ObjPrim_SetTexture(rightportrait, junko_neutral);
+  ObjText_SetText(textobj, "'Friendly sparring match'? With *you*?");
+  ObjPrim_SetTexture(leftportrait, reimu_serious);
   SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "Ugh, you're giving me the creeps!");
+  ObjText_SetText(textobj, "You can't be serious... [r] Have you seen your own danmaku?!");
   ObjPrim_SetTexture(leftportrait, reimu_bruh);
-  EventWaitA3(10);
 
-  ObjText_SetText(textobj, "And you know what? [r] Getting myself here wasn't fun.");
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  JunkoText;
+  ObjText_SetText(textobj, "Hm? Of course I have. Is there an issue?");
+  ObjPrim_SetTexture(rightportrait, junko_smile);
   ObjPrim_SetTexture(leftportrait, reimu_serious);
-  EventWaitA3(10);
+  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
 
-  ObjText_SetText(textobj, "So, if you want a duel with me...");
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ReimuText;
+  ObjText_SetText(textobj, "One of your spellcards is literally [r] \"Pristine Danmaku to Kill a Person\"...");
   ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  ObjPrim_SetTexture(rightportrait, junko_smile);
+  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "How is anybody supposed to enjoy that?");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "Ugh, you know what? You're weird. [r]And I've been having a bad day.");
+  ObjPrim_SetTexture(leftportrait, reimu_serious);
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+
+
+  EventWaitA3(10);
+  PlaySFX(diag_beat);
+
+  ObjText_SetText(textobj, "So, if you really want a fight that badly...");
+  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
   EventWaitA3(10);
 
   PlaySFX(boom_spawn);
   ScreenShakeA1(45, 3);
-  ObjText_SetText(textobj, "...then you're getting one, alright!");
+  ObjText_SetText(textobj, "...then you're sure as hell gonna get one!");
   ObjText_SetFontBold(textobj, true);
   ObjPrim_SetTexture(leftportrait, reimu_angery);
   ObjPrim_SetTexture(rightportrait, junko_smug2);
 
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
   JunkoText;
   ObjText_SetFontBold(textobj, false);
-  ObjText_SetText(textobj, "Splendid.");
-  ObjPrim_SetTexture(rightportrait, junko_smile);
+  ObjText_SetText(textobj, "Oh? Then come, Miko of Hakurei.");
+  ObjPrim_SetTexture(rightportrait, junko_smug2);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "Then come, Miko of Hakurei.");
-  ObjPrim_SetTexture(leftportrait, reimu_neutral);
-  ObjPrim_SetTexture(rightportrait, junko_smug1);
-
-  EventWaitA3(10);
-
-  ObjText_SetText(textobj, "Gaze upon the light of overwhelming purity...");
-  ObjPrim_SetTexture(rightportrait, junko_smile);
+  ObjText_SetText(textobj, "Face me in battle, and [r] show me just what you can do...");
+  ObjPrim_SetTexture(rightportrait, junko_hmph);
 
   EventWaitA3(10);
+  PlaySFX(diag_beat);
 
   ObjText_SetFontBold(textobj, true);
-  ObjText_SetText(textobj, "...and face me in battle!");
-  ObjPrim_SetTexture(rightportrait, junko_smug1);
+  ObjText_SetText(textobj, "...against a renewed, flawless purity!");
+  ObjPrim_SetTexture(rightportrait, junko_creepy);
 
   EventWaitA3(10);
 

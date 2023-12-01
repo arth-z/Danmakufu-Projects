@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Hateful Star -Incinerate-", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("Seething Star \"Incinerate\"", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;
@@ -105,7 +105,7 @@ let new_y = GetCenterY()*0.5 + rand(-10,10);
   }
 
   if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 80])};
-  UpdateStarHitbox;
+  if (mainTimer > 200) {UpdateStarHitbox}
 
   mainTimer++;
   yield;
@@ -118,7 +118,8 @@ task circle(posX, posY, offset, inc, proj, accel, max) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
   }
 
   angle += offset;
@@ -154,7 +155,7 @@ task MainTask {
       lasers = [];
       loop(30) {
         let laser = CreateStraightLaserA1(starX, starY, angleL, 
-                768, 20, laser_interval*0.2, 17, laser_interval);
+                768, 20, laser_interval*0.2, CTC_LASER_RED, laser_interval);
         angleL = rand(0, 360);
         ObjLaser_SetGrazeInvalidFrame(laser, 5); 
         ObjLaser_SetInvalidLength(laser, 5, 5); 
@@ -194,7 +195,7 @@ task MainTask {
       let bossX = ObjMove_GetX(objBoss);
       let bossY = ObjMove_GetY(objBoss);
       let angleP = GetAngleToPlayer(objBoss);
-      circle(bossX, bossY, angleP, 10, 376, 0.1, 2);
+      circle(bossX, bossY, angleP, 10, FIRE_RED, 0.1, 2);
       PlaySFX(shoot_sfx);    
     }
 

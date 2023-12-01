@@ -25,7 +25,7 @@ task TStarDraw(delay, color) {
   wait(delay);
 
   ObjPrim_SetTexture(objStar, path ~ "./img/hatefulStar_" ~ color ~ ".png");
-  ObjRender_SetBlendType(objStar, BLEND_ALPHA);
+  ObjRender_SetBlendType(objStar, BLEND_ADD_ARGB);
 	ObjSprite2D_SetSourceRect(objStar, 0, 0, 512, 512);
   Obj_SetRenderPriorityI(objStar, 60);
   ObjRender_SetColor(objStar, 255, 255, 255);
@@ -75,17 +75,14 @@ task UpdateStarHitbox {
   ObjEnemy_SetIntersectionCircleToPlayer(objStar, ObjMove_GetX(objStar), ObjMove_GetY(objStar), 12);
 }
 
+let normalImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_nodamage.wav");
+ObjSound_SetVolumeRate(normalImpact, 60);
+
 task TStarHitFX {
-  /*
+  
   let beingHit = true;
   let lastHit = 0;
   let loop_iters = 0;
-
-  let maxLife = ObjEnemy_GetInfo(objStar, INFO_LIFE);
-
-  let normalImpact = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_damage00.wav");
-  ObjSound_SetVolumeRate(normalImpact, 75);
-
   while (!Obj_IsDeleted(objStar)) {
 
     if (loop_iters % 6 == 0) {
@@ -99,15 +96,13 @@ task TStarHitFX {
     let currLife = ObjEnemy_GetInfo(objStar, INFO_LIFE);
 
     if (loop_iters % 4 == 0 && beingHit) {
-      
       PlaySFX(normalImpact);
 
     } 
-
     loop_iters++;
     yield;
   }
-  */
+  
 }
 
 task TStarFinalize {

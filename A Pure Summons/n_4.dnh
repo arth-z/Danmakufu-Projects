@@ -129,14 +129,14 @@ task MainTask {
       TJunkoShockwave(200, 80, [255, 100, 255]);
       ascent(i in 0..2) {
         if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0){return}
-        collapse_circle(playerX, playerY, 100, angle, 15, 376, 0.02, 2.5, 0);
+        collapse_circle(playerX, playerY, 100, angle, 15, FIRE_RED, 0.02, 2.5, 0);
         PlaySFX(laser_sfx);
         
         wait(40);
         direction*=-1;
 
         if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0){return}
-        collapse_circle(playerX, playerY, 150, GetAngleToPlayer(objBoss), 12, 375, 0.02, 4, 0);
+        collapse_circle(playerX, playerY, 150, GetAngleToPlayer(objBoss), 12, FIRE_BLUE, 0.02, 4, 0);
         PlaySFX(laser_sfx);
 
         wait(40);

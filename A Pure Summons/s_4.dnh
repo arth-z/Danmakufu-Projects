@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("-Seven-Tailed Killing Intent-", DISPLEASED, 255, 100, 255);
+  TJunkoSpellStartFX("\"Seven-Tailed Killing Intent\"", DISPLEASED, 255, 100, 255);
 
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
@@ -103,6 +103,8 @@ task laser_circle(posX, posY, offset, inc, speed, length, width, graphiclaser, g
     angle+=angle_inc;
     let laser = CreateLooseLaserA1(posX, posY, speed, angle, length, width, graphiclaser, 15);
     let shot = CreateShotA1(posX + cos(angle), posY + sin(angle), speed, angle, graphichead, 15);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
+    ObjRender_SetAlpha(shot, 230);
   }
 }
 
@@ -207,7 +209,7 @@ task MainTask {
 
     // pure light of the palm lasers
     if (loop_iters % 180 == 0) {
-      laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, 273);
+      laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, SMALL_PURPLE);
       TJunkoShockwave(200, 80, [255, 80, 255]);
       PlaySFX(laser_sfx);
     }

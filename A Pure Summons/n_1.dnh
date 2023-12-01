@@ -80,21 +80,6 @@ let new_y = GetCenterY()*0.5 + rand(-10,10);
   yield;
 }
 
-task slow_circle(offset, inc, proj) {
-
-  let angle = offset;
-  let angle_inc = inc;
-
-  loop(360/angle_inc) {
-    angle+=angle_inc;
-    CreateShotA1(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1.5, angle, proj, 5);
-    PlaySFX(shoot_sfx);
-  }
-
-  angle += offset;
-
-}
-
 task fast_circle(posX, posY, offset, inc, proj, accel, max) {
   
   let angle = offset;
@@ -102,7 +87,8 @@ task fast_circle(posX, posY, offset, inc, proj, accel, max) {
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
     PlaySFX(shoot_sfx);
   }
 
@@ -122,9 +108,9 @@ task MainTask {
 
     let angleT = rand(0, 360);
 
-    fast_circle(GetCenterX() + 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3, 250, 0.5, 2);
+    fast_circle(GetCenterX() + 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3, SMALL_BLUE, 0.5, 2);
       
-    fast_circle(GetCenterX() - 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3, 250, 0.5, 2);    
+    fast_circle(GetCenterX() - 150*rand(0.75, 1.25), GetCenterX()*0.5 + rand(-20, 20), angleT, 3, SMALL_BLUE, 0.5, 2);    
 
     wait(120);
   }

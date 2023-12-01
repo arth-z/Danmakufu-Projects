@@ -59,7 +59,7 @@ task TSpellCardWait() { // you thought this would be a nonspell? get survivaled,
   ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("Lunatic Star -Annihilate-", NEUTRAL, 255, 50, 255);
+  TJunkoSpellStartFX("Hateful Star \"Annihilate\"", NEUTRAL, 255, 50, 255);
 
 }
 
@@ -176,6 +176,8 @@ task MainTask {
   // other variables
   let shotsToDelete = [];
   let aux_blender_angle = 0;
+  let starX;
+  let starY;
 
   // attack design - a stress-control survival (blender = follow the spinning lasers)
   // curvy blender blades are weird and unnerving but the real fear factor is frequent spin-direction changes 
@@ -185,8 +187,8 @@ task MainTask {
   // and eventually in the last 5 all hell breaks loose as the star decides it's had enough and starts moving towards you
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
-    let starX = ObjMove_GetX(objStar);
-    let starY = ObjMove_GetY(objStar);
+    starX = ObjMove_GetX(objStar);
+    starY = ObjMove_GetY(objStar);
     
     // lasers
     if (loop_iters > blender_changes[0]) {
@@ -195,7 +197,7 @@ task MainTask {
         angleL = (360/laser_count)/2;
         loop(laser_count) {
           let laser = CreateStraightLaserA1(starX, starY, angleL, 
-                  512, 20, 20, 23, laser_interval);
+                  512, 20, 20, CTC_LASER_PURPLE, laser_interval);
           angleL += 360/laser_count;
           ObjLaser_SetGrazeInvalidFrame(laser, 5); 
           ObjLaser_SetInvalidLength(laser, 5, 5); 
@@ -230,7 +232,7 @@ task MainTask {
     // it fires every frame, and basically 'works' as a laser despite being like, 5000 murasa droplets
     // this is...basically a BoWaP variant, if you look at the way blender_offset and blender_speed are controlled
     if (loop_iters > 30) {
-      ang_circle(starX, starY, blender_offset, 360/blender_count, 272, 0.1, blender_wave, 0);
+      ang_circle(starX, starY, blender_offset, 360/blender_count, DROP_PURPLE, 0.1, blender_wave, 0);
       blender_offset+=blender_speed;
     }
 
@@ -328,6 +330,10 @@ task MainTask {
   }
   ObjSound_Stop(desperation);
   TStarShockwave("purple");
+  TStarShockwave("purple");
+  TStarShockwave("purple");
+  PetalRelease(starX, starY, rand(0, 360), rand(100, 255), 3, 12, 1000, [255, 150, 255], 64);
+
   TColour(false);
   TUnloadColourShader;
 }
