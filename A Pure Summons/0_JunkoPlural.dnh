@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Plural]
 #ScriptVersion[3]
 #Title["'A Pure Summons' - Junko Plural Script"]
-#Text["Reimu receives an invitation...[r] ...from Junko, of all people? [r] For a...friendly danmaku duel? [r] Time to investigate!"]
+#Text["An invitation from Junko... [r] for a...friendly danmaku duel? [r] Yeah, right. [r] Time to investigate!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -37,7 +37,6 @@ let bgm2_isplaying = false;
       ObjSound_SetSoundDivision(bgm1, SOUND_BGM);
       ObjSound_SetRestartEnable(bgm1, true);
       ObjSound_SetLoopEnable(bgm1, true);
-      ObjSound_SetLoopTime(bgm1, 0, 300);
       ObjSound_Play(bgm1);
       ObjSound_SetVolumeRate(bgm1, 100);
     }
@@ -48,8 +47,6 @@ let bgm2_isplaying = false;
       bgm2 = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/pf-drL.ogg");
       ObjSound_SetSoundDivision(bgm2, SOUND_BGM);
       ObjSound_SetRestartEnable(bgm2, true);
-      ObjSound_SetLoopEnable(bgm2, true);
-      ObjSound_SetLoopTime(bgm2, 0, 300);
       ObjSound_Play(bgm2);
       ObjSound_SetVolumeRate(bgm2, 100);
     }
@@ -70,6 +67,7 @@ task TPlural {
   let objScene = ObjEnemyBossScene_Create();
 
   ObjEnemyBossScene_Add(objScene, 0, dir ~ "d_1.dnh");
+  
   ObjEnemyBossScene_Add(objScene, 1, dir ~ "n_1.dnh");
   ObjEnemyBossScene_Add(objScene, 1, dir ~ "s_1.dnh");
   ObjEnemyBossScene_Add(objScene, 2, dir ~ "n_2.dnh");
@@ -79,8 +77,10 @@ task TPlural {
   ObjEnemyBossScene_Add(objScene, 4, dir ~ "n_4.dnh");
   ObjEnemyBossScene_Add(objScene, 4, dir ~ "s_4.dnh");
   ObjEnemyBossScene_Add(objScene, 5, dir ~ "s_5.dnh");
+  ObjEnemyBossScene_Add(objScene, 6, dir ~ "s_6.dnh");
+  
+  ObjEnemyBossScene_Add(objScene, 7, dir ~ "d_2.dnh");
 
-  SetPlayerLife(3);
   ObjEnemyBossScene_LoadInThread(objScene);
   ObjEnemyBossScene_Regist(objScene);
 

@@ -39,6 +39,11 @@ task TLoadJunkoFX {
 
 }
 
+task TNotifyBattleEvents {
+  NotifyEventAll(EV_USER_STAGE+333, 0);
+  NotifyEventAll(EV_USER_STAGE+444, 0);
+}
+
 task TLoadBFX {
   BFX_Init();
   
@@ -236,6 +241,13 @@ task TJunkoChargeUpSmall(radius, duration, color) {
   PlaySFX(smallCharge);
 }
 
+task TJunkoChargeUpSmallPetals(radius, duration, color) {
+  BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
+  ShockwaveCharge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), duration, radius/50, color);
+  ObjSound_SetVolumeRate(charge, 100);
+  PlaySFX(smallCharge);
+}
+
 task TJunkoChargeUpSmallAtPos(posX, posY, radius, duration, color) {
   //BFX_Charge(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), radius, duration);
   ShockwaveCharge(posX, posY, duration, radius/50, color);
@@ -273,7 +285,7 @@ task TJunkoBurnAura {
   let reflect = false;
 
   while (!Obj_IsDeleted(objBoss)) {
-    let color = [200 + 30*sin(loop_iters), 40, 40];
+    let color = [200 + 30*sin(loop_iters), 40, 60];
     if (loop_iters % 8 == 0) {
       flame(objBoss, color, 2.5, 45);
     }
@@ -811,7 +823,40 @@ task TJunkoFinalize {
 	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
   wait(15);
   Obj_Delete(objBoss);
+  wait(40);
   SetAutoDeleteObject(true);
+  CloseScript(GetOwnScriptID());
+
+  return;
+}
+
+task TJunkoFinaleFinalize {
+  while (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+		yield;
+	}
+
+	DeleteShotAll(TYPE_ALL, TYPE_FADE);
+  let timer = 0;
+  
+  NotifyEventAll(EV_USER_STAGE+888, [ObjMove_GetX(objBoss), ObjMove_GetY(objBoss)]);
+
+  while (timer < 105) {
+    PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 2, 10, 200*10, [255, 200, 255], 2);
+    timer++;
+    yield;
+  }
+
+  ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 80, 8, [255, 200, 255]);
+  wait(1);
+  
+  PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 2, 10, 200*10, [255, 200, 255], 32);
+  PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 2, 10, 200*10, [255, 200, 255], 32);
+  NotifyEventAll(EV_USER_STAGE+888, [ObjMove_GetX(objBoss), ObjMove_GetY(objBoss)]);
+
+  Obj_Delete(objBoss);
+  wait(40);
+  SetAutoDeleteObject(true);
+  CloseScript(GetOwnScriptID());
 
   return;
 }

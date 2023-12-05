@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Nonspell 4"]
-#Text["Surprisingly hard, but I think it's okay."]
+#Text["More filler, I guess? [r] Man, I don't do much [r] with Junko's nons."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -32,6 +32,7 @@ let mainTimer = 0;
   ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
 
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.25, 60);
 
@@ -86,19 +87,15 @@ task collapse_circle(posX, posY, radius, offset, inc, proj, accel, max, directio
   
   let angle = offset;
   let angle_inc = inc;
-  let start_safe = 0;
-  let end_safe = 0;
   let rand_ang = rand(-60,60);
 
   loop(360/angle_inc) {
     if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0 && Obj_IsDeleted(objBoss)) {return;}
     angle+=angle_inc;
-    if (!(angle > start_safe && angle < end_safe)) {
-      let shot = CreateShotA2(posX+radius*cos(angle), posY+radius*sin(angle), 0, -angle+rand_ang, accel, max, proj, 10);
-      ObjMove_SetAngularVelocity(shot, direction);
-      ObjShot_SetDeleteFrame(shot, 300);
-      ObjShot_SetAutoDelete(shot, 0);
-    }  
+    let shot = CreateShotA2(posX+radius*cos(angle), posY+radius*sin(angle), 0, -angle+rand_ang, accel, max, proj, 10);
+    ObjMove_SetAngularVelocity(shot, direction);
+    ObjShot_SetAutoDelete(shot, 0);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
   }
 
 }
@@ -117,32 +114,30 @@ task MainTask {
   // into walls/waves that converge on you. also they have angular velocity, to be mean.
   // a surprisingly difficult dodge, despite the simplicity
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
-    let angle = rand(0, 360);
     let bossX = ObjMove_GetX(objBoss);
     let bossY = ObjMove_GetY(objBoss);
-    
 
     if (loop_iters % fire_interval == 0) {
       let playerX = GetPlayerX();
       let playerY = GetPlayerY();
-      TJunkoShockwave(200, 80, [255, 100, 255]);
-      ascent(i in 0..2) {
+      TJunkoShockwave(150, 80, [255, 50, 50]);
+      wait(15);
+      TJunkoShockwave(150, 80, [100, 100, 255]);
+      ascent(i in 0..3) {
         if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0){return}
-        collapse_circle(playerX, playerY, 100, angle, 15, FIRE_RED, 0.02, 2.5, 0);
+        collapse_circle(playerX, playerY, 100, rand(0, 360), 12, FIRE_RED, 0.02, 2.5, 0);
         PlaySFX(laser_sfx);
-        
+
         wait(40);
         direction*=-1;
 
         if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0){return}
-        collapse_circle(playerX, playerY, 150, GetAngleToPlayer(objBoss), 12, FIRE_BLUE, 0.02, 4, 0);
+        collapse_circle(playerX, playerY, 150, rand(0, 360), 10, FIRE_BLUE, 0.02, 4, 0);
         PlaySFX(laser_sfx);
 
         wait(40);
       }
-    }
-
-    
+    }  
     loop_iters++;
     yield;
   }

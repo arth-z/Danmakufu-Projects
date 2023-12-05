@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Red Star\""]
-#Text["Still messing around with the stars. Misdirection is hard."]
+#Text["Am I milking this \"star\"[r] metaphor too much?"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -22,7 +22,7 @@ let mainTimer = 0;
         SetScriptResult(70);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-        SetScriptResult(2000000);
+        SetScriptResult(2500000);
     }
 }
 
@@ -31,11 +31,11 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 
-  ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
 
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.33, 60);
 
@@ -49,7 +49,7 @@ let mainTimer = 0;
   TStarHitFX;
   SetStarSpinRate(2);
   
-  TJunkoSpellStartFX("Seething Star \"Incinerate\"", NEUTRAL, 255, 50, 100);
+  TJunkoSpellStartFX("Seething Star \"Relentless Nightmare\"", NEUTRAL, 255, 50, 100);
   TJunkoCrownAuraDelay;
 
   MainTask;

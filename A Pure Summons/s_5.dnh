@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Purple Star\""]
-#Text["It's not BoWaP, I swear!"]
+#Text["Yeah, definitely milking it [r]too hard. On the plus side, [r] have the most scary survival[r] I could think of."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -19,7 +19,7 @@ let mainTimer = 0;
         SetScriptResult(100000);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
-        SetScriptResult(40);
+        SetScriptResult(43);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
         SetScriptResult(3000000);
@@ -35,6 +35,7 @@ let mainTimer = 0;
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
   TSpellCardWait;
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.5, 60);
 
@@ -56,15 +57,11 @@ let mainTimer = 0;
 
 task TSpellCardWait() { // you thought this would be a nonspell? get survivaled, lmao
   wait(200);
-  ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("Hateful Star \"Annihilate\"", NEUTRAL, 255, 50, 255);
+  TJunkoSpellStartFX("Hateful Star \"Paralysing Lunacy\"", NEUTRAL, 255, 50, 255);
 
 }
-
-let new_x = GetCenterX();
-let new_y = GetCenterY();
 
 @MainLoop 
 { 
@@ -78,6 +75,7 @@ let new_y = GetCenterY();
   let move_interval = 120;
   let move_time = 150;
 
+  // move into place, sit there charging up, laugh a bit, then just dip
   if (mainTimer < 16) {
     ObjEnemy_SetDamageRate(objBoss, 25, 25);
     MDrawJunkoMotionBegin(mainTimer);
@@ -88,15 +86,15 @@ let new_y = GetCenterY();
   } else if (mainTimer < 200) {
     MDrawJunkoBlink(mainTimer);
     MJunkoBreathe(mainTimer);
+  } else if (mainTimer < 210) {
+    MDrawJunkoLaughContinue(mainTimer);
+  } else if (mainTimer < 226) {
+    MDrawJunkoMotionBegin(mainTimer);
   } else {
-    if (mainTimer == 205) {
-      new_x = GetCenterX();
-      new_y = GetCenterY()*-1.7; // oh, she just flies off screen for this 
-      ObjMove_SetDestAtWeight(objBoss, new_x, new_y, 0.1, 2);
-    } else {
-      MDrawJunkoLaughContinue(mainTimer); // and if you bother to check up there, she's laughing like always
-    }
+    MDrawJunkoMotionContinue(mainTimer);
+    ObjMove_SetDestAtWeight(objBoss, GetCenterX(), GetCenterY()*-20, 0.1, 2);
   }
+  
      
 
   if (mainTimer == 60) {TJunkoChargeUp(200, 80, [255, 80, 255])};
@@ -119,7 +117,6 @@ task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
     ObjMove_SetAngularVelocity(shot, ang_v);
     ObjShot_SetSpellResist(shot, true);
   }
-
 }
 
 function circle_in(posX, posY, radius, offset, inc, proj, start, accel, max, delay) {
@@ -184,7 +181,7 @@ task MainTask {
   // this also gets combo'd with the familiar star-dazzle lasers to mess with your sense of space management
   // there's also an accelerating auxiliary pattern fired inwards to mess with your sense of space management even MORE
   // survival intensification is here too: spirals grow denser, blender blades go faster, direction changes become more frequent
-  // and eventually in the last 5 all hell breaks loose as the star decides it's had enough and starts moving towards you
+  // and eventually in the last moments all hell breaks loose as the star decides it's had enough and starts moving towards you
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
 
     starX = ObjMove_GetX(objStar);
@@ -221,7 +218,7 @@ task MainTask {
         ObjLaser_SetLength(laser, ObjLaser_GetLength(laser))
       }
 
-      if (loop_iters % laser_interval < laser_interval/5 && loop_iters > blender_changes[0] + laser_interval) {
+      if (loop_iters % laser_interval < laser_interval/5 && loop_iters > blender_changes[0] + laser_interval*2) {
         TColour(true);
       } else {
         TColour(false);
@@ -318,7 +315,7 @@ task MainTask {
           PlaySFX(desperation);
         }
         if (blender_index % 9 == 0) { // also fires a bunch of aimed junk at you (looks nice, though)
-          ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-5, 5), 36, 204, 0.03, 4, 0);
+          ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-2, 2), 36, 204, 0.03, 6, 0);
           PlaySFX(shoot_sfx);
         }
       }
@@ -329,11 +326,7 @@ task MainTask {
     yield;
   }
   ObjSound_Stop(desperation);
-  TStarShockwave("purple");
-  TStarShockwave("purple");
-  TStarShockwave("purple");
-  PetalRelease(starX, starY, rand(0, 360), rand(100, 255), 3, 12, 1000, [255, 150, 255], 64);
-
   TColour(false);
   TUnloadColourShader;
+  NotifyEventAll(EV_USER_STAGE+888, [starX, starY]);
 }

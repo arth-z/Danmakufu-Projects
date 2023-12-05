@@ -1,0 +1,334 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Post-fight dialogue"]
+#Text["Wrap up dialogue. I hope they [r]leave on friendly terms..."]
+#System["./JunkoSystem.dnh"]
+#Background["./JunkoBackground.dnh"]
+
+#include "./func_library.dnh"
+#include "./img/ZUNShot_Const.txt"
+#include "./JunkoFX.dnh"
+#include "./dialogue_lib.dnh"
+#include "./HatefulStar.dnh"
+
+@Initialize { 
+  NotifyEventAll(EV_USER_STAGE+666, 0); 
+  NotifyEventAll(EV_USER_STAGE+333, 0);
+  TLoadBFX;
+  TEvent;
+}
+
+let bossX = GetCenterX();
+let bossY = GetCenterY()*0.5;
+
+let starX = GetCenterX();
+let starY = GetCenterY()*0.8;
+
+@MainLoop {
+  yield;
+}
+
+@Event {
+    alternative(GetEventType())
+    case(EV_REQUEST_LIFE) {
+        SetScriptResult(1);
+    }
+}
+
+task TShowEnemy {
+  objScene = GetEnemyBossSceneObjectID();
+  objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+  ObjEnemy_Regist(objBoss);
+
+  ObjMove_SetPosition(objBoss, bossX, bossY);
+
+  TLoadJunkoFX;
+  TJunkoHitFX;
+  TJunkoBurnAura;
+  TJunkoCircleAura;
+  TJunkoShadowAura;
+  TJunkoCrownAura;
+  TDistortionAura;
+}
+
+task TEvent {
+  
+  SetForbidPlayerSpell(true);
+  SetForbidPlayerShot(true);
+
+  TShowEnemy;
+  TJunkoBreathe;
+  TDrawJunkoBlink;
+  
+  wait(90);
+
+  let reimu_neutral = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_neutral.png";
+  let reimu_serious = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_serious.png";
+  let reimu_bruh = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_bruh.png";
+  let reimu_exclaim = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_exclaim.png";
+  let reimu_angery = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_angery.png";
+  let reimu_smug = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_smug.png";
+  let reimu_smile = GetCurrentScriptDirectory() ~ "./img/dialogue/reimu_smile.png";
+
+  let junko_neutral = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_neutral.png";
+  let junko_smug1 = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_smug1.png";
+  let junko_smug2 = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_smug2.png";
+  let junko_hmph = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_hmph.png";
+  let junko_smile = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_happy.png";
+  let junko_creepy = GetCurrentScriptDirectory() ~ "./img/dialogue/junko_creepy.png";
+
+  let boom_spawn = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
+  let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
+  let diag_beat = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_select00.wav");
+  let clear_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_bonus.wav");
+  ObjSound_SetVolumeRate(diag_beat, 50);
+
+  let dialogueobjects = CreateDialogueEvent(reimu_neutral, junko_neutral, "Well fought, Miko of Hakurei.");
+  
+  let textbox = dialogueobjects[0];
+  let textobj = dialogueobjects[1];
+  let leftportrait = dialogueobjects[2];
+  let rightportrait = dialogueobjects[3];
+
+  
+  ObjRender_SetScaleXYZ(leftportrait, 0.52, 0.52, 1);
+  ObjRender_SetScaleXYZ(rightportrait, 0.7, 0.7, 1);
+
+  let alpha = 0;
+
+  ObjRender_SetAlpha(textbox, 0);
+  ObjRender_SetAlpha(textobj, 0);
+  ObjRender_SetAlpha(leftportrait, 0);
+  ObjRender_SetAlpha(rightportrait, 0);
+
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
+
+  task ReimuText {
+    ObjText_SetFontColorTop(textobj, 255, 150, 150);
+    ObjText_SetFontColorBottom(textobj, 255, 255, 255);
+    ObjText_SetFontBorderColor(textobj, 50, 25, 25);
+    ObjText_SetFontType(textobj, "ARIAL");
+  }
+
+  task JunkoText {
+    ObjText_SetFontColorTop(textobj, 220, 150, 255);
+    ObjText_SetFontColorBottom(textobj, 255, 0, 0);
+    ObjText_SetFontBorderColor(textobj, 0, 0, 50);
+    ObjText_SetFontType(textobj, "Constantia");
+  }
+
+  JunkoText;
+  let alpha1=0;
+  let alpha2=0;
+
+  while (alpha2 < 255) {
+    alpha1+=4;
+    alpha2+=5;
+    ObjRender_SetAlpha(textbox, alpha1);
+    ObjRender_SetAlpha(leftportrait, alpha1);
+    ObjRender_SetColor(leftportrait, alpha1, alpha1, alpha1);
+    ObjRender_SetAlpha(rightportrait, alpha2);
+    ObjRender_SetColor(rightportrait, alpha2, alpha2, alpha2);
+    ObjRender_SetAlpha(textobj, alpha2);
+    yield;
+  }
+
+  EventWaitA3(10);
+  
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "I expected nothing less from one such as you.");
+  ObjPrim_SetTexture(rightportrait, junko_smug1);
+
+  EventWaitA3(10);
+
+  ReimuText;
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "You...");
+  ObjPrim_SetTexture(rightportrait, junko_smug1);
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
+
+  EventWaitA3(10);
+
+  ScreenShakeA1(20, 3);
+  PlaySFX(boom_spawn);
+  PlaySFX(diag_beat);
+  ObjText_SetFontBold(textobj, true);
+  ObjText_SetText(textobj, "...murderous LUNATIC!");
+  ObjPrim_SetTexture(leftportrait, reimu_angery);
+
+  EventWaitA3(10);
+
+  JunkoText;
+  PlaySFX(diag_beat);
+  ObjText_SetFontBold(textobj, false);
+  ObjText_SetText(textobj, "Please...");
+  ObjPrim_SetTexture(rightportrait, junko_hmph);
+  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  PlaySFX(warning);
+  ObjText_SetFontBold(textobj, true);
+  ObjText_SetText(textobj, "Don't use *that* word for me.");
+  ObjPrim_SetTexture(rightportrait, junko_creepy);
+
+  EventWaitA3(10);
+
+  ReimuText;
+  ObjText_SetFontBold(textobj, false);
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Are you-");
+  ObjPrim_SetTexture(leftportrait, reimu_serious);
+  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Ugh...");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Are we finished here?");
+  ObjPrim_SetTexture(leftportrait, reimu_exclaim);
+
+  EventWaitA3(10);
+
+  JunkoText;
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Yes, of course.");
+  ObjPrim_SetTexture(rightportrait, junko_smug1);
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
+  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "It was a pleasure to fight with you.");
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "I can only hope you enjoyed this as [r] much as I did.");
+  ObjPrim_SetTexture(rightportrait, junko_smile);
+
+  EventWaitA3(10);
+
+  ReimuText;
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Well...");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  SetPortraitToForeground(leftportrait, 5); SetPortraitToBackground(rightportrait, 5);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "I hate to say this, but...");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "It was okay.");
+  ObjPrim_SetTexture(leftportrait, reimu_smug);
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+
+  EventWaitA3(10);
+
+  JunkoText;
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "...");
+  ObjPrim_SetTexture(rightportrait, junko_smug1);
+  SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Perfect. Thank you, Reimu.");
+  ObjPrim_SetTexture(rightportrait, junko_smile);
+
+  EventWaitA3(10);
+
+  ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 80, 8, [255, 80, 255]);
+	PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 3, 18, 1000, [255, 200, 255], 64);
+  PlaySFX(boom_spawn);
+  Obj_Delete(objBoss);
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Hecatia is going to enjoy hearing about this...");
+  ObjPrim_SetTexture(rightportrait, junko_neutral);
+  NotifyEventAll(EV_USER_STAGE+555, 0);
+
+  alpha2 = 255;
+  while (alpha2 > 0) {
+    alpha2-=2.5;
+    ObjRender_SetAlpha(rightportrait, alpha2);
+    ObjRender_SetColor(rightportrait, alpha2, alpha2, alpha2);
+    yield;
+  }
+
+  EventWaitA3(10);
+
+  ReimuText;
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "...");
+  ObjPrim_SetTexture(leftportrait, reimu_bruh);
+  SetPortraitToForeground(leftportrait, 5);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Maybe I should talk to Marisa.");
+  ObjPrim_SetTexture(leftportrait, reimu_neutral);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "Those orbs of light...stars and lasers...");
+  ObjPrim_SetTexture(leftportrait, reimu_smug);
+
+  EventWaitA3(10);
+
+  PlaySFX(diag_beat);
+  ObjText_SetText(textobj, "I think she'd love to hear about them.");
+  ObjPrim_SetTexture(leftportrait, reimu_smile);
+
+  EventWaitA3(10);
+
+  DestroyDialogueEvent(dialogueobjects);
+  SetForbidPlayerSpell(false);
+  SetForbidPlayerShot(false);
+  ObjEnemy_SetLife(objBoss, -1);
+  wait(10);
+
+  let clearText = ObjText_Create();
+	ObjText_SetFontType(clearText, "Constantia");
+	ObjText_SetText(clearText, "Clear!");
+	ObjText_SetFontSize(clearText, 32);
+	ObjText_SetFontBold(clearText, true);
+	ObjText_SetFontColorTop(clearText, 255, 255, 255);
+	ObjText_SetFontColorBottom(clearText, 150, 200, 150);
+	ObjText_SetFontBorderType(clearText, BORDER_FULL);
+	ObjText_SetFontBorderColor(clearText,0, 0, 0);
+	ObjText_SetFontBorderWidth(clearText, 2);
+	Obj_SetRenderPriority(clearText, 0.6);
+	ObjRender_SetX(clearText, 32);
+	ObjRender_SetY(clearText, 98);
+
+  alpha = 0;
+  while(alpha < 255) {
+		alpha+=2.5;
+    if (alpha == 60) {PlaySFX(clear_sfx)}
+		ObjRender_SetAlpha(clearText, alpha);
+		yield;
+	}
+
+  wait(60);
+  Obj_Delete(objScene);
+  CloseScript(GetOwnScriptID());
+}

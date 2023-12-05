@@ -158,11 +158,12 @@ task PetalRelease(posX, posY, angX, startAlpha, startScale, radius, duration, co
 
 let shader;
 
-task TLoadColourShader(colour) {
+function TLoadColourShader(colour) {
   let pathShader = GetCurrentScriptDirectory() ~ "./shader/colouration.hlsl";
   shader = ObjShader_Create();
   ObjShader_SetShaderF(shader, pathShader);
 	ObjShader_SetTechnique(shader, "TecSaturate" ~ colour);
+  return shader;
 }
 
 task TColour(on) {
@@ -173,9 +174,23 @@ task TColour(on) {
   }
 }
 
+task TColourCustomRender(on, minRender, maxRender) {
+  if (on) {
+  	SetShaderI(shader, minRender, maxRender);
+  } else {
+  	ResetShaderI(minRender, maxRender);
+  }
+}
+
 task TUnloadColourShader {
   ResetShaderI(0, 100);
   Obj_Delete(shader);
+}
+
+task TModifyCustomColourFloats(r, g, b) {
+  ObjShader_SetFloat(shader, "customR_", r);
+  ObjShader_SetFloat(shader, "customG_", g);
+  ObjShader_SetFloat(shader, "customB_", b);
 }
 
 // Thanks, Sparen!

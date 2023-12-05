@@ -1,0 +1,345 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["Spellcard \"Finale\""]
+#Text["Is Junko a florist? Maybe? [r] Maybe this would be better for Yuuka or something..."]
+#System["./JunkoSystem.dnh"]
+#Background["./JunkoBackground.dnh"]
+
+#include "./func_library.dnh"
+#include "./img/ZUNShot_Const.txt"
+#include "./JunkoFX.dnh"
+
+let mainTimer = 0;
+
+@Event 
+{
+  alternative(GetEventType())
+    case(EV_REQUEST_LIFE){ //Sets boss's life
+      SetScriptResult(17000);
+    }
+    case(EV_REQUEST_TIMER){ //Sets attack time
+      SetScriptResult(198);
+    }
+    case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
+      SetScriptResult(5000000);
+    }
+}
+
+let spelldelay = 300;
+
+@Initialize 
+{ 
+  objScene = GetEnemyBossSceneObjectID();
+  objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+
+  TLoadJunkoFX;
+  TNotifyBattleEvents;
+  TSpellCardWait;
+
+  ObjMove_SetPosition(objBoss, GetCenterX()*0.5, -100);
+  ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()*0.5, spelldelay/4);
+
+  TJunkoHitFX;
+  TJunkoBurnAura;
+  TJunkoCircleAura;
+  TJunkoShadowAura;
+  TJunkoCrownAura;
+  
+  MainTask;
+
+  TJunkoFinaleFinalize;
+}
+
+task TSpellCardWait() { // suspense
+  wait(spelldelay);
+  ObjEnemyBossScene_StartSpell(objScene);
+  ObjEnemy_Regist(objBoss);
+  TJunkoSpellStartFX("Pure Sign \"A New-Bloomed Danmaku Hell\"", DISPLEASED, 230, 200, 230);
+
+}
+
+let new_x = GetCenterX();
+let new_y = GetCenterY()*0.5;
+
+@MainLoop 
+{
+  ObjEnemy_SetIntersectionCircleToShot(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 32);
+  ObjEnemy_SetIntersectionCircleToPlayer(objBoss, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 24);
+  
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+
+  if (mainTimer < 16) {
+    MDrawJunkoMotionBegin(mainTimer);
+  } else if (mainTimer < spelldelay/4-16) {
+    MDrawJunkoMotionContinue(mainTimer);
+  } else if (mainTimer < spelldelay/4) {
+    MDrawJunkoMotionEnd(mainTimer);
+  } else if (mainTimer < spelldelay) {
+    MDrawJunkoBlink(mainTimer);
+    MJunkoBreathe(mainTimer);
+  } else {
+    MDrawJunkoLaughContinue(mainTimer); 
+  }
+
+  if (mainTimer < spelldelay) {ObjEnemy_SetDamageRate(objBoss, 5, 5)} else {ObjEnemy_SetDamageRate(objBoss, 100, 100)}
+  if (mainTimer == spelldelay/4 + 10) {TJunkoChargeUp(200, 80, [255, 80, 80])}
+  if (mainTimer == spelldelay/4 + 50) {TJunkoChargeUp(200, 80, [100, 100, 255])}
+  if (mainTimer == spelldelay/4 + 90) {TJunkoChargeUp(200, 80, [255, 80, 255])}
+
+  mainTimer++;
+  yield;
+}
+
+task laser_circle(posX, posY, offset, inc, speed, length, width, graphiclaser, graphichead) {
+  
+  let angle = offset;
+  let angle_inc = inc;
+  let direction = -0.01;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let laser = CreateLooseLaserA1(posX, posY, speed, angle, length, width, graphiclaser, 15);
+    let shot = CreateShotA1(posX + cos(angle), posY + sin(angle), speed, angle, graphichead, 15);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
+    ObjRender_SetAlpha(shot, 230);
+  }
+}
+
+task diag_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
+  let angle = offset;
+  let angle_inc = inc;
+  let direction = -1;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 10);
+    ObjMove_SetAngularVelocity(shot, ang_v*direction);
+    direction*=-1;
+  }
+}
+
+task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
+  
+  let angle = offset;
+  let angle_inc = inc;
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
+    ObjMove_SetAngularVelocity(shot, ang_v);
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
+  }
+}
+
+function proj_ellipse(posX, posY, radX, radY, offset, inc, proj) {
+  let angle = offset;
+  let angle_inc = inc;
+  let shots = [];
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let shot = CreateShotA2(posX+cos(angle)*radX, posY+sin(angle)*radY, 0, angle, 0, 0, proj, 10);
+    shots = shots~[shot];
+    ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
+    ObjRender_SetAlpha(shot, 80);
+    ObjShot_SetIntersectionEnable(shot, false);
+  }
+  return shots;
+}
+
+function floral_laser_circle(posX, posY, offset, inc, speed, proj, angv, length, width) {
+  let angle = offset;
+  let angle_inc = inc;
+  let direction = -1;
+  let lasers = [];
+
+  loop(360/angle_inc) {
+    angle+=angle_inc;
+    let objLaser = CreateCurveLaserA1(posX, posY, speed, angle,
+        length, width, proj, 0);
+    ObjCrLaser_SetTipDecrement(objLaser, 0.5);
+    ObjMove_SetAngularVelocity(objLaser, angv*direction);
+    direction*=-1;
+    lasers = lasers ~ [objLaser];
+  }
+
+  return lasers;
+}
+
+task MainTask {
+  
+  wait(spelldelay);
+
+  let loop_iters = -30;
+  let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
+  ObjSound_SetVolumeRate(shoot_sfx, 50);
+  let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
+  let laser_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_lazer01.wav");
+  let boom_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_tan00.wav");
+  let big_boom = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_enep02.wav");
+  let r = 1;
+  let g = 1; 
+  let b = 1;
+  TLoadColourShader("Custom");
+  TModifyCustomColourFloats(r, g, b);
+  TColour(true);
+
+  let bossX = ObjMove_GetX(objBoss);
+  let bossY = ObjMove_GetY(objBoss);
+  let phases = [ObjEnemyBossScene_GetInfo(objScene, INFO_CURRENT_LIFE_MAX)*0.75,
+                ObjEnemyBossScene_GetInfo(objScene, INFO_CURRENT_LIFE_MAX)*0.33,
+                -1];
+  let bossLife = ObjEnemyBossScene_GetInfo(objScene, INFO_CURRENT_LIFE);
+  let phaseIndex = 0;
+
+  TJunkoShockwave(200, 80, [255, 80, 255]);
+  TJunkoShockwave(200, 80, [255, 80, 80]);
+  TJunkoShockwave(200, 80, [100, 100, 255]);
+  PlaySFX(big_boom);
+  ScreenShakeA1(40,3);
+
+  let proj1_list = [];
+  let proj1_angle = 0;
+  let proj1_interval = 390;
+  let proj1_ring_spawn = 5;
+  let proj1_gaps = 5;
+
+  let angle1 = 0;
+  let radius = 200;
+
+  let angleL = 0;
+  let lasers = [];
+  let laser_interval = 85;
+  let laser_count = 14;
+  
+  task proj1_spawn { 
+    let current_index = phaseIndex;
+    let circle_colour;
+    ascent(i in 0..14) {
+      if (current_index != phaseIndex) {return}
+      if (ObjEnemy_GetInfo(objBoss,INFO_LIFE) <= 0) {return}
+      if (i % 2 == 0) {
+        circle_colour = SMALL_RED;
+      } else {
+        circle_colour = SMALL_BLUE;
+      }
+      proj1_list = proj1_list ~ proj_ellipse(bossX+cos(angle1)*radius, bossY+sin(angle1)*radius, 200, 200, rand(0,360), proj1_gaps, circle_colour);
+      wait(proj1_ring_spawn);
+      angle1+=360/14;
+    }
+  }
+
+  while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
+    
+    bossLife = ObjEnemyBossScene_GetInfo(objScene, INFO_CURRENT_LIFE);
+
+    if (bossLife < phases[phaseIndex]) {
+      TJunkoShockwave(200,80, [255, 80, 255]);
+      TJunkoShockwave(200,80, [255, 80, 255]);
+      TJunkoShockwave(200,80, [255, 80, 255]);
+      DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+      loop_iters = -15;
+      if (phaseIndex == 0) {  
+        proj1_interval -= 60;
+      } else {
+        proj1_interval -= 30;
+      }
+      proj1_gaps -= 1;
+      proj1_ring_spawn -= 1;
+
+      ScreenShakeA1(40, 4);
+      if (phaseIndex != length(phases) - 1) {
+        phaseIndex+=1;
+      } 
+    }
+
+    
+    if (phaseIndex > 1 && loop_iters % proj1_interval == 105) {
+      ang_circle(bossX, bossY, 0, 360/14, FIRE_GRAY, 0.015, 5, 0);
+      ang_circle(bossX, bossY, 360/14/2, 360/14, FIRE_GRAY, 0.02, 3, 0);
+
+      PlaySFX(shoot_sfx);
+    }
+
+    if (phaseIndex > 0 && loop_iters % proj1_interval == 0) {
+      loop(laser_count) {
+        let laser1 = CreateStraightLaserA1(bossX, bossY, angleL, 0, 18, 135, SUPP_MAGENTA, laser_interval);
+        angleL+=360/laser_count;
+        lasers = lasers ~ [laser1];
+      }
+      angleL+=360/laser_count/2;
+    }
+
+
+    if (phaseIndex > 0 && loop_iters % proj1_interval == laser_interval) {
+        PlaySFX(laser_sfx);
+        TJunkoShockwave(200, 80, [255, 80, 255]);
+        ScreenShakeA1(20, 3);
+        lasers = [];
+    }
+
+    if (phaseIndex > 0 && loop_iters % proj1_interval > laser_interval && loop_iters % proj1_interval < laser_interval*1.2) {
+      r = 2.0;
+      g = 1.3;
+      b = 2.0;
+    } else {
+      if (r > 1) {r-=1.0/30}
+      if (g > 1) {g-=0.3/30}
+      if (b > 1) {b-=1.0/30}
+    }
+    TModifyCustomColourFloats(r, g, b);
+
+    let len = length(lasers);
+    let magnitude = (laser_interval - loop_iters % proj1_interval)/laser_interval;
+
+    ascent(i in 0..len) {
+      let laser = lasers[i];
+      let angle = ObjStLaser_GetAngle(laser);
+      let direction = power(-1, i%2+1);
+      let ls_len = ObjLaser_GetLength(laser);
+      ObjStLaser_SetAngle(laser, angle+magnitude*direction);
+      ObjLaser_SetLength(laser, ls_len+(450/laser_interval));
+    }
+
+    bossX = ObjMove_GetX(objBoss);
+    bossY = ObjMove_GetY(objBoss);
+
+    if (loop_iters % proj1_interval == 0) {
+      TJunkoChargeUpSmall(200, 80, [255, 80, 255]);
+      proj1_spawn;
+    }
+
+    if (loop_iters % proj1_interval == 90) {
+      PlaySFX(warning);
+      ascent(i in 0..length(proj1_list)) {
+        let shot = proj1_list[i];
+        ObjRender_SetAlpha(shot, 255);
+      }
+    }
+
+    if (loop_iters % proj1_interval == 105) {
+      ascent(i in 0..length(proj1_list)) {
+        let shot = proj1_list[i];
+        ObjShot_SetIntersectionEnable(shot, true);
+        ObjMove_SetAngularVelocity(shot, 0);
+        ObjMove_SetAcceleration(shot, 0.0075);
+        ObjMove_SetMaxSpeed(shot, 5);
+      }
+      proj1_list = [];
+    }
+    
+    loop_iters++;
+    yield;
+  }
+  ascent(i in 0..length(proj1_list)) {
+    let shot = proj1_list[i];
+    ObjShot_SetIntersectionEnable(shot, true);
+    ObjMove_SetAngularVelocity(shot, 0);
+    ObjMove_SetAcceleration(shot, 0.0075);
+    ObjMove_SetMaxSpeed(shot, 5);
+    Obj_Delete(shot);
+  }
+  TColour(false);
+  TUnloadColourShader;
+}

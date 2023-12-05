@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Nonspell 1"]
-#Text["Everybody knows these blue circles. At least you can dodge them 1-by-1 here."]
+#Text["Filler, warm-up."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -31,6 +31,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
 
+  TNotifyBattleEvents;
   TLoadJunkoFX;
 
   ObjEnemy_Regist(objBoss);

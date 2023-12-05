@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Blossom\""]
-#Text["This attack was a nightmare to balance. I hope it's in a good spot, though."]
+#Text["I playtested this once without [r]the telegraph lines. It sucked."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -21,7 +21,7 @@ let mainTimer = 0;
       SetScriptResult(60);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-      SetScriptResult(2000000);
+      SetScriptResult(2500000);
     }
 }
 
@@ -30,13 +30,13 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Flawless Blossoming Enmity\"", DISPLEASED, 255, 100, 100);
+  TJunkoSpellStartFX("\"Flawless Blossoms of Enmity\"", DISPLEASED, 255, 100, 100);
 
-  ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
 
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.25, 60);
 

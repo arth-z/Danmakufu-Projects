@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Nonspell 3"]
-#Text["There's a trick to this one, so it's not as hard as what it's referencing."]
+#Text["Obvious safespot, so just [r]appreciate the lasers."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -32,6 +32,7 @@ let mainTimer = 0;
   ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
 
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.25, 60);
 

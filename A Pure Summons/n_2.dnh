@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Nonspell 2"]
-#Text["Most nonspells in this fight have a 'trick' to them. This one does too."]
+#Text["Does this count as BoWaP?"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -32,6 +32,7 @@ let mainTimer = 0;
   ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
 
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.25, 60);
 

@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Tail Trap\""]
-#Text["Those are supposed to be her tails, but here they look more like wings..."]
+#Text["Those are supposed to be tails,[r]but they look like wings..."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -15,13 +15,13 @@ let mainTimer = 0;
 {
   alternative(GetEventType())
     case(EV_REQUEST_LIFE){ //Sets boss's life
-      SetScriptResult(6000);
+      SetScriptResult(6500);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
       SetScriptResult(60);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
-      SetScriptResult(2000000);
+      SetScriptResult(2500000);
     }
 }
 
@@ -32,11 +32,11 @@ let mainTimer = 0;
   ObjEnemy_Regist(objBoss);
   TJunkoSpellStartFX("\"Seven-Tailed Killing Intent\"", DISPLEASED, 255, 100, 255);
 
-  ObjEnemyBossScene_Regist(objBoss);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
 
   TLoadJunkoFX;
+  TNotifyBattleEvents;
 
   ObjMove_SetDestAtFrame(objBoss, GetCenterX(), GetCenterY()/1.25, 60);
 
@@ -206,7 +206,7 @@ task MainTask {
 
     // pure light of the palm lasers - well, close to, cuz i dont have the laser tips
     if (loop_iters % 180 == 0) {
-      laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, SMALL_PURPLE);
+      laser_circle(bossX, bossY-55, rand(0, 360), 5, 3, 100, 18, 342, DROP_MAGENTA);
       TJunkoShockwaveAtPos(bossX, bossY-55, 200, 80, [255, 80, 255]);
       PlaySFX(laser_sfx);
     }
