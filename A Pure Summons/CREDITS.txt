@@ -60,7 +60,7 @@ I recoloured it with more online image editting software.
 -----------------------
 
 All SFX by ZUN (specifically, from Touhou Seirensen ~ Undefined Fantastic Object)
-Boss BGM: Pure Furies ~ Whereabouts of the Heart from album 'Dr. Latency's Freak Report' by ZUN
-Initial BGM: The Sea that Reflects One's Home Planet ~ Whereabouts of the Heart from album 'Dr. Latency's Freak Report' by ZUN
+Boss BGM: "Pure Furies ~ Whereabouts of the Heart" from album 'Dr. Latency's Freak Report' by ZUN
+Initial BGM: "The Sea that Reflects One's Home Planet" from album 'Dr. Latency's Freak Report' by ZUN
 
 -----------------------
