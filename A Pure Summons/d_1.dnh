@@ -13,6 +13,7 @@
 
 let dialogueobjects;
 let star_initialised = false;
+let boss_spawned = false;
 
 @Initialize {  
   NotifyEventAll(EV_USER_STAGE+111, 0);
@@ -48,7 +49,9 @@ task TCheckSkip {
   while(GetVirtualKeyState(VK_SPELL) == KEY_HOLD){yield;}
   while(GetVirtualKeyState(VK_SPELL) != KEY_PUSH){yield;}
 
-  TShowEnemy;
+  if (!boss_spawned) {
+    TShowEnemy;
+  }
 
   ShockwaveExpand(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 80, 8, [255, 80, 255]);
 	PetalRelease(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), rand(0, 360), rand(100, 255), 3, 18, 1000, [255, 200, 255], 64);
@@ -200,6 +203,7 @@ task TEvent {
   EventWaitA2(150);
 
   TShowEnemy;
+  boss_spawned = true;
   TJunkoShockwave(200, 80, [255, 80, 255]);
   TJunkoBreathe;
   TDrawJunkoBlink;
@@ -266,7 +270,7 @@ task TEvent {
 
   JunkoText;
   
-  ObjText_SetText(textobj, "Oh, is that how you see it? Forgive me.");
+  ObjText_SetText(textobj, "Oh, is that how you saw it? Forgive me.");
   ObjPrim_SetTexture(rightportrait, junko_hmph);
   SetPortraitToForeground(rightportrait, 5); SetPortraitToBackground(leftportrait, 5);
   EventWaitA3(10);
@@ -299,7 +303,7 @@ task TEvent {
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "And what better way to enjoy danmaku [r] than in a friendly sparring match, hm?");
+  ObjText_SetText(textobj, "And what better way to enjoy danmaku [r] than in an amiable sparring match, hm?");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
   ObjPrim_SetTexture(leftportrait, reimu_neutral);
 
@@ -337,7 +341,7 @@ task TEvent {
   EventWaitA3(10);
   PlaySFX(diag_beat);
 
-  ObjText_SetText(textobj, "How is anybody supposed to enjoy that?");
+  ObjText_SetText(textobj, "Like, what even-");
   ObjPrim_SetTexture(leftportrait, reimu_bruh);
 
   EventWaitA3(10);
@@ -368,7 +372,7 @@ task TEvent {
 
   PlaySFX(boom_spawn);
   ScreenShakeA1(45, 3);
-  ObjText_SetText(textobj, "...then a fight is what you'll get!");
+  ObjText_SetText(textobj, "...then a fight is what you'll get, damnit!");
   ObjText_SetFontBold(textobj, true);
   ObjPrim_SetTexture(leftportrait, reimu_angery);
   ObjPrim_SetTexture(rightportrait, junko_smug2);

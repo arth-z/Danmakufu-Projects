@@ -83,7 +83,7 @@ task TEvent {
   let clear_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_bonus.wav");
   ObjSound_SetVolumeRate(diag_beat, 50);
 
-  let dialogueobjects = CreateDialogueEvent(reimu_neutral, junko_neutral, "Well fought, Miko of Hakurei.");
+  let dialogueobjects = CreateDialogueEvent(reimu_neutral, junko_neutral, "Well fought, well fought!");
   
   let textbox = dialogueobjects[0];
   let textobj = dialogueobjects[1];
@@ -171,7 +171,7 @@ task TEvent {
   PlaySFX(diag_beat);
   PlaySFX(warning);
   ObjText_SetFontBold(textobj, true);
-  ObjText_SetText(textobj, "Don't use *that* word for me.");
+  ObjText_SetText(textobj, "Don't use that word for me.");
   ObjPrim_SetTexture(rightportrait, junko_creepy);
 
   EventWaitA3(10);
@@ -208,13 +208,13 @@ task TEvent {
   EventWaitA3(10);
 
   PlaySFX(diag_beat);
-  ObjText_SetText(textobj, "It was a pleasure to fight with you.");
+  ObjText_SetText(textobj, "It was a pleasure to do battle with you.");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
 
   EventWaitA3(10);
 
   PlaySFX(diag_beat);
-  ObjText_SetText(textobj, "I can only hope you enjoyed this as [r] much as I did.");
+  ObjText_SetText(textobj, "I can only hope that pleasure was [r] shared between the both of us.");
   ObjPrim_SetTexture(rightportrait, junko_smile);
 
   EventWaitA3(10);
@@ -250,7 +250,7 @@ task TEvent {
   EventWaitA3(10);
 
   PlaySFX(diag_beat);
-  ObjText_SetText(textobj, "Perfect. Thank you, Reimu.");
+  ObjText_SetText(textobj, "My thanks, human.");
   ObjPrim_SetTexture(rightportrait, junko_smile);
 
   EventWaitA3(10);
@@ -260,7 +260,7 @@ task TEvent {
   PlaySFX(boom_spawn);
   Obj_Delete(objBoss);
   PlaySFX(diag_beat);
-  ObjText_SetText(textobj, "Hecatia is going to enjoy hearing about this...");
+  ObjText_SetText(textobj, "Hecatia will be delighted to hear about this...");
   ObjPrim_SetTexture(rightportrait, junko_neutral);
   NotifyEventAll(EV_USER_STAGE+555, 0);
 
