@@ -254,7 +254,11 @@ task MainTask {
       } else {
         proj1_interval -= 30;
       }
-      proj1_gaps -= 1;
+      if (phaseIndex == 1) {
+        proj1_gaps = 360/110;
+      } else {
+        proj1_gaps -= 1;
+      }
       proj1_ring_spawn -= 1;
 
       ScreenShakeA1(40, 4);
