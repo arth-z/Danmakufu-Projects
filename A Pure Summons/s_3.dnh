@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Blossom\""]
-#Text["I playtested this once without [r]the telegraph lines. It sucked."]
+#Text["I playtested this once without [r]the telegraph lines. It sucked.[r]Well, at least they look nice."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -154,7 +154,7 @@ task MainTask {
           // line telegraphs - oooo, they disappear as they complete the petals of the flower!
             ascent(i in 0..(360/floral_density)) {
               if (i % 2 == 1) {
-                ExpandOutTelegraphLaser(orbX, orbY, angle+(floral_density/2)+i*floral_density, 450, 200, 0, 379, fire_interval*1.5);
+                ExpandOutTelegraphLaser(orbX, orbY, angle+(floral_density/2)+i*floral_density, 450, 200, 0, FIRE_PURPLE, fire_interval*1.5);
               }
             }
 

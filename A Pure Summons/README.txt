@@ -14,9 +14,15 @@ In the plural you start with only 2 lives, but you have a point extend every 3 m
 Defeating a boss phase (spell or nonspell) will also reward you points based on how many bullets are on-screen (this applies to lasers too).
 Clearing the plural definitely necessitates you capture at least one spellcard, more likely two or three.
 
-Difficulty is...can't really say. Although playtesting it myself, I did find the full plural script quite difficult.
+Difficulty is...can't really say. Playtesting it myself, I did find the full plural script quite difficult.
+But I've also never quite beaten Kanako on Hard or Utsuho on Normal with just two lives, either...
 That was with full use of bombs and trying to get as many point extends as I could through spellcard captures.
 As a point of reference: I'm usually a normal 1CC player, but I did clear Lunatic LoLK on PointDevice after a LOT of deaths (like, 3000+).
 If it counts for anything, I've also captured phase 3-4 of Pristine Danmaku Hell...after 4000+ attempts. 
+
+At the very least, I tried to keep the spellcard design at a level where I could still have fun even after repeatedly dying in playtesting.
+
+(Although, I also think the last spellcard's last phase is goddamn nuts, but I kept it that way intentionally...)
+(I think it's a beautiful pattern, and it wouldn't really be Junko without those insane psycho-mechanical dodges...)
 
 Anyways, thanks for downloading and have fun!

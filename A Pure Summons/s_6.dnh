@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Finale\""]
-#Text["Is Junko a florist? Maybe? [r] Maybe this would be better for Yuuka or something..."]
+#Text["Oh damnit, I just realised all[r]my spellcards have lasers...[r](Lasers are good, though!)"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -147,30 +147,11 @@ function proj_ellipse(posX, posY, radX, radY, offset, inc, proj) {
   return shots;
 }
 
-function floral_laser_circle(posX, posY, offset, inc, speed, proj, angv, length, width) {
-  let angle = offset;
-  let angle_inc = inc;
-  let direction = -1;
-  let lasers = [];
-
-  loop(360/angle_inc) {
-    angle+=angle_inc;
-    let objLaser = CreateCurveLaserA1(posX, posY, speed, angle,
-        length, width, proj, 0);
-    ObjCrLaser_SetTipDecrement(objLaser, 0.5);
-    ObjMove_SetAngularVelocity(objLaser, angv*direction);
-    direction*=-1;
-    lasers = lasers ~ [objLaser];
-  }
-
-  return lasers;
-}
-
 task MainTask {
   
   wait(spelldelay);
 
-  let loop_iters = -30;
+  let loop_iters = -60;
   let shoot_sfx = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_kira00.wav");
   ObjSound_SetVolumeRate(shoot_sfx, 50);
   let warning = SoundSFX(GetCurrentScriptDirectory() ~ "./sfx/se_boon01.wav");
@@ -192,11 +173,7 @@ task MainTask {
   let bossLife = ObjEnemyBossScene_GetInfo(objScene, INFO_CURRENT_LIFE);
   let phaseIndex = 0;
 
-  TJunkoShockwave(200, 80, [255, 80, 255]);
-  TJunkoShockwave(200, 80, [255, 80, 80]);
-  TJunkoShockwave(200, 80, [100, 100, 255]);
-  PlaySFX(big_boom);
-  ScreenShakeA1(40,3);
+  ScreenShakeA1(20,3);
 
   let proj1_list = [];
   let proj1_angle = 0;
@@ -229,14 +206,13 @@ task MainTask {
     }
   }
 
-  // attack idea - massive flower "collapses" into a series of consecutive and extremely difficult diagonal dodges
+  // attack idea - 14 large circles spawn in a ring around Junko and then "collapse" into a series of consecutive and extremely difficult diagonal dodges
   // go forwards to pre-dodge rings, then back up as the rings rush forwards to give yourself bigger gaps to dodge through
   // phase escalation 1 - "petal" lasers force you to be mindful of sideways positioning by making specific lanes 
   // (side then center then side) either extremely ugly to dodge (if you're fast) or just killing you (if you're slow)
   // phase escalation 2 - the pattern "collapses" faster and gets more denser, forcing you to be more aggressive in your dodging
   // phase escalation 3 - projectiles are aimed right down the center of petal lanes, disrupting existing dodging pattern
-  // needless to say: this attack is stunningly beautiful (especially in last phase) but absolutely fucking psychotic
-  // truly, Junko, you are the Touhou Kanjuden ~ Legacy of Lunatic Kingdom
+  // simple yet beautiful, beautiful yet pretty difficult, difficult yet pretty simple
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){
     
     bossLife = ObjEnemyBossScene_GetInfo(objScene, INFO_CURRENT_LIFE);
@@ -249,6 +225,10 @@ task MainTask {
       loop_iters = -15;
       if (phaseIndex == 0) {  
         proj1_interval -= 60;
+
+        // please excuse these increments that don't do anything since there's no lasers in p1
+        // i briefly considered it but that takes away the thunder of p2 music sync full bloom
+        // increments here still work tho
         laser_count*=2;
         angleL=360/laser_count/2;
       } else {
@@ -268,14 +248,14 @@ task MainTask {
     }
 
     
-    if (phaseIndex > 1 && loop_iters % proj1_interval == 105) {
+    if (phaseIndex > 0 && phaseIndex > 1 && loop_iters % proj1_interval == 105) {
       ang_circle(bossX, bossY, 0, 360/14, FIRE_PURPLE, 0.015, 5, 0);
       ang_circle(bossX, bossY, 360/14/2, 360/14, FIRE_PURPLE, 0.02, 3, 0);
 
       PlaySFX(shoot_sfx);
     }
 
-    if (loop_iters % proj1_interval == 0) {
+    if (phaseIndex > 0 && loop_iters % proj1_interval == 0) {
       loop(laser_count) {
         let laser1 = CreateStraightLaserA1(bossX, bossY, angleL, 0, 18, 135, SUPP_MAGENTA, laser_interval);
         angleL+=360/laser_count;
@@ -289,7 +269,7 @@ task MainTask {
     }
 
 
-    if (loop_iters % proj1_interval == laser_interval) {
+    if (phaseIndex > 0 && loop_iters % proj1_interval == laser_interval) {
         PlaySFX(laser_sfx);
         TJunkoShockwave(200, 80, [255, 80, 255]);
         ScreenShakeA1(20, 3);

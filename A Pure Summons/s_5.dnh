@@ -1,7 +1,7 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["Spellcard \"Purple Star\""]
-#Text["Yeah, definitely milking it [r]too hard. On the plus side, [r] have the most scary survival[r] I could think of."]
+#Text["Yeah, definitely milking it [r]too hard. On the plus side, [r] I think this survival[r] is absolutely terrifying [r] to playtest."]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
 
@@ -106,7 +106,7 @@ task TSpellCardWait() { // you thought this would be a nonspell? get survivaled,
 }
 
 // circle for blender "lasers" - it's actually just individual projectiles
-task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
+task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v, spellResist) {
   
   let angle = offset;
   let angle_inc = inc;
@@ -115,7 +115,7 @@ task ang_circle(posX, posY, offset, inc, proj, accel, max, ang_v) {
     angle+=angle_inc;
     let shot = CreateShotA2(posX, posY, 0, angle, accel, max, proj, 5);
     ObjMove_SetAngularVelocity(shot, ang_v);
-    ObjShot_SetSpellResist(shot, true);
+    ObjShot_SetSpellResist(shot, spellResist);
   }
 }
 
@@ -229,7 +229,7 @@ task MainTask {
     // it fires every frame, and basically 'works' as a laser despite being like, 5000 murasa droplets
     // this is...basically a BoWaP variant, if you look at the way blender_offset and blender_speed are controlled
     if (loop_iters > 30) {
-      ang_circle(starX, starY, blender_offset, 360/blender_count, DROP_PURPLE, 0.1, blender_wave, 0);
+      ang_circle(starX, starY, blender_offset, 360/blender_count, DROP_PURPLE, 0.1, blender_wave, 0, true);
       blender_offset+=blender_speed;
     }
 
@@ -315,7 +315,7 @@ task MainTask {
           PlaySFX(desperation);
         }
         if (blender_index % 9 == 0) { // also fires a bunch of aimed junk at you (looks nice, though)
-          ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-2, 2), 36, 204, 0.03, 6, 0);
+          ang_circle(starX, starY, GetAngleToPlayer(objStar) + rand(-2, 2), 36, 204, 0.03, 6, 0, false);
           PlaySFX(shoot_sfx);
         }
       }
