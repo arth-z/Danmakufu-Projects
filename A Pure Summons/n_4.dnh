@@ -109,7 +109,7 @@ task MainTask {
   let floral_density = 6;
   let direction = 1;
 
-  // circles spawn around you, overflowing blemishes callback, except they "degenerate" or "collapse"
+  // circles spawn around junko, overflowing blemishes callback, except they "degenerate" or "collapse"
   // into walls/waves that converge on you. also they have angular velocity, to be mean.
   // a surprisingly difficult dodge, despite the simplicity
   while(ObjEnemy_GetInfo(objBoss,INFO_LIFE) > 0){

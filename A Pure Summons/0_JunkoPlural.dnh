@@ -4,6 +4,7 @@
 #Text["An invitation from Junko... [r] for a...friendly danmaku duel? [r] Yeah, right. [r] Time to investigate!"]
 #System["./JunkoSystem.dnh"]
 #Background["./JunkoBackground.dnh"]
+#Player["./ultima-DDC-reimuB/ReimuH.dnh", "./ultima-DDC-reimuB/ReimuH-Inv.dnh"]
 
 #include "./img/ZUNShot_Const.txt"
 #include "./JunkoFX.dnh"

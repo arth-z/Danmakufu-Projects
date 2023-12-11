@@ -263,14 +263,14 @@ let KNIFE_YELLOW		= 330;
 let KNIFE_ORANGE		= 331;
 
 // Oval Bullets ------------------------------
-let OVAL_GRAY			= 265;
-let OVAL_RED			= 266;
-let OVAL_PURPLE			= 267;
-let OVAL_BLUE			= 268;
-let OVAL_AQUA			= 269;
-let OVAL_GREEN			= 270;
-let OVAL_YELLOW			= 271;
-//let OVAL_ORANGE			= 272;
+let OVAL_GRAY			= 332;
+let OVAL_RED			= 333;
+let OVAL_PURPLE			= 334;
+let OVAL_BLUE			= 335;
+let OVAL_AQUA			= 336;
+let OVAL_GREEN			= 337;
+let OVAL_YELLOW			= 338;
+let OVAL_ORANGE			= 339;
 
 // Bubbles ------------------------------
 let BUBBLE_GRAY			= 362;

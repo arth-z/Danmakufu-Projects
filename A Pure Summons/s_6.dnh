@@ -232,7 +232,7 @@ task MainTask {
         laser_count*=2;
         angleL=360/laser_count/2;
       } else {
-        proj1_interval -= 30;
+        proj1_interval -= 20;
       }
       if (phaseIndex == 1) {
         proj1_gaps = 360/110;
@@ -247,7 +247,7 @@ task MainTask {
       } 
     }
 
-    
+
     if (phaseIndex > 0 && phaseIndex > 1 && loop_iters % proj1_interval == 105) {
       ang_circle(bossX, bossY, 0, 360/14, FIRE_PURPLE, 0.015, 5, 0);
       ang_circle(bossX, bossY, 360/14/2, 360/14, FIRE_PURPLE, 0.02, 3, 0);
@@ -258,6 +258,7 @@ task MainTask {
     if (phaseIndex > 0 && loop_iters % proj1_interval == 0) {
       loop(laser_count) {
         let laser1 = CreateStraightLaserA1(bossX, bossY, angleL, 0, 18, 135, SUPP_MAGENTA, laser_interval);
+        ObjStLaser_SetSource(laser1, false);
         angleL+=360/laser_count;
         lasers = lasers ~ [laser1];
       }
