@@ -159,7 +159,7 @@ task TJunkoHitFX {
     if (floor(loop_iters/(2/3)) == loop_iters/(2/3) && beingHit) {
       
       ObjRender_SetBlendType(objBoss, BLEND_ADD_ARGB);
-      ObjRender_SetAlpha(objBoss, 150);
+      ObjRender_SetAlpha(objBoss, 100);
       if (currLife > critLife) {
           PlaySFX(normalImpact);
         } else {
@@ -492,7 +492,7 @@ task TJunkoCrownAura {
     ObjSprite2D_SetDestCenter(crownpoints[3]);
     ObjRender_SetAngleZ(crownpoints[3], 45);
 
-    let alpha = 140 + 55*cos(2*loop_iters);
+    let alpha = 160 + 55*cos(2*loop_iters);
 
     ascent(i in 0..5) {
       let crownpoint = crownpoints[i];
@@ -505,15 +505,15 @@ task TJunkoCrownAura {
     }
 
     // crownpoint pulses - goes from top to bottom
-    let duration = 15;
-    if (loop_iters % 90 == 15) {
+    let duration = 30;
+    if (loop_iters % 120 == 15) {
       JunkoCrownpointPulse(crownpoints[2], alpha, [155 + 2*40, 80, 155 + (4-2)*40], duration);
     }
-    if (loop_iters % 90 == 30) {
+    if (loop_iters % 120 == 30) {
       JunkoCrownpointPulse(crownpoints[1], alpha, [155 + 1*40, 80, 155 + (4-1)*40], duration);
       JunkoCrownpointPulse(crownpoints[3], alpha, [155 + 3*40, 80, 155 + (4-3)*40], duration);
     }
-    if (loop_iters % 90 == 45) {
+    if (loop_iters % 120 == 45) {
       JunkoCrownpointPulse(crownpoints[0], alpha, [155 + 0*40, 80, 155 + (4-0)*40], duration);
       JunkoCrownpointPulse(crownpoints[4], alpha, [155 + 4*40, 80, 155 + (4-4)*40], duration);
     }
@@ -530,6 +530,9 @@ task TJunkoCrownAura {
 // 'pulses' a crownpoint by copying it, reducing its transparency, and scaling it upwards
 // supplementary to crown aura to make it feel alive
 task JunkoCrownpointPulse(crownpoint, alpha, color, duration) {
+
+  let accel_factor = 0;
+
   let xScale = 1;
   let yScale = 1;
 
@@ -550,18 +553,19 @@ task JunkoCrownpointPulse(crownpoint, alpha, color, duration) {
   ObjSprite2D_SetDestCenter(pulse);
   ObjRender_SetAngleZ(pulse, angle);
   ObjRender_SetBlendType(pulse, ObjRender_GetBlendType(crownpoint));
+  ObjRender_SetPosition(pulse, ObjRender_GetX(crownpoint), ObjRender_GetY(crownpoint), 0);
   
   while (loop_iters < duration && !Obj_IsDeleted(objBoss)) {
-    let posX = ObjRender_GetX(crownpoint);
-    let posY = ObjRender_GetY(crownpoint);
+    let posX = ObjRender_GetX(pulse);
+    let posY = ObjRender_GetY(pulse);
     
     alpha_new -= alpha/duration;
 
-    yScale+=0.075;
-    xScale+=0.02;
+    yScale+=0.005*(accel_factor/duration);
+    xScale+=0.005*(accel_factor/duration);
 
-    posX += 2*sin(angle);
-    posY -= 2*cos(angle);
+    posX += 4*sin(angle)*(accel_factor/duration);
+    posY -= 4*cos(angle)*(accel_factor/duration);
 
     ObjRender_SetPosition(pulse, posX, posY, 0);
     ObjRender_SetScaleXYZ(pulse, xScale, yScale, 1);
@@ -569,6 +573,7 @@ task JunkoCrownpointPulse(crownpoint, alpha, color, duration) {
     ObjRender_SetColor(pulse, r, g, b);
 
     loop_iters++;
+    accel_factor++;
     yield;
   }
   Obj_Delete(pulse);

@@ -59,7 +59,7 @@ task TSpellCardWait() { // you thought this would be a nonspell? get survivaled,
   wait(200);
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("Hateful Star \"Pristine Maelstrom\"", NEUTRAL, 255, 50, 255);
+  TJunkoSpellStartFX("\"Hateful Lunatic Star\"", NEUTRAL, 255, 50, 255);
 
 }
 

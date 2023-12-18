@@ -30,7 +30,7 @@ let mainTimer = 0;
 { 
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
-  TJunkoSpellStartFX("Frigid Star \"Shimmering Radiance\"", NEUTRAL, 150, 150, 255);
+  TJunkoSpellStartFX("\"Nightmare of Distant Starlight\"", NEUTRAL, 150, 150, 255);
 
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);

@@ -18,7 +18,7 @@ let mainTimer = 0;
       SetScriptResult(6500);
     }
     case(EV_REQUEST_TIMER){ //Sets attack time
-      SetScriptResult(60);
+      SetScriptResult(70);
     }
     case(EV_REQUEST_SPELL_SCORE){ //Spellcard bonus
       SetScriptResult(2500000);
@@ -30,7 +30,7 @@ let mainTimer = 0;
   objScene = GetEnemyBossSceneObjectID();
   objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
   ObjEnemy_Regist(objBoss);
-  TJunkoSpellStartFX("\"Seven-Tailed Killing Intent\"", DISPLEASED, 255, 100, 255);
+  TJunkoSpellStartFX("\"Seven Tails of a Pure Fox\"", DISPLEASED, 255, 100, 255);
 
   ObjEnemyBossScene_StartSpell(objScene);
   ObjEnemy_Regist(objBoss);
@@ -96,7 +96,8 @@ task laser_circle(posX, posY, offset, inc, speed, length, width, graphiclaser, g
 
   loop(360/angle_inc) {
     angle+=angle_inc;
-    let laser = CreateLooseLaserA1(posX, posY, speed, angle, length, width, graphiclaser, 15);
+    let laser1 = CreateLooseLaserA1(posX, posY, speed, angle, length, width, graphiclaser, 15);
+    let laser2 = CreateLooseLaserA1(posX, posY, speed, angle, length, width, graphiclaser, 15);
     let shot = CreateShotA1(posX + cos(angle), posY + sin(angle), speed, angle, graphichead, 15);
     ObjRender_SetBlendType(shot, BLEND_ADD_ARGB);
     ObjRender_SetAlpha(shot, 230);
@@ -188,10 +189,10 @@ task MainTask {
     }
     
     // shoots junk at you - have fun navigating this to avoid the tails...
-    if (loop_iters % 60 == 0) {
+    if (loop_iters % 45 == 0) {
       let angleP = GetAngleToPlayer(objBoss);
       //ang_circle(bossX, bossY-55, angleP, 9, 349, 0.2, 1.5, -ang_v*0.5);
-      diag_circle(bossX, bossY-55, angleP, 6, 349, 0.2, 1.5, 0.25);
+      diag_circle(bossX, bossY-55, angleP, 6, D_PELLET_PURPLE, 0.2, 1.5, 0.25);
       PlaySFX(shoot_sfx);
       
     }
@@ -203,7 +204,7 @@ task MainTask {
 
     // pure light of the palm lasers - well, close to, cuz i dont have the laser tips
     if (loop_iters % move_interval == 0) {
-      laser_circle(bossX, bossY-55, rand(0, 360), 5, 2.4, 120, 18, 342, DROP_PURPLE);
+      laser_circle(bossX, bossY-55, rand(0, 360), 4, 2.5, 120, 16, C_LASER_PURPLE, SMALL_PURPLE);
       TJunkoShockwaveAtPos(bossX, bossY-55, 200, 80, [255, 80, 255]);
       PlaySFX(laser_sfx);
     }

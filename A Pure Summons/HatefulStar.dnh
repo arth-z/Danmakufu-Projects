@@ -49,6 +49,10 @@ task TStarDraw(delay, color) {
   }
 }
 
+task TStarChangeColour(color) {
+  ObjPrim_SetTexture(objStar, path ~ "./img/hatefulStar_" ~ color ~ ".png");
+}
+
 task TStarShockwave(color) {
   let posX = ObjRender_GetX(objStar);
   let posY = ObjRender_GetY(objStar);
