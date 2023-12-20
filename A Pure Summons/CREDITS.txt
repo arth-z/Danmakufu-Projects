@@ -55,7 +55,7 @@ The variants appearing in-game are literally just recoloured.
 STG frame abstract background from "https://www.freepik.com/free-vector/abstract-asthetic-hd-wallpaper-background-banner-design-multipurpose_23258842.htm#page=14&query=abstract%20background&position=4&from_view=search&track=ais", image by Sketchepedia on Freepik
 
 STG frame original logo from Touhou Kanjuden ~ Legacy of Lunatic Kingdom by ZUN/Team Shanghai Alice.
-I recoloured it with more online image editting software.
+I recoloured it with more online image editing software.
 
 -----------------------
 
@@ -64,3 +64,8 @@ Boss BGM: "Pure Furies ~ Whereabouts of the Heart" from album 'Dr. Latency's Fre
 Initial BGM: "The Sea that Reflects One's Home Planet" from album 'Dr. Latency's Freak Report' by ZUN
 
 -----------------------
+
+The Reimu player provided with this script is Ultima124's DDC ReimuB, and can be found at this link:
+https://www.bulletforge.org/u/ultima124/p/ultimas-ddc-reimu-b-player-true-final-version
+
+I made some slight modifications (especially for the infinite lives variant), but all the original work belongs to and was made by them!
