@@ -1,6 +1,6 @@
 # Danmakufu-Projects
 A repository for my projects in the "Touhou Danmakufu" shoot-em-up game engine and its associated C-like .dnh scripting language.
-Currently contains one WIP bossfight.
+Currently contains one completed bossfight.
 
 ## **How do I play these?**
 
