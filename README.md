@@ -2,6 +2,9 @@
 A repository for my projects in the "Touhou Danmakufu" shoot-em-up game engine and its associated C-like .dnh scripting language.
 Currently contains one completed bossfight.
 
+Watch it here:
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/J6M_8aDEXVg/0.jpg)](http://www.youtube.com/watch?v=J6M_8aDEXVg "Touhou Danmakufu (PH3) - Script Showcase: "A Pure Summons" (Junko bossfight)")
+
 ## **How do I play these?**
 
 Go to this [link](https://touhougc.web.fc2.com/products/th_dnh_ph3.html), (don't worry if it's in Japanese) and click the link labeled **"東方弾幕風ph3 [.1 pre6]
