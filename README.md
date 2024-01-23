@@ -2,7 +2,7 @@
 A repository for my projects in the "Touhou Danmakufu" shoot-em-up game engine and its associated C-like .dnh scripting language.
 Currently contains one completed bossfight.
 
-Watch it here:
+Watch it by clicking on the image:
 
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/J6M_8aDEXVg/0.jpg)](http://www.youtube.com/watch?v=J6M_8aDEXVg)
 
