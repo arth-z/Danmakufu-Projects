@@ -3,6 +3,7 @@ A repository for my projects in the "Touhou Danmakufu" shoot-em-up game engine a
 Currently contains one completed bossfight.
 
 Watch it here:
+
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/J6M_8aDEXVg/0.jpg)](http://www.youtube.com/watch?v=J6M_8aDEXVg)
 
 ## **How do I play these?**
